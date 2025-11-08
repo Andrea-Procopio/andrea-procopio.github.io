@@ -1,3 +1,3 @@
 # andrea-procopio.github.io
 
-Experiment website, heavily inspired by friend David B
+Personal website, originally inspired by friend David B. Created with help from claude sonnet 4.5
