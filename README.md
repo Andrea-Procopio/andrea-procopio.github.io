@@ -1,3 +1,3 @@
 # andrea-procopio.github.io
 
-Experiment bio, copied from friend David B
+Experiment website, heavily inspired by friend David B
