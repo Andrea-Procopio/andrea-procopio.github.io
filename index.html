@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Andrea Procopio — CS & Econ @ Bocconi | CV Research @ Harvard</title>
-  <meta name="description" content="Andrea Procopio — BSc CS & Economics at Bocconi; Computer Vision researcher at Harvard's CoCoDev Lab. Interests: human-like intelligence, computational vision, tiny CNNs, wearable AI." />
+  <meta name="description" content="Andrea Procopio — BSc CS & Economics at Bocconi; Research Fellow at Harvard University. Interests: human-like intelligence, computer vision, tiny CNNs, wearable ML." />
   <meta name="theme-color" content="#0a0e17" />
   
   <link rel="icon" href="dbicon.png" type="image/png" />
@@ -13,7 +13,7 @@
   <style>
     :root{
       --bg:#0a0e17;
-      --card:rgba(15,20,30,0.85);
+      --card:rgba(15,20,30,0.92);
       --text:#e8edf4;
       --muted:#8a95a8;
       --accent:#6b9bd1;
@@ -32,19 +32,18 @@
       min-height:100svh;
       font-size:15px;
       position:relative;
+      overflow-x:hidden;
     }
 
-    /* Background canvases - behind everything */
+    /* Background canvas */
     .bg-canvas{
       position:fixed; 
       inset:0; 
       pointer-events:none;
-    }
-
-    #bg{
       z-index:1;
     }
 
+    /* Effect canvases */
     .effect-canvas{
       position:fixed;
       inset:0;
@@ -58,7 +57,7 @@
       opacity:1;
     }
 
-    /* Content layer - above backgrounds */
+    /* Content layer */
     main{
       min-height:100svh; 
       display:grid; 
@@ -76,46 +75,85 @@
       backdrop-filter:blur(24px);
       -webkit-backdrop-filter:blur(24px);
       border:1px solid var(--border);
-      border-radius:4px;
+      border-radius:6px;
       box-shadow:var(--shadow);
       padding:40px 40px 36px;
       position:relative;
+      transition:transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    /* Floating Control Panel */
+    .card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 12px 48px rgba(0,0,0,.5);
+    }
+
+    /* Improved Control Trigger - More Visible */
     .control-trigger{
       position:fixed;
-      top:24px;
-      right:24px;
-      width:48px;
-      height:48px;
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:50%;
+      top:32px;
+      right:32px;
+      height:56px;
+      padding:0 20px 0 24px;
+      background:linear-gradient(135deg, var(--accent), var(--purple), var(--green));
+      background-size:200% 200%;
+      animation:gradientShift 4s ease infinite;
+      border:2px solid rgba(255,255,255,0.2);
+      border-radius:28px;
       display:flex;
       align-items:center;
-      justify-content:center;
+      gap:14px;
       cursor:pointer;
       z-index:1000;
-      transition:all .3s ease;
+      transition:all .4s cubic-bezier(0.4, 0, 0.2, 1);
       backdrop-filter:blur(24px);
       -webkit-backdrop-filter:blur(24px);
+      box-shadow:0 4px 20px rgba(107,155,209,0.5), 0 0 40px rgba(107,155,209,0.3);
+      overflow:hidden;
+      max-width:56px;
     }
+    
+    @keyframes gradientShift{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    
     .control-trigger:hover{
-      background:rgba(107,155,209,0.15);
-      border-color:var(--accent);
-      transform:rotate(90deg);
+      max-width:280px;
+      padding-right:20px;
+      box-shadow:0 6px 30px rgba(95,200,144,0.6), 0 0 60px rgba(95,200,144,0.4);
+      animation:gradientShift 2s ease infinite;
     }
+    
+    .control-trigger-text{
+      color:#fff;
+      font-size:0.9rem;
+      font-weight:600;
+      white-space:nowrap;
+      opacity:0;
+      transition:opacity .3s ease .1s;
+      letter-spacing:0.03em;
+      text-shadow:0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .control-trigger:hover .control-trigger-text{
+      opacity:1;
+    }
+    
     .control-trigger i{
-      color:var(--accent);
-      font-size:1.2rem;
+      color:#fff;
+      font-size:1.3rem;
+      filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      flex-shrink:0;
+      order:2;
     }
 
+    /* Control Panel */
     .control-panel{
       position:fixed;
       top:0;
-      right:-320px;
-      width:320px;
+      right:-360px;
+      width:360px;
       height:100vh;
       background:var(--card);
       border-left:1px solid var(--border);
@@ -123,60 +161,126 @@
       -webkit-backdrop-filter:blur(24px);
       z-index:999;
       transition:right .4s cubic-bezier(0.4, 0, 0.2, 1);
-      padding:80px 24px 24px;
+      padding:24px;
       overflow-y:auto;
-      box-shadow:-8px 0 32px rgba(0,0,0,.4);
+      box-shadow:-8px 0 32px rgba(0,0,0,.5);
     }
     .control-panel.open{
       right:0;
     }
 
-    .control-section{
-      margin-bottom:32px;
-      padding-bottom:24px;
+    .control-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:24px;
+      padding-bottom:16px;
       border-bottom:1px solid var(--border);
     }
-    .control-section:last-child{
-      border-bottom:none;
-    }
-    .control-section h3{
-      font-size:.85rem;
+
+    .control-header h3{
+      margin:0;
+      font-size:1rem;
       color:var(--accent);
-      margin:0 0 16px;
+      letter-spacing:0.05em;
+    }
+
+    .close-panel{
+      background:none;
+      border:none;
+      color:var(--muted);
+      cursor:pointer;
+      font-size:1.2rem;
+      padding:4px 8px;
+      transition:color 0.2s;
+    }
+    .close-panel:hover{
+      color:var(--text);
+    }
+
+    .control-section{
+      margin-bottom:20px;
+    }
+    .control-section h4{
+      font-size:.85rem;
+      color:var(--green);
+      margin:0 0 12px;
       letter-spacing:0.05em;
       font-weight:700;
     }
-    .control-section h3::before{
+    .control-section h4::before{
       content:'> ';
-      color:var(--green);
+      color:var(--accent);
     }
 
-    .control-btn{
-      width:100%;
-      padding:12px 16px;
-      margin-bottom:8px;
-      background:rgba(107,155,209,0.06);
-      border:1px solid var(--border);
-      border-radius:4px;
-      color:var(--text);
-      font-family:inherit;
-      font-size:.88rem;
-      cursor:pointer;
-      transition:all .3s ease;
+    .control-item{
       display:flex;
       align-items:center;
       justify-content:space-between;
+      padding:12px;
+      margin-bottom:8px;
+      background:rgba(107,155,209,0.05);
+      border:1px solid var(--border);
+      border-radius:6px;
+      transition:all .3s ease;
     }
-    .control-btn:hover{
-      background:rgba(107,155,209,0.15);
+    .control-item:hover{
+      background:rgba(107,155,209,0.1);
       border-color:var(--accent);
     }
-    .control-btn.active{
-      background:rgba(95,200,144,0.15);
+
+    .control-label{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--text);
+      font-size:.9rem;
+    }
+
+    .control-label i{
+      opacity:.7;
+      width:20px;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch{
+      position:relative;
+      width:44px;
+      height:24px;
+      background:rgba(138,149,168,0.3);
+      border-radius:12px;
+      cursor:pointer;
+      transition:background 0.3s;
+      border:1px solid var(--border);
+    }
+    .toggle-switch::after{
+      content:'';
+      position:absolute;
+      top:2px;
+      left:2px;
+      width:18px;
+      height:18px;
+      background:#fff;
+      border-radius:50%;
+      transition:transform 0.3s;
+      box-shadow:0 2px 4px rgba(0,0,0,0.3);
+    }
+    .toggle-switch.active{
+      background:var(--green);
       border-color:var(--green);
     }
-    .control-btn i{
-      opacity:.7;
+    .toggle-switch.active::after{
+      transform:translateX(20px);
+    }
+
+    .control-info{
+      font-size:.8rem; 
+      color:var(--muted); 
+      margin:16px 0 0;
+      padding:12px;
+      background:rgba(107,155,209,0.05);
+      border-radius:4px;
+      border-left:3px solid var(--accent);
     }
 
     .cursor-blink::after{
@@ -190,14 +294,14 @@
       50%, 100%{opacity:0}
     }
 
-    /* Two-column header layout */
+    /* Header with profile photo */
     header{
       margin-bottom:32px; 
       padding-bottom:24px; 
       position:relative;
       display:grid;
       grid-template-columns:1fr auto;
-      gap:24px;
+      gap:28px;
       align-items:center;
     }
     header::after{
@@ -220,41 +324,49 @@
     }
 
     .avatar-container{
-      width:100px;
-      height:100px;
+      width:110px;
+      height:110px;
       position:relative;
-      display:flex;
-      align-items:center;
-      justify-content:center;
     }
+    
     .avatar{
       width:100%;
       height:100%;
       border-radius:50%;
-      border:2px solid var(--border);
+      border:3px solid var(--border);
       background:linear-gradient(135deg, rgba(107,155,209,0.2), rgba(95,200,144,0.2));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:2.5rem;
-      color:var(--accent);
       position:relative;
       overflow:hidden;
-    }
-    .avatar::before{
-      content:'';
-      position:absolute;
-      top:-50%;
-      left:-50%;
-      width:200%;
-      height:200%;
-      background:linear-gradient(45deg, transparent, rgba(107,155,209,0.3), transparent);
-      animation:avatarShine 3s infinite;
+      box-shadow:0 4px 16px rgba(0,0,0,0.3);
+      transition:transform 0.3s ease, border-color 0.3s ease;
     }
 
-    @keyframes avatarShine{
-      0%, 100%{transform:rotate(0deg)}
-      50%{transform:rotate(180deg)}
+    .avatar:hover{
+      transform:scale(1.05);
+      border-color:var(--accent);
+    }
+
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      border-radius:50%;
+    }
+
+    /* Subtle glow effect on hover */
+    .avatar::after{
+      content:'';
+      position:absolute;
+      inset:-3px;
+      border-radius:50%;
+      background:linear-gradient(45deg, var(--accent), var(--green), var(--purple));
+      opacity:0;
+      z-index:-1;
+      transition:opacity 0.3s ease;
+      filter:blur(8px);
+    }
+    .avatar:hover::after{
+      opacity:0.4;
     }
 
     h1{
@@ -277,7 +389,11 @@
       line-height:1.6;
     }
 
-    section{margin-bottom:32px; opacity:0; animation:fadeIn 0.6s ease-out forwards}
+    section{
+      margin-bottom:32px; 
+      opacity:0; 
+      animation:fadeIn 0.6s ease-out forwards;
+    }
     section:nth-child(1){animation-delay:0.1s}
     section:nth-child(2){animation-delay:0.2s}
     section:nth-child(3){animation-delay:0.3s}
@@ -344,8 +460,7 @@
       font-size:.85rem;
       color:var(--muted);
       transition:all .3s ease;
-      cursor:pointer;
-      text-decoration:none;
+      cursor:default;
       position:relative;
       overflow:hidden;
     }
@@ -396,8 +511,8 @@
       display:inline-flex; 
       align-items:center; 
       gap:.5rem; 
-      padding:.5rem .9rem; 
-      border-radius:4px; 
+      padding:.6rem 1rem; 
+      border-radius:6px; 
       border:1px solid var(--border); 
       background:rgba(107,155,209,0.06);
       transition:all .25s ease;
@@ -450,7 +565,7 @@
     }
 
     @media (prefers-reduced-motion: reduce){
-      .bg-canvas, .effect-canvas{display:none}
+      .bg-canvas{display:none}
       *{animation:none !important; transition:none !important}
       .control-trigger{display:none}
     }
@@ -463,58 +578,84 @@
       .avatar-container{
         margin:0 auto;
       }
+      .control-trigger{
+        top:20px;
+        right:20px;
+        width:50px;
+        height:50px;
+      }
+      .control-trigger::before{
+        display:none;
+      }
     }
 
     @media (max-width:480px){
       .card{padding:28px 20px 24px}
       body{font-size:14px}
-      .control-panel{width:100%; right:-100%}
+      .control-panel{
+        width:100%; 
+        right:-100%;
+        border-radius:16px 16px 0 0;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Background Canvases -->
+  <!-- Background Canvas -->
   <canvas id="bg" class="bg-canvas" aria-hidden="true"></canvas>
-  <canvas id="neural" class="effect-canvas" aria-hidden="true"></canvas>
-  <canvas id="flow" class="effect-canvas" aria-hidden="true"></canvas>
-  <canvas id="pointcloud" class="effect-canvas" aria-hidden="true"></canvas>
-  <canvas id="convolution" class="effect-canvas" aria-hidden="true"></canvas>
+  <canvas id="feature-map" class="effect-canvas" aria-hidden="true"></canvas>
+  <canvas id="mnist-rain" class="effect-canvas" aria-hidden="true"></canvas>
+  <canvas id="object-detection" class="effect-canvas" aria-hidden="true"></canvas>
 
   <!-- Floating Control Trigger -->
-  <div class="control-trigger" id="control-trigger">
-    <i class="fa-solid fa-sliders"></i>
+  <div class="control-trigger" id="control-trigger" role="button" aria-label="Toggle interactive effects">
+    <span class="control-trigger-text">Interactive Effects</span>
+    <i class="fa-solid fa-wand-magic-sparkles"></i>
   </div>
 
   <!-- Control Panel -->
-  <div class="control-panel" id="control-panel">
-    <div class="control-section">
-      <h3>VISUAL_EFFECTS</h3>
-      <button class="control-btn active" id="toggle-gradient">
-        <span><i class="fa-solid fa-gradient"></i> Heat Gradient</span>
-        <i class="fa-solid fa-check"></i>
-      </button>
-      <button class="control-btn" id="toggle-neural">
-        <span><i class="fa-solid fa-brain"></i> Neural Network</span>
-        <i class="fa-solid fa-circle"></i>
-      </button>
-      <button class="control-btn" id="toggle-flow">
-        <span><i class="fa-solid fa-water"></i> Perceptual Flow</span>
-        <i class="fa-solid fa-circle"></i>
-      </button>
-      <button class="control-btn" id="toggle-pointcloud">
-        <span><i class="fa-solid fa-cube"></i> 3D Point Cloud</span>
-        <i class="fa-solid fa-circle"></i>
-      </button>
-      <button class="control-btn" id="toggle-convolution">
-        <span><i class="fa-solid fa-th"></i> Convolution Kernel</span>
-        <i class="fa-solid fa-circle"></i>
+  <div class="control-panel" id="control-panel" role="dialog" aria-label="Interactive effects controls">
+    <div class="control-header">
+      <h3><i class="fa-solid fa-sliders"></i> INTERACTIVE EFFECTS</h3>
+      <button class="close-panel" id="close-panel" aria-label="Close panel">
+        <i class="fa-solid fa-times"></i>
       </button>
     </div>
+    
     <div class="control-section">
-      <h3>INFO</h3>
-      <p style="font-size:.8rem; color:var(--muted); margin:0;">
-        Interactive visual effects inspired by computer vision and deep learning. Click any effect to toggle it on/off.
-      </p>
+      <h4>VISUAL EFFECTS</h4>
+      <div class="control-item">
+        <div class="control-label">
+          <i class="fa-solid fa-palette"></i>
+          <span>Heat Gradient</span>
+        </div>
+        <div class="toggle-switch active" id="toggle-gradient" role="switch" aria-checked="true"></div>
+      </div>
+      <div class="control-item">
+        <div class="control-label">
+          <i class="fa-solid fa-layer-group"></i>
+          <span>CNN Feature Map</span>
+        </div>
+        <div class="toggle-switch" id="toggle-feature" role="switch" aria-checked="false"></div>
+      </div>
+      <div class="control-item">
+        <div class="control-label">
+          <i class="fa-solid fa-hashtag"></i>
+          <span>MNIST Rain</span>
+        </div>
+        <div class="toggle-switch" id="toggle-mnist" role="switch" aria-checked="false"></div>
+      </div>
+      <div class="control-item">
+        <div class="control-label">
+          <i class="fa-solid fa-cube"></i>
+          <span>Object Detection</span>
+        </div>
+        <div class="toggle-switch" id="toggle-object" role="switch" aria-checked="false"></div>
+      </div>
+    </div>
+    
+    <div class="control-info">
+      <i class="fa-solid fa-info-circle"></i> Interactive effects inspired by computer vision and deep learning. Toggle any effect on or off.
     </div>
   </div>
 
@@ -527,23 +668,23 @@
         </div>
         <div class="avatar-container">
           <div class="avatar">
-            <i class="fa-solid fa-brain"></i>
+            <img src="assets/profile.jpg" alt="Andrea Procopio profile photo" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-user-astronaut\' style=\'font-size:3rem;color:var(--accent)\'></i>'">
           </div>
         </div>
       </header>
 
       <section>
         <p>My main interest is studying the principles underlying human visual intelligence as a way to achieve human-like informed-design of AGI systems.</p>
-        <p>Previously at the <a href="https://dii.univpm.it/en-gb/riot_en/" target="_blank" rel="noopener">RIOT Lab</a> (UNIVPM), I built tiny CNNs for wearables. Now at Harvard's <a href="https://www.cocodev.org" target="_blank" rel="noopener">CoCoDev Lab</a>, I analyze shared mechanisms of physical resoning between models and humans.</p>
+        <p>Previously at the <a href="https://dii.univpm.it/en-gb/riot_en/" target="_blank" rel="noopener">RIOT Lab</a> (UNIVPM), I built tiny CNNs for wearables. Now at Harvard's <a href="https://www.cocodev.org" target="_blank" rel="noopener">CoCoDev Lab</a>, I analyze shared mechanisms of physical reasoning between models and humans.</p>
       </section>
 
       <section>
         <h2>RESEARCH_INTERESTS</h2>
         <div class="pills">
           <span class="pill"><i class="fa-solid fa-brain"></i><span>Deep Learning</span></span>
-          <span class="pill"><i class="fa-solid fa-brain"></i><span>Computer Vision</span></span>
-          <span class="pill"><i class="fa-solid fa-flask"></i><span>Visual Reasoning</span></span>
-          <span class="pill"><i class="fa-solid fa-flask"></i><span>Intuitive Physics</span></span>
+          <span class="pill"><i class="fa-solid fa-eye"></i><span>Computer Vision</span></span>
+          <span class="pill"><i class="fa-solid fa-lightbulb"></i><span>Visual Reasoning</span></span>
+          <span class="pill"><i class="fa-solid fa-atom"></i><span>Intuitive Physics</span></span>
           <span class="pill"><i class="fa-solid fa-microchip"></i><span>Efficient ML for Wearables</span></span>
         </div>
       </section>
@@ -564,9 +705,14 @@
     // Control Panel Toggle
     const controlTrigger = document.getElementById('control-trigger');
     const controlPanel = document.getElementById('control-panel');
+    const closePanel = document.getElementById('close-panel');
     
     controlTrigger?.addEventListener('click', () => {
       controlPanel.classList.toggle('open');
+    });
+
+    closePanel?.addEventListener('click', () => {
+      controlPanel.classList.remove('open');
     });
 
     // Close panel when clicking outside
@@ -586,23 +732,23 @@
       }
     })();
 
-    // Improved gradient background
+    // Improved Heat Gradient Effect
     (function(){
       const canvas = document.getElementById('bg');
       if(!canvas) return;
       const ctx = canvas.getContext('2d', { alpha: false });
 
       let dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
-      let gridSize = 16;
+      let gridSize = 20;
       let cols = 0, rows = 0;
-      const radius = 7;
-      const maxValue = 2;
+      const radius = 4; // Smaller radius as requested
+      const maxValue = 3; // Higher max for more intensity
       
-      const colorDecay = 0.999;
-      const trailDecay = 0.999;
+      const colorDecay = 0.975; // Slightly slower fade
+      const trailDecay = 0.975;
       
       let lastTS = performance.now();
-      const minVisible = 0.005;
+      const minVisible = 0.01;
       let running = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       const active = new Map();
@@ -654,28 +800,47 @@
             if(gx<0||gy<0||gx>=cols||gy>=rows) continue;
             const d2 = dx*dx+dy*dy; 
             if(d2>radius*radius) continue;
-            const intensity = 1.2 * (1 - Math.sqrt(d2)/radius);
+            const intensity = 2.0 * (1 - Math.sqrt(d2)/radius); // More intense
             if(intensity>0) heat(gx,gy,intensity);
           }
         }
       }
 
+      // Enhanced color palette with more vibrant colors
       function getHeatColor(value){
         const t = Math.min(value, maxValue) / maxValue;
         let r=0,g=0,b=0;
         
-        if(t < 0.25){
-          const k = t/0.25; 
-          r=0; g=Math.floor(k*80); b=Math.floor(120 + k*135);
-        } else if(t < 0.5){
-          const k = (t-0.25)/0.25; 
-          r=0; g=Math.floor(80 + k*140); b=255;
-        } else if(t < 0.75){
-          const k = (t-0.5)/0.25; 
-          r=Math.floor(k*95); g=Math.floor(220 - k*60); b=Math.floor(255 - k*100);
+        if(t < 0.2){
+          // Deep blue to cyan
+          const k = t/0.2;
+          r=Math.floor(k*20);
+          g=Math.floor(k*100);
+          b=Math.floor(150 + k*105);
+        } else if(t < 0.4){
+          // Cyan to bright blue
+          const k = (t-0.2)/0.2;
+          r=Math.floor(20 + k*80);
+          g=Math.floor(100 + k*120);
+          b=255;
+        } else if(t < 0.6){
+          // Bright blue to purple
+          const k = (t-0.4)/0.2;
+          r=Math.floor(100 + k*100);
+          g=Math.floor(220 - k*140);
+          b=Math.floor(255 - k*50);
+        } else if(t < 0.8){
+          // Purple to magenta
+          const k = (t-0.6)/0.2;
+          r=Math.floor(200 + k*40);
+          g=Math.floor(80 - k*30);
+          b=Math.floor(205 - k*55);
         } else {
-          const k = (t-0.75)/0.25; 
-          r=Math.floor(95 + k*60); g=Math.floor(160 - k*70); b=Math.floor(155 + k*50);
+          // Magenta to bright pink/white
+          const k = (t-0.8)/0.2;
+          r=Math.floor(240 + k*15);
+          g=Math.floor(50 + k*100);
+          b=Math.floor(150 + k*80);
         }
         return `rgb(${r}, ${g}, ${b})`;
       }
@@ -699,7 +864,7 @@
           const x = k % cols; const y = (k - x) / cols;
           
           ctx.fillStyle = getHeatColor(val);
-          ctx.globalAlpha = Math.min(0.5, val/7);
+          ctx.globalAlpha = Math.min(0.7, val/4); // More visible
           ctx.fillRect(x*gridSize, y*gridSize, gridSize, gridSize);
           
           const decayed = val * colorDecay * trailDecay;
@@ -723,6 +888,7 @@
       toggleBtn?.addEventListener('click', ()=>{
         running = !running;
         toggleBtn.classList.toggle('active');
+        toggleBtn.setAttribute('aria-checked', running);
         if(running) requestAnimationFrame(frame); else frame();
       });
 
@@ -730,9 +896,9 @@
       if(running) requestAnimationFrame(frame); else frame();
     })();
 
-    // Neural Network Effect
+    // CNN Feature Map Effect
     (function(){
-      const canvas = document.getElementById('neural');
+      const canvas = document.getElementById('feature-map');
       if(!canvas) return;
       const ctx = canvas.getContext('2d', { alpha: true });
       
@@ -741,93 +907,80 @@
       canvas.width = w;
       canvas.height = h;
       
-      const nodes = [];
-      const nodeCount = 50;
-      const connectionDistance = 150;
-      let mouseX = w / 2;
-      let mouseY = h / 2;
+      const maps = [];
+      const mapCount = 8;
       let running = false;
       let animFrame;
       
-      class Node {
+      class FeatureMap {
         constructor() {
-          this.x = Math.random() * w;
-          this.y = Math.random() * h;
-          this.vx = (Math.random() - 0.5) * 0.5;
-          this.vy = (Math.random() - 0.5) * 0.5;
-          this.radius = Math.random() * 2 + 1;
+          this.size = 60 + Math.random() * 40;
+          this.x = Math.random() * (w - this.size);
+          this.y = Math.random() * (h - this.size);
+          this.vx = (Math.random() - 0.5) * 0.8;
+          this.vy = (Math.random() - 0.5) * 0.8;
+          this.activation = Math.random();
+          this.pulseSpeed = 0.01 + Math.random() * 0.02;
         }
         
         update() {
           this.x += this.vx;
           this.y += this.vy;
           
-          if (this.x < 0 || this.x > w) this.vx *= -1;
-          if (this.y < 0 || this.y > h) this.vy *= -1;
+          if (this.x < 0 || this.x > w - this.size) this.vx *= -1;
+          if (this.y < 0 || this.y > h - this.size) this.vy *= -1;
           
-          const dx = mouseX - this.x;
-          const dy = mouseY - this.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 200) {
-            this.vx += dx * 0.00005;
-            this.vy += dy * 0.00005;
-          }
+          this.activation += this.pulseSpeed;
+          if (this.activation > 1 || this.activation < 0) this.pulseSpeed *= -1;
         }
         
         draw() {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-          ctx.fillStyle = '#6b9bd1';
-          ctx.fill();
-        }
-      }
-      
-      for (let i = 0; i < nodeCount; i++) {
-        nodes.push(new Node());
-      }
-      
-      function drawConnections() {
-        for (let i = 0; i < nodes.length; i++) {
-          for (let j = i + 1; j < nodes.length; j++) {
-            const dx = nodes[i].x - nodes[j].x;
-            const dy = nodes[i].y - nodes[j].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            
-            if (dist < connectionDistance) {
-              const opacity = (1 - dist / connectionDistance) * 0.3;
-              ctx.beginPath();
-              ctx.strokeStyle = `rgba(107, 155, 209, ${opacity})`;
-              ctx.lineWidth = 1;
-              ctx.moveTo(nodes[i].x, nodes[i].y);
-              ctx.lineTo(nodes[j].x, nodes[j].y);
-              ctx.stroke();
+          const gridSize = 8;
+          const cellSize = this.size / gridSize;
+          
+          for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+              const noise = Math.sin(this.activation * Math.PI + i + j) * 0.5 + 0.5;
+              const alpha = noise * 0.4;
+              
+              const hue = 210 + noise * 60;
+              ctx.fillStyle = `hsla(${hue}, 60%, 60%, ${alpha})`;
+              ctx.fillRect(
+                this.x + i * cellSize,
+                this.y + j * cellSize,
+                cellSize - 1,
+                cellSize - 1
+              );
             }
           }
+          
+          ctx.strokeStyle = 'rgba(107, 155, 209, 0.5)';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(this.x, this.y, this.size, this.size);
         }
+      }
+      
+      for (let i = 0; i < mapCount; i++) {
+        maps.push(new FeatureMap());
       }
       
       function animate() {
         ctx.clearRect(0, 0, w, h);
         
-        drawConnections();
-        nodes.forEach(node => {
-          node.update();
-          node.draw();
+        maps.forEach(map => {
+          map.update();
+          map.draw();
         });
         
         if (running) animFrame = requestAnimationFrame(animate);
       }
       
-      window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-      });
-      
-      const toggleBtn = document.getElementById('toggle-neural');
+      const toggleBtn = document.getElementById('toggle-feature');
       toggleBtn?.addEventListener('click', () => {
         running = !running;
         canvas.classList.toggle('active');
         toggleBtn.classList.toggle('active');
+        toggleBtn.setAttribute('aria-checked', running);
         
         if (running) {
           animate();
@@ -845,9 +998,9 @@
       });
     })();
 
-    // Perceptual Flow Field Effect
+    // MNIST Rain Effect
     (function(){
-      const canvas = document.getElementById('flow');
+      const canvas = document.getElementById('mnist-rain');
       if(!canvas) return;
       const ctx = canvas.getContext('2d', { alpha: true });
       
@@ -856,86 +1009,72 @@
       canvas.width = w;
       canvas.height = h;
       
-      const particles = [];
-      const particleCount = 100;
-      let mouseX = w / 2;
-      let mouseY = h / 2;
+      const digits = [];
+      const digitCount = 30;
       let running = false;
       let animFrame;
       
-      class Particle {
+      class Digit {
         constructor() {
           this.reset();
         }
         
         reset() {
           this.x = Math.random() * w;
-          this.y = Math.random() * h;
-          this.vx = 0;
-          this.vy = 0;
-          this.life = 255;
+          this.y = -30;
+          this.value = Math.floor(Math.random() * 10);
+          this.speed = 1 + Math.random() * 2;
+          this.size = 20 + Math.random() * 15;
+          this.rotation = Math.random() * Math.PI * 2;
+          this.rotationSpeed = (Math.random() - 0.5) * 0.05;
+          this.opacity = 0.4 + Math.random() * 0.4;
         }
         
         update() {
-          const dx = mouseX - this.x;
-          const dy = mouseY - this.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          this.y += this.speed;
+          this.rotation += this.rotationSpeed;
           
-          if (dist < 300) {
-            const force = (300 - dist) / 300;
-            const angle = Math.atan2(dy, dx);
-            this.vx += Math.cos(angle) * force * 0.5;
-            this.vy += Math.sin(angle) * force * 0.5;
-          }
-          
-          this.vx *= 0.95;
-          this.vy *= 0.95;
-          
-          this.x += this.vx;
-          this.y += this.vy;
-          
-          this.life -= 1;
-          
-          if (this.life <= 0 || this.x < 0 || this.x > w || this.y < 0 || this.y > h) {
+          if (this.y > h + 50) {
             this.reset();
           }
         }
         
         draw() {
-          const alpha = this.life / 255;
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(95, 200, 144, ${alpha * 0.6})`;
-          ctx.fill();
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          ctx.rotate(this.rotation);
+          ctx.font = `bold ${this.size}px "Courier New", monospace`;
+          ctx.fillStyle = `rgba(95, 200, 144, ${this.opacity})`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(this.value, 0, 0);
+          ctx.restore();
         }
       }
       
-      for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
+      for (let i = 0; i < digitCount; i++) {
+        digits.push(new Digit());
+        digits[i].y = Math.random() * h;
       }
       
       function animate() {
         ctx.fillStyle = 'rgba(10, 14, 23, 0.1)';
         ctx.fillRect(0, 0, w, h);
         
-        particles.forEach(particle => {
-          particle.update();
-          particle.draw();
+        digits.forEach(digit => {
+          digit.update();
+          digit.draw();
         });
         
         if (running) animFrame = requestAnimationFrame(animate);
       }
       
-      window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-      });
-      
-      const toggleBtn = document.getElementById('toggle-flow');
+      const toggleBtn = document.getElementById('toggle-mnist');
       toggleBtn?.addEventListener('click', () => {
         running = !running;
         canvas.classList.toggle('active');
         toggleBtn.classList.toggle('active');
+        toggleBtn.setAttribute('aria-checked', running);
         
         if (running) {
           animate();
@@ -953,9 +1092,9 @@
       });
     })();
 
-    // 3D Point Cloud Effect
+    // Object Detection Boxes Effect
     (function(){
-      const canvas = document.getElementById('pointcloud');
+      const canvas = document.getElementById('object-detection');
       if(!canvas) return;
       const ctx = canvas.getContext('2d', { alpha: true });
       
@@ -964,170 +1103,80 @@
       canvas.width = w;
       canvas.height = h;
       
-      const points = [];
-      const pointCount = 300;
-      let rotationX = 0;
-      let rotationY = 0;
+      const boxes = [];
+      const boxCount = 12;
       let running = false;
       let animFrame;
       
-      for (let i = 0; i < pointCount; i++) {
-        points.push({
-          x: (Math.random() - 0.5) * 400,
-          y: (Math.random() - 0.5) * 400,
-          z: (Math.random() - 0.5) * 400
-        });
-      }
+      const labels = ['person', 'cat', 'dog', 'car', 'bird', 'bottle', 'chair', 'laptop'];
       
-      function project(x, y, z) {
-        const scale = 300 / (300 + z);
-        return {
-          x: x * scale + w / 2,
-          y: y * scale + h / 2,
-          scale: scale
-        };
-      }
-      
-      function rotatePoint(x, y, z, rx, ry) {
-        let cosY = Math.cos(ry);
-        let sinY = Math.sin(ry);
-        let tempX = x * cosY - z * sinY;
-        let tempZ = x * sinY + z * cosY;
-        
-        let cosX = Math.cos(rx);
-        let sinX = Math.sin(rx);
-        let tempY = y * cosX - tempZ * sinX;
-        tempZ = y * sinX + tempZ * cosX;
-        
-        return { x: tempX, y: tempY, z: tempZ };
-      }
-      
-      function animate() {
-        ctx.clearRect(0, 0, w, h);
-        
-        rotationY += 0.005;
-        rotationX += 0.003;
-        
-        points.forEach(point => {
-          const rotated = rotatePoint(point.x, point.y, point.z, rotationX, rotationY);
-          const projected = project(rotated.x, rotated.y, rotated.z);
-          
-          const size = projected.scale * 2;
-          const alpha = projected.scale * 0.8;
-          
-          ctx.beginPath();
-          ctx.arc(projected.x, projected.y, size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(157, 124, 191, ${alpha})`;
-          ctx.fill();
-        });
-        
-        if (running) animFrame = requestAnimationFrame(animate);
-      }
-      
-      const toggleBtn = document.getElementById('toggle-pointcloud');
-      toggleBtn?.addEventListener('click', () => {
-        running = !running;
-        canvas.classList.toggle('active');
-        toggleBtn.classList.toggle('active');
-        
-        if (running) {
-          animate();
-        } else {
-          cancelAnimationFrame(animFrame);
-          ctx.clearRect(0, 0, w, h);
-        }
-      });
-      
-      window.addEventListener('resize', () => {
-        w = window.innerWidth;
-        h = window.innerHeight;
-        canvas.width = w;
-        canvas.height = h;
-      });
-    })();
-
-    // Convolution Kernel Effect
-    (function(){
-      const canvas = document.getElementById('convolution');
-      if(!canvas) return;
-      const ctx = canvas.getContext('2d', { alpha: true });
-      
-      let w = window.innerWidth;
-      let h = window.innerHeight;
-      canvas.width = w;
-      canvas.height = h;
-      
-      const kernels = [];
-      const kernelSize = 30;
-      const kernelCount = 20;
-      let running = false;
-      let animFrame;
-      
-      class Kernel {
+      class BoundingBox {
         constructor() {
-          this.x = Math.random() * w;
-          this.y = Math.random() * h;
-          this.vx = (Math.random() - 0.5) * 2;
-          this.vy = (Math.random() - 0.5) * 2;
-          this.angle = Math.random() * Math.PI * 2;
-          this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+          this.reset();
+        }
+        
+        reset() {
+          this.width = 80 + Math.random() * 120;
+          this.height = 60 + Math.random() * 100;
+          this.x = Math.random() * (w - this.width);
+          this.y = Math.random() * (h - this.height);
+          this.vx = (Math.random() - 0.5) * 1.5;
+          this.vy = (Math.random() - 0.5) * 1.5;
+          this.label = labels[Math.floor(Math.random() * labels.length)];
+          this.confidence = (0.7 + Math.random() * 0.29).toFixed(2);
+          this.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+          this.life = 5 + Math.random() * 5;
         }
         
         update() {
           this.x += this.vx;
           this.y += this.vy;
-          this.angle += this.rotationSpeed;
           
-          if (this.x < -kernelSize || this.x > w + kernelSize) this.vx *= -1;
-          if (this.y < -kernelSize || this.y > h + kernelSize) this.vy *= -1;
+          if (this.x < 0 || this.x > w - this.width) this.vx *= -1;
+          if (this.y < 0 || this.y > h - this.height) this.vy *= -1;
+          
+          this.life -= 0.01;
+          if (this.life <= 0) this.reset();
         }
         
         draw() {
-          ctx.save();
-          ctx.translate(this.x, this.y);
-          ctx.rotate(this.angle);
+          const alpha = Math.min(1, this.life);
           
-          ctx.strokeStyle = 'rgba(107, 155, 209, 0.4)';
-          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = this.color.replace(')', `, ${alpha * 0.8})`).replace('hsl', 'hsla');
+          ctx.lineWidth = 2;
+          ctx.strokeRect(this.x, this.y, this.width, this.height);
           
-          const gridSize = 3;
-          const cellSize = kernelSize / gridSize;
+          ctx.fillStyle = this.color.replace(')', `, ${alpha * 0.9})`).replace('hsl', 'hsla');
+          ctx.fillRect(this.x, this.y - 20, this.width, 20);
           
-          for (let i = 0; i < gridSize; i++) {
-            for (let j = 0; j < gridSize; j++) {
-              const x = (i - gridSize/2 + 0.5) * cellSize;
-              const y = (j - gridSize/2 + 0.5) * cellSize;
-              const size = cellSize * 0.7;
-              
-              ctx.strokeRect(x - size/2, y - size/2, size, size);
-            }
-          }
-          
-          ctx.restore();
+          ctx.font = '12px "Courier New", monospace';
+          ctx.fillStyle = `rgba(10, 14, 23, ${alpha})`;
+          ctx.textAlign = 'left';
+          ctx.fillText(`${this.label} ${this.confidence}`, this.x + 4, this.y - 6);
         }
       }
       
-      for (let i = 0; i < kernelCount; i++) {
-        kernels.push(new Kernel());
+      for (let i = 0; i < boxCount; i++) {
+        boxes.push(new BoundingBox());
       }
       
       function animate() {
-        ctx.fillStyle = 'rgba(10, 14, 23, 0.1)';
-        ctx.fillRect(0, 0, w, h);
+        ctx.clearRect(0, 0, w, h);
         
-        kernels.forEach(kernel => {
-          kernel.update();
-          kernel.draw();
+        boxes.forEach(box => {
+          box.update();
+          box.draw();
         });
         
         if (running) animFrame = requestAnimationFrame(animate);
       }
       
-      const toggleBtn = document.getElementById('toggle-convolution');
+      const toggleBtn = document.getElementById('toggle-object');
       toggleBtn?.addEventListener('click', () => {
         running = !running;
         canvas.classList.toggle('active');
         toggleBtn.classList.toggle('active');
+        toggleBtn.setAttribute('aria-checked', running);
         
         if (running) {
           animate();
