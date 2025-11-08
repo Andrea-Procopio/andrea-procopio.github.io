@@ -162,7 +162,9 @@
       let cols = 0, rows = 0;
       const radius = 10; // in cells
       const maxValue = 5;
-      const decay = 0.965;
+      // time-based exponential decay (half-life)
+      const halfLife = 1.6; // seconds until intensity halves
+      let lastTS = performance.now();
       const minVisible = 0.08;
       let running = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -241,6 +243,10 @@
       }
 
       function frame(){
+        const now = performance.now();
+        const dt = Math.max(0.001, (now - lastTS) / 1000);
+        lastTS = now;
+        const decayFactor = Math.pow(0.5, dt / halfLife);
         if(!running){
           // paused: draw a static low-contrast vignette
           ctx.fillStyle = '#001f3f';
@@ -256,7 +262,7 @@
         }
 
         // fade trail
-        ctx.fillStyle = 'rgba(0,31,63,0.10)';
+        ctx.fillStyle = '#001f3f';
         ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);
 
         // draw only active cells
@@ -266,7 +272,7 @@
           ctx.fillStyle = getHeatColor(val);
           ctx.globalAlpha = Math.min(0.9, val/15);
           ctx.fillRect(x*gridSize, y*gridSize, gridSize, gridSize);
-          const decayed = val * decay;
+          const decayed = val * decayFactor;
           if(decayed > minVisible){ active.set(k, decayed); } else { active.delete(k); }
         }
 
@@ -307,4 +313,5 @@
 </script>
 </body>
 </html>
+
 
