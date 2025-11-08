@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" href="dbicon.png" type="image/x-icon">
+    <link rel="apple-touch-icon" href="dbicon.png">
+    <link rel="icon" href="dbicon.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
+    <link rel="stylesheet" href="https://use.typekit.net/grr6fkk.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>David B Bio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #001f3f; /* bluee */
+            font-family: Arial, sans-serif;
+        }
+        
+        /* flex container */
+        .page-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            position: relative;
+        }
+        
+        #heatmap-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        #text-overlay {
+            position: relative;
+            z-index: 10;
+            color: white;
+            font-family: "stevie-sans", sans-serif;
+            font-weight: 100;
+            font-style: italic;
+            text-align: left;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            line-height: 1.6;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.9);
+            border-radius: 10px;
+            margin: 0 20px;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 100;
+            margin-top: 0;
+            margin-bottom: clamp(1rem, 3vw, 2rem);
+        }
+
+        p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            margin-bottom: 1rem;
+        }
+        
+        #text-overlay a {
+            color: #80ccff; /* light blue */
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        #text-overlay a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        #social-links {
+            margin-top: clamp(1rem, 3vw, 2rem);
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        #social-links a {
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        #social-links a:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 480px) {
+            #text-overlay {
+                padding: 15px;
+            }
+            
+            p {
+                margin-bottom: 0.8rem;
+            }
+            
+            #social-links {
+                margin-top: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <canvas id="heatmap-canvas"></canvas>
+
+        <div id="text-overlay">
+            <h1>I'm Andrea Procopio</h1>
+            <p>I'm a third-year BSc student in Computer Science and Economics as <a href="https://www.unibocconi.it/en/programs/bachelor-science/economics-management-and-computer-science/study-plan" target="_blank">Bocconi University</a>.</p>
+            <p>I am deeply interested in understanding human mechanisms behind general intelligence as an educated approach to design Human-like ASI systems.</p>
+            <p>In the past, I have worked in the <a href="https://dii.univpm.it/en-gb/riot_en/" target="_blank">RIOT Lab</a> at UNIVPM developing tiny CNNs models for wearables.</p>
+            <p>Now I'm working within the <a href="https://www.cocodev.org" target="_blank">CoCoDev Lab</a> at Harvard researching shared mechanisms of visual perception between models and humans.</p>
+            
+            <div id="social-links">
+                <a href="lhttps://www.linkedin.com/in/procopioandrea/">LinkedIn</a>
+                <a href="mailto:aprocopio@fas.harvard.edu">Email</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // elements
+            const canvas = document.getElementById('heatmap-canvas');
+            
+            // get context
+            const ctx = canvas.getContext('2d');
+            
+            // set canvas size to match window size
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                // redraw blue background
+                ctx.fillStyle = '#001f3f';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // recompute grid dimensions
+                cols = Math.ceil(canvas.width / gridSize);
+                rows = Math.ceil(canvas.height / gridSize);
+                
+                // a new grid with new dimensions
+                const newHeatmapData = Array(rows).fill().map(() => Array(cols).fill(0));
+                
+                // Copy existing data
+                if (heatmapData) {
+                    for (let y = 0; y < Math.min(heatmapData.length, rows); y++) {
+                        for (let x = 0; x < Math.min(heatmapData[0].length, cols); x++) {
+                            newHeatmapData[y][x] = heatmapData[y][x];
+                        }
+                    }
+                }
+                
+                heatmapData = newHeatmapData;
+            }
+            
+            const gridSize = 10; // Smaller grid size for more detail
+            let cols = Math.ceil(window.innerWidth / gridSize);
+            let rows = Math.ceil(window.innerHeight / gridSize);
+            let heatmapData = Array(rows).fill().map(() => Array(cols).fill(0));
+            
+            // setup
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            resizeCanvas();
+            
+            // mouse movement event
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+                
+                // get center grid cell
+                const centerGridX = Math.floor(mouseX / gridSize);
+                const centerGridY = Math.floor(mouseY / gridSize);
+                
+                // radial impact - affect cells in a radius around the cursor
+                const radius = 10; // radius of impact in grid cells
+                
+                // loop through all cells in a square around the cursor
+                for (let dy = -radius; dy <= radius; dy++) {
+                    for (let dx = -radius; dx <= radius; dx++) {
+                        const gridX = centerGridX + dx;
+                        const gridY = centerGridY + dy;
+                        
+                        // check if the cell is within the grid bounds
+                        if (gridX >= 0 && gridX < cols && gridY >= 0 && gridY < rows) {
+                            // calculate distance from cursor center (squared)
+                            const distSquared = dx * dx + dy * dy;
+                            
+                            // only affect cells within the circular radius
+                            if (distSquared <= radius * radius) {
+                                // calculate intensity based on distance from center
+                                // closer = more intense, using inverse square falloff
+                                const intensity = 1.5 * (1 - Math.sqrt(distSquared) / radius);
+                                
+                                // add heat to this cell
+                                heatmapData[gridY][gridX] += intensity;
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // window resize event
+            window.addEventListener('resize', resizeCanvas);
+            
+            // color mapping function (value to RGB color) - blue to red with more gradients
+            function getHeatColor(value) {
+                // make the transition faster with a lower max value
+                const maxValue = 5;
+                const clampedValue = Math.min(value, maxValue) / maxValue;
+                
+                // create a gradient: blue -> cyan -> green -> yellow -> orange -> red
+                let r, g, b;
+                
+                if (clampedValue < 0.2) {
+                    // blue to cyan
+                    const t = clampedValue / 0.2;
+                    r = 0;
+                    g = Math.floor(t * 255);
+                    b = 255;
+                } else if (clampedValue < 0.4) {
+                    // dyan to green
+                    const t = (clampedValue - 0.2) / 0.2;
+                    r = 0;
+                    g = 255;
+                    b = Math.floor(255 * (1 - t));
+                } else if (clampedValue < 0.6) {
+                    // green to yellow
+                    const t = (clampedValue - 0.4) / 0.2;
+                    r = Math.floor(t * 255);
+                    g = 255;
+                    b = 0;
+                } else if (clampedValue < 0.8) {
+                    // yellow to orange
+                    const t = (clampedValue - 0.6) / 0.2;
+                    r = 255;
+                    g = Math.floor(255 * (1 - t * 0.5));
+                    b = 0;
+                } else {
+                    // orange to red
+                    const t = (clampedValue - 0.8) / 0.2;
+                    r = 255;
+                    g = Math.floor(127 * (1 - t));
+                    b = 0;
+                }
+                
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+            
+            // animation loop to render the heatmap
+            function animate() {
+                // draw a semi-transparent blue background for fade effect
+                ctx.fillStyle = 'rgba(0, 31, 63, 0.1)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // draw the heatmap
+                for (let y = 0; y < rows; y++) {
+                    for (let x = 0; x < cols; x++) {
+                        const value = heatmapData[y][x];
+                        
+                        if (value > 0) {
+                            // apply a decay to each cell
+                            heatmapData[y][x] *= 0.97;
+                            
+                            // draw heatmap cell if it has a significant value
+                            if (value > 0.1) {
+                                ctx.fillStyle = getHeatColor(value);
+                                ctx.globalAlpha = Math.min(0.9, value / 15);
+                                // draw squares
+                                ctx.fillRect(
+                                    x * gridSize, 
+                                    y * gridSize, 
+                                    gridSize, 
+                                    gridSize
+                                );
+                                ctx.globalAlpha = 1.0;
+                            }
+                        }
+                    }
+                }
+                
+                requestAnimationFrame(animate);
+            }
+            
+            // start the animation
+            animate();
+        });
+    </script>
+</body>
+</html>
