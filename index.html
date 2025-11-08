@@ -340,14 +340,14 @@
       let dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
       let gridSize = 16;
       let cols = 0, rows = 0;
-      const radius = 8;
-      const maxValue = 4;
+      const radius = 7;
+      const maxValue = 2;
       
       const colorDecay = 0.99;
-      const trailDecay = 0.88;
+      const trailDecay = 0.99;
       
       let lastTS = performance.now();
-      const minVisible = 0.01;
+      const minVisible = 0.005;
       let running = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       const active = new Map();
