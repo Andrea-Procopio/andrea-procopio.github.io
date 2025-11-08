@@ -18,36 +18,165 @@
       --muted:#8a95a8;
       --accent:#6b9bd1;
       --green:#5fc890;
+      --purple:#9d7cbf;
       --border:rgba(107,155,209,0.2);
       --shadow:0 8px 32px rgba(0,0,0,.4);
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0}
     body{
-      color:var(--text); background:var(--bg);
+      color:var(--text); 
+      background:var(--bg);
       font-family:"Courier New", "Courier", monospace;
       line-height:1.7;
       min-height:100svh;
       font-size:15px;
+      position:relative;
     }
 
-    #bg{position:fixed; inset:0; z-index:-1; display:block;}
+    /* Background canvases - behind everything */
+    .bg-canvas{
+      position:fixed; 
+      inset:0; 
+      pointer-events:none;
+    }
 
+    #bg{
+      z-index:1;
+    }
+
+    .effect-canvas{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:0;
+      transition:opacity .5s;
+      z-index:2;
+    }
+    
+    .effect-canvas.active{
+      opacity:1;
+    }
+
+    /* Content layer - above backgrounds */
     main{
-      min-height:100svh; display:grid; place-items:center; padding:8vh 4vw;
-      max-width:1400px; margin:0 auto;
+      min-height:100svh; 
+      display:grid; 
+      place-items:center; 
+      padding:8vh 4vw;
+      max-width:1400px; 
+      margin:0 auto;
+      position:relative;
+      z-index:100;
     }
 
     .card{
-      width:min(820px, 94vw);
+      width:min(900px, 94vw);
       background:var(--card);
       backdrop-filter:blur(24px);
       -webkit-backdrop-filter:blur(24px);
       border:1px solid var(--border);
-      border-radius:0;
+      border-radius:4px;
       box-shadow:var(--shadow);
       padding:40px 40px 36px;
       position:relative;
+    }
+
+    /* Floating Control Panel */
+    .control-trigger{
+      position:fixed;
+      top:24px;
+      right:24px;
+      width:48px;
+      height:48px;
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      z-index:1000;
+      transition:all .3s ease;
+      backdrop-filter:blur(24px);
+      -webkit-backdrop-filter:blur(24px);
+    }
+    .control-trigger:hover{
+      background:rgba(107,155,209,0.15);
+      border-color:var(--accent);
+      transform:rotate(90deg);
+    }
+    .control-trigger i{
+      color:var(--accent);
+      font-size:1.2rem;
+    }
+
+    .control-panel{
+      position:fixed;
+      top:0;
+      right:-320px;
+      width:320px;
+      height:100vh;
+      background:var(--card);
+      border-left:1px solid var(--border);
+      backdrop-filter:blur(24px);
+      -webkit-backdrop-filter:blur(24px);
+      z-index:999;
+      transition:right .4s cubic-bezier(0.4, 0, 0.2, 1);
+      padding:80px 24px 24px;
+      overflow-y:auto;
+      box-shadow:-8px 0 32px rgba(0,0,0,.4);
+    }
+    .control-panel.open{
+      right:0;
+    }
+
+    .control-section{
+      margin-bottom:32px;
+      padding-bottom:24px;
+      border-bottom:1px solid var(--border);
+    }
+    .control-section:last-child{
+      border-bottom:none;
+    }
+    .control-section h3{
+      font-size:.85rem;
+      color:var(--accent);
+      margin:0 0 16px;
+      letter-spacing:0.05em;
+      font-weight:700;
+    }
+    .control-section h3::before{
+      content:'> ';
+      color:var(--green);
+    }
+
+    .control-btn{
+      width:100%;
+      padding:12px 16px;
+      margin-bottom:8px;
+      background:rgba(107,155,209,0.06);
+      border:1px solid var(--border);
+      border-radius:4px;
+      color:var(--text);
+      font-family:inherit;
+      font-size:.88rem;
+      cursor:pointer;
+      transition:all .3s ease;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .control-btn:hover{
+      background:rgba(107,155,209,0.15);
+      border-color:var(--accent);
+    }
+    .control-btn.active{
+      background:rgba(95,200,144,0.15);
+      border-color:var(--green);
+    }
+    .control-btn i{
+      opacity:.7;
     }
 
     .cursor-blink::after{
@@ -61,7 +190,16 @@
       50%, 100%{opacity:0}
     }
 
-    header{margin-bottom:32px; padding-bottom:24px; position:relative}
+    /* Two-column header layout */
+    header{
+      margin-bottom:32px; 
+      padding-bottom:24px; 
+      position:relative;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:24px;
+      align-items:center;
+    }
     header::after{
       content:'';
       position:absolute;
@@ -75,6 +213,48 @@
 
     @keyframes expandLine{
       to{width:100%}
+    }
+
+    .header-text{
+      flex:1;
+    }
+
+    .avatar-container{
+      width:100px;
+      height:100px;
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .avatar{
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      border:2px solid var(--border);
+      background:linear-gradient(135deg, rgba(107,155,209,0.2), rgba(95,200,144,0.2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:2.5rem;
+      color:var(--accent);
+      position:relative;
+      overflow:hidden;
+    }
+    .avatar::before{
+      content:'';
+      position:absolute;
+      top:-50%;
+      left:-50%;
+      width:200%;
+      height:200%;
+      background:linear-gradient(45deg, transparent, rgba(107,155,209,0.3), transparent);
+      animation:avatarShine 3s infinite;
+    }
+
+    @keyframes avatarShine{
+      0%, 100%{transform:rotate(0deg)}
+      50%{transform:rotate(180deg)}
     }
 
     h1{
@@ -124,6 +304,7 @@
       margin:0 0 14px; 
       font-size:clamp(.88rem,1.3vw,.96rem);
       color:var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
     p:last-child{margin-bottom:0}
     
@@ -156,22 +337,41 @@
       display:inline-flex; 
       align-items:center; 
       gap:.5rem; 
-      padding:.45rem .85rem; 
+      padding:.5rem .95rem; 
       border:1px solid var(--border); 
-      border-radius:0; 
+      border-radius:20px; 
       background:rgba(107,155,209,0.08);
       font-size:.85rem;
       color:var(--muted);
       transition:all .3s ease;
-      cursor:default;
+      cursor:pointer;
+      text-decoration:none;
+      position:relative;
+      overflow:hidden;
+    }
+    .pill::before{
+      content:'';
+      position:absolute;
+      top:50%;
+      left:50%;
+      width:0;
+      height:0;
+      border-radius:50%;
+      background:rgba(107,155,209,0.3);
+      transform:translate(-50%, -50%);
+      transition:width .4s ease, height .4s ease;
+    }
+    .pill:hover::before{
+      width:200%;
+      height:200%;
     }
     .pill:hover{
-      background:rgba(107,155,209,0.15);
       border-color:var(--accent);
       color:var(--text);
-      transform:translateX(4px);
+      transform:translateY(-2px);
     }
-    .pill i{opacity:.75; font-size:.8rem}
+    .pill i{opacity:.75; font-size:.8rem; position:relative; z-index:1}
+    .pill span{position:relative; z-index:1}
 
     nav[aria-label="social"]{
       margin-top:28px; 
@@ -192,13 +392,12 @@
       animation:expandLine 1.2s ease-out 0.5s forwards;
     }
 
-    nav[aria-label="social"] a,
-    nav[aria-label="social"] button{
+    nav[aria-label="social"] a{
       display:inline-flex; 
       align-items:center; 
       gap:.5rem; 
       padding:.5rem .9rem; 
-      border-radius:0; 
+      border-radius:4px; 
       border:1px solid var(--border); 
       background:rgba(107,155,209,0.06);
       transition:all .25s ease;
@@ -209,8 +408,7 @@
       position:relative;
       overflow:hidden;
     }
-    nav[aria-label="social"] a::before,
-    nav[aria-label="social"] button::before{
+    nav[aria-label="social"] a::before{
       content:'';
       position:absolute;
       top:0;
@@ -220,15 +418,13 @@
       background:linear-gradient(90deg, transparent, rgba(107,155,209,0.2), transparent);
       transition:left .5s ease;
     }
-    nav[aria-label="social"] a:hover::before,
-    nav[aria-label="social"] button:hover::before{
+    nav[aria-label="social"] a:hover::before{
       left:100%;
     }
     nav[aria-label="social"] a::after{
       display:none;
     }
-    nav[aria-label="social"] a:hover,
-    nav[aria-label="social"] button:hover{
+    nav[aria-label="social"] a:hover{
       background:rgba(107,155,209,0.15);
       border-color:var(--accent);
       transform:translateY(-2px);
@@ -253,43 +449,87 @@
       animation:expandLine 1.2s ease-out 0.6s forwards;
     }
 
-    /* Matrix rain effect toggle */
-    .matrix-container{
-      position:fixed;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      pointer-events:none;
-      z-index:1;
-      opacity:0;
-      transition:opacity .5s;
-    }
-    .matrix-container.active{
-      opacity:0.15;
+    @media (prefers-reduced-motion: reduce){
+      .bg-canvas, .effect-canvas{display:none}
+      *{animation:none !important; transition:none !important}
+      .control-trigger{display:none}
     }
 
-    @media (prefers-reduced-motion: reduce){
-      #bg{display:none}
-      *{animation:none !important; transition:none !important}
-      .matrix-container{display:none}
+    @media (max-width:600px){
+      header{
+        grid-template-columns:1fr;
+        text-align:center;
+      }
+      .avatar-container{
+        margin:0 auto;
+      }
     }
 
     @media (max-width:480px){
       .card{padding:28px 20px 24px}
       body{font-size:14px}
+      .control-panel{width:100%; right:-100%}
     }
   </style>
 </head>
 <body>
-  <canvas id="bg" aria-hidden="true"></canvas>
-  <canvas id="matrix" class="matrix-container" aria-hidden="true"></canvas>
+  <!-- Background Canvases -->
+  <canvas id="bg" class="bg-canvas" aria-hidden="true"></canvas>
+  <canvas id="neural" class="effect-canvas" aria-hidden="true"></canvas>
+  <canvas id="flow" class="effect-canvas" aria-hidden="true"></canvas>
+  <canvas id="pointcloud" class="effect-canvas" aria-hidden="true"></canvas>
+  <canvas id="convolution" class="effect-canvas" aria-hidden="true"></canvas>
+
+  <!-- Floating Control Trigger -->
+  <div class="control-trigger" id="control-trigger">
+    <i class="fa-solid fa-sliders"></i>
+  </div>
+
+  <!-- Control Panel -->
+  <div class="control-panel" id="control-panel">
+    <div class="control-section">
+      <h3>VISUAL_EFFECTS</h3>
+      <button class="control-btn active" id="toggle-gradient">
+        <span><i class="fa-solid fa-gradient"></i> Heat Gradient</span>
+        <i class="fa-solid fa-check"></i>
+      </button>
+      <button class="control-btn" id="toggle-neural">
+        <span><i class="fa-solid fa-brain"></i> Neural Network</span>
+        <i class="fa-solid fa-circle"></i>
+      </button>
+      <button class="control-btn" id="toggle-flow">
+        <span><i class="fa-solid fa-water"></i> Perceptual Flow</span>
+        <i class="fa-solid fa-circle"></i>
+      </button>
+      <button class="control-btn" id="toggle-pointcloud">
+        <span><i class="fa-solid fa-cube"></i> 3D Point Cloud</span>
+        <i class="fa-solid fa-circle"></i>
+      </button>
+      <button class="control-btn" id="toggle-convolution">
+        <span><i class="fa-solid fa-th"></i> Convolution Kernel</span>
+        <i class="fa-solid fa-circle"></i>
+      </button>
+    </div>
+    <div class="control-section">
+      <h3>INFO</h3>
+      <p style="font-size:.8rem; color:var(--muted); margin:0;">
+        Interactive visual effects inspired by computer vision and deep learning. Click any effect to toggle it on/off.
+      </p>
+    </div>
+  </div>
 
   <main>
     <article class="card" role="region" aria-label="About Andrea Procopio">
       <header>
-        <h1><span class="prompt">$</span>Andrea Procopio<span class="cursor-blink"></span></h1>
-        <div class="tag">BSc CS & Economics @ <a href="https://www.unibocconi.it/en/programs/bachelor-science/economics-management-and-computer-science/study-plan" target="_blank" rel="noopener">Bocconi University</a><br>Computer Vision Researcher @ <a href="https://www.cocodev.org" target="_blank" rel="noopener">Harvard CoCoDev Lab</a></div>
+        <div class="header-text">
+          <h1><span class="prompt">$</span>Andrea Procopio<span class="cursor-blink"></span></h1>
+          <div class="tag">BSc CS & Economics @ <a href="https://www.unibocconi.it/en/programs/bachelor-science/economics-management-and-computer-science/study-plan" target="_blank" rel="noopener">Bocconi University</a><br>Computer Vision Researcher @ <a href="https://www.cocodev.org" target="_blank" rel="noopener">Harvard CoCoDev Lab</a></div>
+        </div>
+        <div class="avatar-container">
+          <div class="avatar">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+        </div>
       </header>
 
       <section>
@@ -300,18 +540,17 @@
       <section>
         <h2>RESEARCH_INTERESTS</h2>
         <div class="pills">
-          <span class="pill"><i class="fa-solid fa-brain"></i> Computational Vision</span>
-          <span class="pill"><i class="fa-solid fa-eye"></i> Human-Model Alignment</span>
-          <span class="pill"><i class="fa-solid fa-microchip"></i> Efficient Neural Networks</span>
-          <span class="pill"><i class="fa-solid fa-flask"></i> Psychophysics</span>
+          <span class="pill"><i class="fa-solid fa-brain"></i><span>Computational Vision</span></span>
+          <span class="pill"><i class="fa-solid fa-eye"></i><span>Human-Model Alignment</span></span>
+          <span class="pill"><i class="fa-solid fa-microchip"></i><span>Efficient Neural Networks</span></span>
+          <span class="pill"><i class="fa-solid fa-flask"></i><span>Psychophysics</span></span>
         </div>
       </section>
 
       <nav aria-label="social">
         <a href="https://www.linkedin.com/in/procopioandrea/" target="_blank" rel="me noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
         <a href="mailto:aprocopio@fas.harvard.edu"><i class="fa-solid fa-envelope"></i> Email</a>
-        <button id="toggle-anim" type="button" title="Toggle background animation"><i class="fa-solid fa-circle-pause"></i> Gradient</button>
-        <button id="toggle-matrix" type="button" title="Toggle matrix effect"><i class="fa-solid fa-code"></i> Matrix</button>
+        <a href="#" onclick="event.preventDefault();alert('CV download coming soon!')"><i class="fa-solid fa-file-pdf"></i> Download CV</a>
       </nav>
 
       <footer>
@@ -321,6 +560,21 @@
   </main>
 
   <script>
+    // Control Panel Toggle
+    const controlTrigger = document.getElementById('control-trigger');
+    const controlPanel = document.getElementById('control-panel');
+    
+    controlTrigger?.addEventListener('click', () => {
+      controlPanel.classList.toggle('open');
+    });
+
+    // Close panel when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!controlPanel.contains(e.target) && !controlTrigger.contains(e.target)) {
+        controlPanel.classList.remove('open');
+      }
+    });
+
     // Date stamp
     (function(){
       const el = document.getElementById('last-updated');
@@ -464,14 +718,10 @@
       window.addEventListener('pointermove', queuePointer, {passive:true});
       window.addEventListener('pointerdown', queuePointer, {passive:true});
 
-      const toggleBtn = document.getElementById('toggle-anim');
+      const toggleBtn = document.getElementById('toggle-gradient');
       toggleBtn?.addEventListener('click', ()=>{
         running = !running;
-        const icon = toggleBtn.querySelector('i');
-        if(icon){
-          icon.classList.toggle('fa-circle-play');
-          icon.classList.toggle('fa-circle-pause');
-        }
+        toggleBtn.classList.toggle('active');
         if(running) requestAnimationFrame(frame); else frame();
       });
 
@@ -479,9 +729,9 @@
       if(running) requestAnimationFrame(frame); else frame();
     })();
 
-    // Matrix rain effect
+    // Neural Network Effect
     (function(){
-      const canvas = document.getElementById('matrix');
+      const canvas = document.getElementById('neural');
       if(!canvas) return;
       const ctx = canvas.getContext('2d', { alpha: true });
       
@@ -490,48 +740,403 @@
       canvas.width = w;
       canvas.height = h;
       
-      const fontSize = 14;
-      const columns = Math.floor(w / fontSize);
-      const drops = Array(columns).fill(0);
-      const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ';
-      
-      let matrixRunning = false;
+      const nodes = [];
+      const nodeCount = 50;
+      const connectionDistance = 150;
+      let mouseX = w / 2;
+      let mouseY = h / 2;
+      let running = false;
       let animFrame;
       
-      function draw(){
-        ctx.fillStyle = 'rgba(10, 14, 23, 0.05)';
-        ctx.fillRect(0, 0, w, h);
-        
-        ctx.fillStyle = '#5fc890';
-        ctx.font = fontSize + 'px monospace';
-        
-        for(let i = 0; i < drops.length; i++){
-          const text = chars[Math.floor(Math.random() * chars.length)];
-          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-          
-          if(drops[i] * fontSize > h && Math.random() > 0.975){
-            drops[i] = 0;
-          }
-          drops[i]++;
+      class Node {
+        constructor() {
+          this.x = Math.random() * w;
+          this.y = Math.random() * h;
+          this.vx = (Math.random() - 0.5) * 0.5;
+          this.vy = (Math.random() - 0.5) * 0.5;
+          this.radius = Math.random() * 2 + 1;
         }
         
-        if(matrixRunning) animFrame = requestAnimationFrame(draw);
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          
+          if (this.x < 0 || this.x > w) this.vx *= -1;
+          if (this.y < 0 || this.y > h) this.vy *= -1;
+          
+          const dx = mouseX - this.x;
+          const dy = mouseY - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 200) {
+            this.vx += dx * 0.00005;
+            this.vy += dy * 0.00005;
+          }
+        }
+        
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = '#6b9bd1';
+          ctx.fill();
+        }
       }
       
-      const toggleMatrix = document.getElementById('toggle-matrix');
-      toggleMatrix?.addEventListener('click', ()=>{
-        matrixRunning = !matrixRunning;
-        canvas.classList.toggle('active');
+      for (let i = 0; i < nodeCount; i++) {
+        nodes.push(new Node());
+      }
+      
+      function drawConnections() {
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x;
+            const dy = nodes[i].y - nodes[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < connectionDistance) {
+              const opacity = (1 - dist / connectionDistance) * 0.3;
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(107, 155, 209, ${opacity})`;
+              ctx.lineWidth = 1;
+              ctx.moveTo(nodes[i].x, nodes[i].y);
+              ctx.lineTo(nodes[j].x, nodes[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+      
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
         
-        if(matrixRunning){
-          draw();
+        drawConnections();
+        nodes.forEach(node => {
+          node.update();
+          node.draw();
+        });
+        
+        if (running) animFrame = requestAnimationFrame(animate);
+      }
+      
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+      
+      const toggleBtn = document.getElementById('toggle-neural');
+      toggleBtn?.addEventListener('click', () => {
+        running = !running;
+        canvas.classList.toggle('active');
+        toggleBtn.classList.toggle('active');
+        
+        if (running) {
+          animate();
         } else {
           cancelAnimationFrame(animFrame);
           ctx.clearRect(0, 0, w, h);
         }
       });
       
-      window.addEventListener('resize', ()=>{
+      window.addEventListener('resize', () => {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w;
+        canvas.height = h;
+      });
+    })();
+
+    // Perceptual Flow Field Effect
+    (function(){
+      const canvas = document.getElementById('flow');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d', { alpha: true });
+      
+      let w = window.innerWidth;
+      let h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+      
+      const particles = [];
+      const particleCount = 100;
+      let mouseX = w / 2;
+      let mouseY = h / 2;
+      let running = false;
+      let animFrame;
+      
+      class Particle {
+        constructor() {
+          this.reset();
+        }
+        
+        reset() {
+          this.x = Math.random() * w;
+          this.y = Math.random() * h;
+          this.vx = 0;
+          this.vy = 0;
+          this.life = 255;
+        }
+        
+        update() {
+          const dx = mouseX - this.x;
+          const dy = mouseY - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist < 300) {
+            const force = (300 - dist) / 300;
+            const angle = Math.atan2(dy, dx);
+            this.vx += Math.cos(angle) * force * 0.5;
+            this.vy += Math.sin(angle) * force * 0.5;
+          }
+          
+          this.vx *= 0.95;
+          this.vy *= 0.95;
+          
+          this.x += this.vx;
+          this.y += this.vy;
+          
+          this.life -= 1;
+          
+          if (this.life <= 0 || this.x < 0 || this.x > w || this.y < 0 || this.y > h) {
+            this.reset();
+          }
+        }
+        
+        draw() {
+          const alpha = this.life / 255;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(95, 200, 144, ${alpha * 0.6})`;
+          ctx.fill();
+        }
+      }
+      
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+      
+      function animate() {
+        ctx.fillStyle = 'rgba(10, 14, 23, 0.1)';
+        ctx.fillRect(0, 0, w, h);
+        
+        particles.forEach(particle => {
+          particle.update();
+          particle.draw();
+        });
+        
+        if (running) animFrame = requestAnimationFrame(animate);
+      }
+      
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+      
+      const toggleBtn = document.getElementById('toggle-flow');
+      toggleBtn?.addEventListener('click', () => {
+        running = !running;
+        canvas.classList.toggle('active');
+        toggleBtn.classList.toggle('active');
+        
+        if (running) {
+          animate();
+        } else {
+          cancelAnimationFrame(animFrame);
+          ctx.clearRect(0, 0, w, h);
+        }
+      });
+      
+      window.addEventListener('resize', () => {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w;
+        canvas.height = h;
+      });
+    })();
+
+    // 3D Point Cloud Effect
+    (function(){
+      const canvas = document.getElementById('pointcloud');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d', { alpha: true });
+      
+      let w = window.innerWidth;
+      let h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+      
+      const points = [];
+      const pointCount = 300;
+      let rotationX = 0;
+      let rotationY = 0;
+      let running = false;
+      let animFrame;
+      
+      for (let i = 0; i < pointCount; i++) {
+        points.push({
+          x: (Math.random() - 0.5) * 400,
+          y: (Math.random() - 0.5) * 400,
+          z: (Math.random() - 0.5) * 400
+        });
+      }
+      
+      function project(x, y, z) {
+        const scale = 300 / (300 + z);
+        return {
+          x: x * scale + w / 2,
+          y: y * scale + h / 2,
+          scale: scale
+        };
+      }
+      
+      function rotatePoint(x, y, z, rx, ry) {
+        let cosY = Math.cos(ry);
+        let sinY = Math.sin(ry);
+        let tempX = x * cosY - z * sinY;
+        let tempZ = x * sinY + z * cosY;
+        
+        let cosX = Math.cos(rx);
+        let sinX = Math.sin(rx);
+        let tempY = y * cosX - tempZ * sinX;
+        tempZ = y * sinX + tempZ * cosX;
+        
+        return { x: tempX, y: tempY, z: tempZ };
+      }
+      
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+        
+        rotationY += 0.005;
+        rotationX += 0.003;
+        
+        points.forEach(point => {
+          const rotated = rotatePoint(point.x, point.y, point.z, rotationX, rotationY);
+          const projected = project(rotated.x, rotated.y, rotated.z);
+          
+          const size = projected.scale * 2;
+          const alpha = projected.scale * 0.8;
+          
+          ctx.beginPath();
+          ctx.arc(projected.x, projected.y, size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(157, 124, 191, ${alpha})`;
+          ctx.fill();
+        });
+        
+        if (running) animFrame = requestAnimationFrame(animate);
+      }
+      
+      const toggleBtn = document.getElementById('toggle-pointcloud');
+      toggleBtn?.addEventListener('click', () => {
+        running = !running;
+        canvas.classList.toggle('active');
+        toggleBtn.classList.toggle('active');
+        
+        if (running) {
+          animate();
+        } else {
+          cancelAnimationFrame(animFrame);
+          ctx.clearRect(0, 0, w, h);
+        }
+      });
+      
+      window.addEventListener('resize', () => {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w;
+        canvas.height = h;
+      });
+    })();
+
+    // Convolution Kernel Effect
+    (function(){
+      const canvas = document.getElementById('convolution');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d', { alpha: true });
+      
+      let w = window.innerWidth;
+      let h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+      
+      const kernels = [];
+      const kernelSize = 30;
+      const kernelCount = 20;
+      let running = false;
+      let animFrame;
+      
+      class Kernel {
+        constructor() {
+          this.x = Math.random() * w;
+          this.y = Math.random() * h;
+          this.vx = (Math.random() - 0.5) * 2;
+          this.vy = (Math.random() - 0.5) * 2;
+          this.angle = Math.random() * Math.PI * 2;
+          this.rotationSpeed = (Math.random() - 0.5) * 0.02;
+        }
+        
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.angle += this.rotationSpeed;
+          
+          if (this.x < -kernelSize || this.x > w + kernelSize) this.vx *= -1;
+          if (this.y < -kernelSize || this.y > h + kernelSize) this.vy *= -1;
+        }
+        
+        draw() {
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          ctx.rotate(this.angle);
+          
+          ctx.strokeStyle = 'rgba(107, 155, 209, 0.4)';
+          ctx.lineWidth = 1.5;
+          
+          const gridSize = 3;
+          const cellSize = kernelSize / gridSize;
+          
+          for (let i = 0; i < gridSize; i++) {
+            for (let j = 0; j < gridSize; j++) {
+              const x = (i - gridSize/2 + 0.5) * cellSize;
+              const y = (j - gridSize/2 + 0.5) * cellSize;
+              const size = cellSize * 0.7;
+              
+              ctx.strokeRect(x - size/2, y - size/2, size, size);
+            }
+          }
+          
+          ctx.restore();
+        }
+      }
+      
+      for (let i = 0; i < kernelCount; i++) {
+        kernels.push(new Kernel());
+      }
+      
+      function animate() {
+        ctx.fillStyle = 'rgba(10, 14, 23, 0.1)';
+        ctx.fillRect(0, 0, w, h);
+        
+        kernels.forEach(kernel => {
+          kernel.update();
+          kernel.draw();
+        });
+        
+        if (running) animFrame = requestAnimationFrame(animate);
+      }
+      
+      const toggleBtn = document.getElementById('toggle-convolution');
+      toggleBtn?.addEventListener('click', () => {
+        running = !running;
+        canvas.classList.toggle('active');
+        toggleBtn.classList.toggle('active');
+        
+        if (running) {
+          animate();
+        } else {
+          cancelAnimationFrame(animFrame);
+          ctx.clearRect(0, 0, w, h);
+        }
+      });
+      
+      window.addEventListener('resize', () => {
         w = window.innerWidth;
         h = window.innerHeight;
         canvas.width = w;
