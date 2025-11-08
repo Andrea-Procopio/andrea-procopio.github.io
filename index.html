@@ -1,307 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="shortcut icon" href="dbicon.png" type="image/x-icon">
-    <link rel="apple-touch-icon" href="dbicon.png">
-    <link rel="icon" href="dbicon.png" type="image/png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
-    <link rel="stylesheet" href="https://use.typekit.net/grr6fkk.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Andrea P bio</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Andrea Procopio — CS & Econ @ Bocconi | CV Research @ Harvard</title>
+  <meta name="description" content="Andrea Procopio — BSc CS & Economics at Bocconi; Computer Vision researcher at Harvard's CoCoDev Lab. Interests: human-like intelligence, computational vision, tiny CNNs, wearable AI." />
+  <meta name="theme-color" content="#001f3f" />
+  <!-- Open Graph / Twitter -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Andrea Procopio — Portfolio" />
+  <meta property="og:description" content="CS & Econ @ Bocconi · CV @ Harvard CoCoDev Lab" />
+  <meta property="og:image" content="dbicon.png" />
+  <meta name="twitter:card" content="summary" />
 
-        html, body {
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            background-color: #001f3f; /* bluee */
-            font-family: Arial, sans-serif;
-        }
-        
-        /* flex container */
-        .page-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            width: 100vw;
-            position: relative;
-        }
-        
-        #heatmap-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
+  <!-- Icons -->
+  <link rel="icon" href="dbicon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="dbicon.png" />
 
-        #text-overlay {
-            position: relative;
-            z-index: 10;
-            color: white;
-            font-family: "stevie-sans", sans-serif;
-            font-weight: 100;
-            font-style: italic;
-            text-align: left;
-            width: 100%;
-            max-width: 600px;
-            padding: 20px;
-            line-height: 1.6;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            background-color: rgba(0, 0, 0, 0.9);
-            border-radius: 10px;
-            margin: 0 20px;
-        }
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+  <link rel="stylesheet" href="https://use.typekit.net/grr6fkk.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/J6MdLec0xGfS07x1p6bJc1S9e+07FQf5Tqz5Wg8vYl5duy8yY3z7kx8YI4r+6L2z8a9sVx3gA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-        h1 {
-            font-size: clamp(2rem, 5vw, 3rem);
-            font-weight: 100;
-            margin-top: 0;
-            margin-bottom: clamp(1rem, 3vw, 2rem);
-        }
+  <style>
+    :root{
+      --bg:#001f3f;
+      --card:rgba(6,12,24,0.68);
+      --card-solid:#0a172e;
+      --text:#e6f1ff;
+      --muted:#adc8ff;
+      --accent:#80ccff;
+      --border:rgba(128,204,255,0.35);
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;}
+    body{
+      margin:0; color:var(--text); background:var(--bg);
+      font-family:"stevie-sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      line-height:1.6;
+      /* allow scroll on small screens */
+      min-height:100svh;
+    }
 
-        p {
-            font-size: clamp(1rem, 2vw, 1.2rem);
-            margin-bottom: 1rem;
-        }
-        
-        #text-overlay a {
-            color: #80ccff; /* light blue */
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        #text-overlay a:hover {
-            color: #ffffff;
-            text-decoration: underline;
-        }
+    /* Canvas background */
+    #bg{position:fixed; inset:0; z-index:-1; display:block;}
 
-        #social-links {
-            margin-top: clamp(1rem, 3vw, 2rem);
-            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+    /* Layout */
+    main{
+      min-height:100svh; display:grid; place-items:center; padding:6vh 4vw;
+    }
 
-        #social-links a {
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
-        }
+    .card{
+      width:min(860px, 95vw);
+      background:var(--card);
+      backdrop-filter:saturate(1.2) blur(10px);
+      -webkit-backdrop-filter:saturate(1.2) blur(10px);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:28px 28px 24px;
+      position:relative;
+      isolation:isolate;
+    }
+    .card::before{
+      /* subtle gradient edge */
+      content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:-1;
+      background:radial-gradient(1200px 700px at 0% 0%, rgba(128,204,255,.18), transparent 55%),
+                 radial-gradient(900px 600px at 100% 100%, rgba(255,196,99,.12), transparent 50%);
+      mask:linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+      -webkit-mask:linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
+      padding:1px; border-radius:inherit;
+    }
 
-        #social-links a:hover {
-            opacity: 1;
-        }
+    header{margin-bottom:18px}
+    h1{font-size:clamp(2rem,4.5vw,3.25rem); line-height:1.15; margin:0 0 6px; font-weight:700; letter-spacing:.2px}
+    .tag{font-size:clamp(.95rem,1.6vw,1.1rem); color:var(--muted)}
 
-        @media (max-width: 480px) {
-            #text-overlay {
-                padding: 15px;
-            }
-            
-            p {
-                margin-bottom: 0.8rem;
-            }
-            
-            #social-links {
-                margin-top: 1.5rem;
-            }
-        }
-    </style>
+    p{margin:.4rem 0 0; font-size:clamp(1rem,1.45vw,1.12rem)}
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    .row{display:flex; flex-wrap:wrap; gap:12px 18px; align-items:center; margin-top:18px}
+    .pill{display:inline-flex; align-items:center; gap:.5rem; padding:.5rem .8rem; border:1px solid var(--border); border-radius:999px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); font-size:.95rem}
+    .pill i{opacity:.9}
+
+    nav[aria-label="social"]{margin-top:22px; display:flex; flex-wrap:wrap; gap:14px}
+    nav[aria-label="social"] a{display:inline-flex; align-items:center; gap:.6rem; padding:.55rem .85rem; border-radius:12px; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); opacity:.92; transition:opacity .2s ease}
+    nav[aria-label="social"] a:hover{opacity:1}
+
+    footer{margin-top:18px; font-size:.92rem; color:#c7ddffb3}
+
+    /* motion safety */
+    @media (prefers-reduced-motion: reduce){
+      #bg{display:none}
+    }
+
+    /* small screens */
+    @media (max-width:480px){
+      .card{padding:22px 16px 18px}
+      nav[aria-label="social"] a{padding:.5rem .7rem}
+    }
+  </style>
 </head>
 <body>
-    <div class="page-container">
-        <canvas id="heatmap-canvas"></canvas>
+  <canvas id="bg" aria-hidden="true"></canvas>
 
-        <div id="text-overlay">
-            <h1>I'm Andrea Procopio</h1>
-            <p>I'm a third-year BSc student in Computer Science and Economics as <a href="https://www.unibocconi.it/en/programs/bachelor-science/economics-management-and-computer-science/study-plan" target="_blank">Bocconi University</a>.</p>
-            <p>I am deeply interested in understanding human mechanisms behind general intelligence as an educated approach to design Human-like ASI systems.</p>
-            <p>In the past, I have worked in the <a href="https://dii.univpm.it/en-gb/riot_en/" target="_blank">RIOT Lab</a> at UNIVPM developing tiny CNNs models for wearables.</p>
-            <p>Now I'm working within the <a href="https://www.cocodev.org" target="_blank">CoCoDev Lab</a> at Harvard researching shared mechanisms of visual perception between models and humans.</p>
-            
-            <div id="social-links">
-                <a href="lhttps://www.linkedin.com/in/procopioandrea/">LinkedIn</a>
-                <a href="mailto:aprocopio@fas.harvard.edu">Email</a>
-            </div>
-        </div>
-    </div>
+  <main>
+    <article class="card" role="region" aria-label="About Andrea Procopio">
+      <header>
+        <h1>Andrea Procopio</h1>
+        <div class="tag">BSc CS & Economics @ <a href="https://www.unibocconi.it/en/programs/bachelor-science/economics-management-and-computer-science/study-plan" target="_blank" rel="noopener">Bocconi University</a> · Computer Vision @ <a href="https://www.cocodev.org" target="_blank" rel="noopener">Harvard CoCoDev Lab</a></div>
+      </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // elements
-            const canvas = document.getElementById('heatmap-canvas');
-            
-            // get context
-            const ctx = canvas.getContext('2d');
-            
-            // set canvas size to match window size
-            function resizeCanvas() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                
-                // redraw blue background
-                ctx.fillStyle = '#001f3f';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // recompute grid dimensions
-                cols = Math.ceil(canvas.width / gridSize);
-                rows = Math.ceil(canvas.height / gridSize);
-                
-                // a new grid with new dimensions
-                const newHeatmapData = Array(rows).fill().map(() => Array(cols).fill(0));
-                
-                // Copy existing data
-                if (heatmapData) {
-                    for (let y = 0; y < Math.min(heatmapData.length, rows); y++) {
-                        for (let x = 0; x < Math.min(heatmapData[0].length, cols); x++) {
-                            newHeatmapData[y][x] = heatmapData[y][x];
-                        }
-                    }
-                }
-                
-                heatmapData = newHeatmapData;
-            }
-            
-            const gridSize = 10; // Smaller grid size for more detail
-            let cols = Math.ceil(window.innerWidth / gridSize);
-            let rows = Math.ceil(window.innerHeight / gridSize);
-            let heatmapData = Array(rows).fill().map(() => Array(cols).fill(0));
-            
-            // setup
-            canvas.style.width = '100%';
-            canvas.style.height = '100%';
-            resizeCanvas();
-            
-            // mouse movement event
-            document.addEventListener('mousemove', (e) => {
-                const mouseX = e.clientX;
-                const mouseY = e.clientY;
-                
-                // get center grid cell
-                const centerGridX = Math.floor(mouseX / gridSize);
-                const centerGridY = Math.floor(mouseY / gridSize);
-                
-                // radial impact - affect cells in a radius around the cursor
-                const radius = 10; // radius of impact in grid cells
-                
-                // loop through all cells in a square around the cursor
-                for (let dy = -radius; dy <= radius; dy++) {
-                    for (let dx = -radius; dx <= radius; dx++) {
-                        const gridX = centerGridX + dx;
-                        const gridY = centerGridY + dy;
-                        
-                        // check if the cell is within the grid bounds
-                        if (gridX >= 0 && gridX < cols && gridY >= 0 && gridY < rows) {
-                            // calculate distance from cursor center (squared)
-                            const distSquared = dx * dx + dy * dy;
-                            
-                            // only affect cells within the circular radius
-                            if (distSquared <= radius * radius) {
-                                // calculate intensity based on distance from center
-                                // closer = more intense, using inverse square falloff
-                                const intensity = 1.5 * (1 - Math.sqrt(distSquared) / radius);
-                                
-                                // add heat to this cell
-                                heatmapData[gridY][gridX] += intensity;
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // window resize event
-            window.addEventListener('resize', resizeCanvas);
-            
-            // color mapping function (value to RGB color) - blue to red with more gradients
-            function getHeatColor(value) {
-                // make the transition faster with a lower max value
-                const maxValue = 5;
-                const clampedValue = Math.min(value, maxValue) / maxValue;
-                
-                // create a gradient: blue -> cyan -> green -> yellow -> orange -> red
-                let r, g, b;
-                
-                if (clampedValue < 0.2) {
-                    // blue to cyan
-                    const t = clampedValue / 0.2;
-                    r = 0;
-                    g = Math.floor(t * 255);
-                    b = 255;
-                } else if (clampedValue < 0.4) {
-                    // dyan to green
-                    const t = (clampedValue - 0.2) / 0.2;
-                    r = 0;
-                    g = 255;
-                    b = Math.floor(255 * (1 - t));
-                } else if (clampedValue < 0.6) {
-                    // green to yellow
-                    const t = (clampedValue - 0.4) / 0.2;
-                    r = Math.floor(t * 255);
-                    g = 255;
-                    b = 0;
-                } else if (clampedValue < 0.8) {
-                    // yellow to orange
-                    const t = (clampedValue - 0.6) / 0.2;
-                    r = 255;
-                    g = Math.floor(255 * (1 - t * 0.5));
-                    b = 0;
-                } else {
-                    // orange to red
-                    const t = (clampedValue - 0.8) / 0.2;
-                    r = 255;
-                    g = Math.floor(127 * (1 - t));
-                    b = 0;
-                }
-                
-                return `rgb(${r}, ${g}, ${b})`;
-            }
-            
-            // animation loop to render the heatmap
-            function animate() {
-                // draw a semi-transparent blue background for fade effect
-                ctx.fillStyle = 'rgba(0, 31, 63, 0.1)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // draw the heatmap
-                for (let y = 0; y < rows; y++) {
-                    for (let x = 0; x < cols; x++) {
-                        const value = heatmapData[y][x];
-                        
-                        if (value > 0) {
-                            // apply a decay to each cell
-                            heatmapData[y][x] *= 0.97;
-                            
-                            // draw heatmap cell if it has a significant value
-                            if (value > 0.1) {
-                                ctx.fillStyle = getHeatColor(value);
-                                ctx.globalAlpha = Math.min(0.9, value / 15);
-                                // draw squares
-                                ctx.fillRect(
-                                    x * gridSize, 
-                                    y * gridSize, 
-                                    gridSize, 
-                                    gridSize
-                                );
-                                ctx.globalAlpha = 1.0;
-                            }
-                        }
-                    }
-                }
-                
-                requestAnimationFrame(animate);
-            }
-            
-            // start the animation
-            animate();
-        });
-    </script>
+      <p>I study the computational principles underlying human visual intelligence and how they inform the design of human-like ASI systems.</p>
+      <p>Previously at the <a href="https://dii.univpm.it/en-gb/riot_en/" target="_blank" rel="noopener">RIOT Lab</a> (UNIVPM), I built tiny CNNs for wearables. Now at Harvard's CoCoDev Lab, I analyze shared mechanisms of visual perception between models and humans.</p>
+
+      <div class="row" aria-label="Focus areas">
+        <span class="pill"><i class="fa-solid fa-brain"></i> Computational vision</span>
+        <span class="pill"><i class="fa-solid fa-microchip"></i> Tiny CNNs</span>
+        <span class="pill"><i class="fa-solid fa-eye"></i> Human-model alignment</span>
+        <span class="pill"><i class="fa-solid fa-flask"></i> Methods & psychophysics</span>
+      </div>
+
+      <nav aria-label="social">
+        <a href="https://www.linkedin.com/in/procopioandrea/" target="_blank" rel="me noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+        <a href="mailto:aprocopio@fas.harvard.edu"><i class="fa-solid fa-envelope"></i> Email</a>
+        <!-- Optional: add a resume when ready -->
+        <!-- <a href="Andrea_Procopio_Resume.pdf" target="_blank" rel="noopener"><i class="fa-solid fa-file"></i> Resume</a> -->
+        <button id="toggle-anim" type="button" title="Toggle background animation" class="pill" style="cursor:pointer; background:none"><i class="fa-solid fa-circle-pause"></i> Toggle animation</button>
+      </nav>
+
+      <footer>
+        <span>Last updated <span id="last-updated"></span></span>
+      </footer>
+    </article>
+  </main>
+
+  <script>
+    // ===== Utility: date stamp =====
+    (function(){
+      const el = document.getElementById('last-updated');
+      if(el){
+        const d = new Date(document.lastModified);
+        const fmt = new Intl.DateTimeFormat(undefined, {year:'numeric', month:'short'});
+        el.textContent = fmt.format(d);
+      }
+    })();
+
+    // ===== Background heatmap (optimized) =====
+    (function(){
+      const canvas = document.getElementById('bg');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d', { alpha: false });
+
+      let dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+      let gridSize = 12; // px in CSS pixels
+      let cols = 0, rows = 0;
+      const radius = 10; // in cells
+      const maxValue = 5;
+      const decay = 0.965;
+      const minVisible = 0.08;
+      let running = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // active cells map: key -> value
+      const active = new Map();
+      const key = (x,y)=> y*cols + x;
+
+      function resize(){
+        dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+        const cssW = Math.max(1, window.innerWidth);
+        const cssH = Math.max(1, window.innerHeight);
+        canvas.width = Math.floor(cssW * dpr);
+        canvas.height = Math.floor(cssH * dpr);
+        canvas.style.width = cssW + 'px';
+        canvas.style.height = cssH + 'px';
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        cols = Math.ceil(cssW / gridSize);
+        rows = Math.ceil(cssH / gridSize);
+        // clear but keep active cells; they will redraw
+        ctx.fillStyle = '#001f3f';
+        ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);
+      }
+
+      function heat(x,y,amount){
+        const k = key(x,y);
+        const next = Math.min(maxValue, (active.get(k) || 0) + amount);
+        active.set(k, next);
+      }
+
+      function pointerToGrid(clientX, clientY){
+        const x = Math.floor(clientX / gridSize);
+        const y = Math.floor(clientY / gridSize);
+        return {x,y};
+      }
+
+      let pointerQueued = false; let lastPointer = null;
+      function queuePointer(e){
+        lastPointer = e;
+        if(!pointerQueued){
+          pointerQueued = true;
+          requestAnimationFrame(applyPointer);
+        }
+      }
+      function applyPointer(){
+        pointerQueued = false;
+        if(!lastPointer) return;
+        const {clientX, clientY} = lastPointer;
+        const {x: cx, y: cy} = pointerToGrid(clientX, clientY);
+        for(let dy=-radius; dy<=radius; dy++){
+          for(let dx=-radius; dx<=radius; dx++){
+            const gx = cx+dx, gy = cy+dy;
+            if(gx<0||gy<0||gx>=cols||gy>=rows) continue;
+            const d2 = dx*dx+dy*dy; if(d2>radius*radius) continue;
+            const intensity = 1.5 * (1 - Math.sqrt(d2)/radius);
+            if(intensity>0) heat(gx,gy,intensity);
+          }
+        }
+      }
+
+      function getHeatColor(value){
+        // clamp 0..1
+        const t = Math.min(value, maxValue) / maxValue;
+        let r=0,g=0,b=0;
+        if(t < 0.2){
+          const k = t/0.2; r=0; g=Math.floor(k*255); b=255;
+        } else if(t < 0.4){
+          const k = (t-0.2)/0.2; r=0; g=255; b=Math.floor(255*(1-k));
+        } else if(t < 0.6){
+          const k = (t-0.4)/0.2; r=Math.floor(k*255); g=255; b=0;
+        } else if(t < 0.8){
+          const k = (t-0.6)/0.2; r=255; g=Math.floor(255*(1-k*0.5)); b=0;
+        } else {
+          const k = (t-0.8)/0.2; r=255; g=Math.floor(127*(1-k)); b=0;
+        }
+        return `rgb(${r}, ${g}, ${b})`;
+      }
+
+      function frame(){
+        if(!running){
+          // paused: draw a static low-contrast vignette
+          ctx.fillStyle = '#001f3f';
+          ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);
+          ctx.globalAlpha = 0.18;
+          const w = canvas.width/dpr, h = canvas.height/dpr;
+          const grd = ctx.createRadialGradient(w*0.5,h*0.5,10, w*0.5,h*0.5, Math.max(w,h)*0.7);
+          grd.addColorStop(0,'#00345d');
+          grd.addColorStop(1,'#001f3f');
+          ctx.fillStyle = grd; ctx.fillRect(0,0,w,h);
+          ctx.globalAlpha = 1;
+          return;
+        }
+
+        // fade trail
+        ctx.fillStyle = 'rgba(0,31,63,0.10)';
+        ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);
+
+        // draw only active cells
+        for(const [k, val] of active){
+          if(val <= minVisible){ active.delete(k); continue; }
+          const x = k % cols; const y = (k - x) / cols;
+          ctx.fillStyle = getHeatColor(val);
+          ctx.globalAlpha = Math.min(0.9, val/15);
+          ctx.fillRect(x*gridSize, y*gridSize, gridSize, gridSize);
+          const decayed = val * decay;
+          if(decayed > minVisible){ active.set(k, decayed); } else { active.delete(k); }
+        }
+
+        requestAnimationFrame(frame);
+      }
+
+      // Event wiring
+      window.addEventListener('resize', resize, {passive:true});
+      window.addEventListener('orientationchange', resize, {passive:true});
+      window.addEventListener('pointermove', queuePointer, {passive:true});
+      window.addEventListener('pointerdown', queuePointer, {passive:true});
+
+      // Toggle button
+      const toggleBtn = document.getElementById('toggle-anim');
+      toggleBtn?.addEventListener('click', ()=>{
+        running = !running;
+        toggleBtn.querySelector('i')?.classList.toggle('fa-circle-play');
+        toggleBtn.querySelector('i')?.classList.toggle('fa-circle-pause');
+        if(running) requestAnimationFrame(frame); else frame();
+      });
+
+      resize();
+      if(running) requestAnimationFrame(frame); else frame();
+    })();
+  </script>
 </body>
 </html>
