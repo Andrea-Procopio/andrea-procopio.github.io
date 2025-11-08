@@ -32,6 +32,7 @@
       --accent:#80ccff;
       --border:rgba(128,204,255,0.35);
       --shadow:0 20px 60px rgba(0,0,0,.45);
+      --glow-opacity:1;
     }
     *{box-sizing:border-box}
     html,body{height:100%;}
@@ -64,6 +65,8 @@
       isolation:isolate;
     }
     .card::before{
+      opacity: var(--glow-opacity);
+      transition: opacity 1.2s ease;
       /* subtle gradient edge */
       content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:-1;
       background:radial-gradient(1200px 700px at 0% 0%, rgba(128,204,255,.18), transparent 55%),
@@ -288,6 +291,20 @@
       resize();
       if(running) requestAnimationFrame(frame); else frame();
     })();
-  </script>
+      // ===== Glow fade control =====
+  (function(){
+    const card = document.querySelector('.card');
+    if(!card) return;
+    const set = (v)=> card.style.setProperty('--glow-opacity', String(v));
+    let timer; const delay = 1800;
+    function poke(){ set(1); clearTimeout(timer); timer = setTimeout(()=> set(0), delay); }
+    // initial fade, then fade after inactivity
+    poke();
+    ['pointermove','pointerdown','focusin','mouseenter','touchstart','keydown'].forEach(evt=>{
+      card.addEventListener(evt, poke, {passive:true});
+    });
+  })();
+</script>
 </body>
 </html>
+
