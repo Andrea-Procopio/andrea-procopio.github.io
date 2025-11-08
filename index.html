@@ -5,143 +5,323 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Andrea Procopio — CS & Econ @ Bocconi | CV Research @ Harvard</title>
   <meta name="description" content="Andrea Procopio — BSc CS & Economics at Bocconi; Computer Vision researcher at Harvard's CoCoDev Lab. Interests: human-like intelligence, computational vision, tiny CNNs, wearable AI." />
-  <meta name="theme-color" content="#001f3f" />
-  <!-- Open Graph / Twitter -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Andrea Procopio — Portfolio" />
-  <meta property="og:description" content="CS & Econ @ Bocconi · CV @ Harvard CoCoDev Lab" />
-  <meta property="og:image" content="dbicon.png" />
-  <meta name="twitter:card" content="summary" />
-
-  <!-- Icons -->
+  <meta name="theme-color" content="#0a0e17" />
+  
   <link rel="icon" href="dbicon.png" type="image/png" />
-  <link rel="apple-touch-icon" href="dbicon.png" />
-
-  <!-- Fonts & Icons -->
-  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
-  <link rel="stylesheet" href="https://use.typekit.net/grr6fkk.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/J6MdLec0xGfS07x1p6bJc1S9e+07FQf5Tqz5Wg8vYl5duy8yY3z7kx8YI4r+6L2z8a9sVx3gA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <style>
     :root{
-      --bg:#001f3f;
-      --card:rgba(6,12,24,0.68);
-      --card-solid:#0a172e;
-      --text:#e6f1ff;
-      --muted:#adc8ff;
-      --accent:#80ccff;
-      --border:rgba(128,204,255,0.35);
-      --shadow:0 20px 60px rgba(0,0,0,.45);
-      --glow-opacity:1;
+      --bg:#0a0e17;
+      --card:rgba(15,20,30,0.85);
+      --text:#e8edf4;
+      --muted:#8a95a8;
+      --accent:#6b9bd1;
+      --green:#5fc890;
+      --border:rgba(107,155,209,0.2);
+      --shadow:0 8px 32px rgba(0,0,0,.4);
     }
     *{box-sizing:border-box}
-    html,body{height:100%;}
+    html,body{height:100%;margin:0}
     body{
-      margin:0; color:var(--text); background:var(--bg);
-      font-family:"stevie-sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-      line-height:1.6;
-      /* allow scroll on small screens */
+      color:var(--text); background:var(--bg);
+      font-family:"Courier New", "Courier", monospace;
+      line-height:1.7;
       min-height:100svh;
+      font-size:15px;
     }
 
-    /* Canvas background */
     #bg{position:fixed; inset:0; z-index:-1; display:block;}
 
-    /* Layout */
     main{
-      min-height:100svh; display:grid; place-items:center; padding:6vh 4vw;
+      min-height:100svh; display:grid; place-items:center; padding:8vh 4vw;
+      max-width:1400px; margin:0 auto;
     }
 
     .card{
-      width:min(860px, 95vw);
+      width:min(820px, 94vw);
       background:var(--card);
-      backdrop-filter:saturate(1.2) blur(10px);
-      -webkit-backdrop-filter:saturate(1.2) blur(10px);
+      backdrop-filter:blur(24px);
+      -webkit-backdrop-filter:blur(24px);
       border:1px solid var(--border);
-      border-radius:18px;
+      border-radius:0;
       box-shadow:var(--shadow);
-      padding:28px 28px 24px;
+      padding:40px 40px 36px;
       position:relative;
-      isolation:isolate;
-    }
-    .card::before{
-      opacity: var(--glow-opacity);
-      transition: opacity 1.2s ease;
-      /* subtle gradient edge */
-      content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:-1;
-      background:radial-gradient(1200px 700px at 0% 0%, rgba(128,204,255,.18), transparent 55%),
-                 radial-gradient(900px 600px at 100% 100%, rgba(255,196,99,.12), transparent 50%);
-      mask:linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
-      -webkit-mask:linear-gradient(#000,#000) content-box, linear-gradient(#000,#000);
-      padding:1px; border-radius:inherit;
     }
 
-    header{margin-bottom:18px}
-    h1{font-size:clamp(2rem,4.5vw,3.25rem); line-height:1.15; margin:0 0 6px; font-weight:700; letter-spacing:.2px}
-    .tag{font-size:clamp(.95rem,1.6vw,1.1rem); color:var(--muted)}
+    .cursor-blink::after{
+      content:'_';
+      animation:blink 1s infinite;
+      color:var(--green);
+    }
 
-    p{margin:.4rem 0 0; font-size:clamp(1rem,1.45vw,1.12rem)}
-    a{color:var(--accent); text-decoration:none}
-    a:hover{text-decoration:underline}
+    @keyframes blink{
+      0%, 49%{opacity:1}
+      50%, 100%{opacity:0}
+    }
 
-    .row{display:flex; flex-wrap:wrap; gap:12px 18px; align-items:center; margin-top:18px}
-    .pill{display:inline-flex; align-items:center; gap:.5rem; padding:.5rem .8rem; border:1px solid var(--border); border-radius:999px; background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); font-size:.95rem}
-    .pill i{opacity:.9}
+    header{margin-bottom:32px; padding-bottom:24px; position:relative}
+    header::after{
+      content:'';
+      position:absolute;
+      bottom:0;
+      left:0;
+      width:0;
+      height:1px;
+      background:var(--border);
+      animation:expandLine 1.2s ease-out forwards;
+    }
 
-    nav[aria-label="social"]{margin-top:22px; display:flex; flex-wrap:wrap; gap:14px}
-    nav[aria-label="social"] a{display:inline-flex; align-items:center; gap:.6rem; padding:.55rem .85rem; border-radius:12px; border:1px solid var(--border); background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02)); opacity:.92; transition:opacity .2s ease}
-    nav[aria-label="social"] a:hover{opacity:1}
+    @keyframes expandLine{
+      to{width:100%}
+    }
 
-    footer{margin-top:18px; font-size:.92rem; color:#c7ddffb3}
+    h1{
+      font-size:clamp(1.5rem,3vw,1.9rem); 
+      line-height:1.3; 
+      margin:0 0 8px; 
+      font-weight:700; 
+      letter-spacing:0.02em;
+      color:var(--text);
+    }
+    
+    .prompt{
+      color:var(--green);
+      margin-right:8px;
+    }
 
-    /* motion safety */
+    .tag{
+      font-size:clamp(.85rem,1.3vw,.95rem); 
+      color:var(--muted);
+      line-height:1.6;
+    }
+
+    section{margin-bottom:32px; opacity:0; animation:fadeIn 0.6s ease-out forwards}
+    section:nth-child(1){animation-delay:0.1s}
+    section:nth-child(2){animation-delay:0.2s}
+    section:nth-child(3){animation-delay:0.3s}
+    section:nth-child(4){animation-delay:0.4s}
+    section:last-of-type{margin-bottom:0}
+
+    @keyframes fadeIn{
+      to{opacity:1}
+    }
+    
+    h2{
+      font-size:.9rem;
+      font-weight:700;
+      margin:0 0 16px;
+      color:var(--accent);
+      letter-spacing:0.05em;
+    }
+    h2::before{
+      content:'> ';
+      color:var(--green);
+    }
+
+    p{
+      margin:0 0 14px; 
+      font-size:clamp(.88rem,1.3vw,.96rem);
+      color:var(--text);
+    }
+    p:last-child{margin-bottom:0}
+    
+    a{
+      color:var(--accent); 
+      text-decoration:none; 
+      position:relative;
+      transition:color .2s;
+    }
+    a::after{
+      content:'';
+      position:absolute;
+      bottom:-2px;
+      left:0;
+      width:0;
+      height:1px;
+      background:var(--accent);
+      transition:width .3s ease;
+    }
+    a:hover{color:var(--green)}
+    a:hover::after{width:100%; background:var(--green)}
+
+    .pills{
+      display:flex; 
+      flex-wrap:wrap; 
+      gap:10px; 
+      margin-top:16px;
+    }
+    .pill{
+      display:inline-flex; 
+      align-items:center; 
+      gap:.5rem; 
+      padding:.45rem .85rem; 
+      border:1px solid var(--border); 
+      border-radius:0; 
+      background:rgba(107,155,209,0.08);
+      font-size:.85rem;
+      color:var(--muted);
+      transition:all .3s ease;
+      cursor:default;
+    }
+    .pill:hover{
+      background:rgba(107,155,209,0.15);
+      border-color:var(--accent);
+      color:var(--text);
+      transform:translateX(4px);
+    }
+    .pill i{opacity:.75; font-size:.8rem}
+
+    nav[aria-label="social"]{
+      margin-top:28px; 
+      display:flex; 
+      flex-wrap:wrap; 
+      gap:12px;
+      padding-top:24px;
+      position:relative;
+    }
+    nav[aria-label="social"]::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      width:0;
+      height:1px;
+      background:var(--border);
+      animation:expandLine 1.2s ease-out 0.5s forwards;
+    }
+
+    nav[aria-label="social"] a,
+    nav[aria-label="social"] button{
+      display:inline-flex; 
+      align-items:center; 
+      gap:.5rem; 
+      padding:.5rem .9rem; 
+      border-radius:0; 
+      border:1px solid var(--border); 
+      background:rgba(107,155,209,0.06);
+      transition:all .25s ease;
+      font-size:.88rem;
+      color:var(--text);
+      font-family:inherit;
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+    }
+    nav[aria-label="social"] a::before,
+    nav[aria-label="social"] button::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:-100%;
+      width:100%;
+      height:100%;
+      background:linear-gradient(90deg, transparent, rgba(107,155,209,0.2), transparent);
+      transition:left .5s ease;
+    }
+    nav[aria-label="social"] a:hover::before,
+    nav[aria-label="social"] button:hover::before{
+      left:100%;
+    }
+    nav[aria-label="social"] a::after{
+      display:none;
+    }
+    nav[aria-label="social"] a:hover,
+    nav[aria-label="social"] button:hover{
+      background:rgba(107,155,209,0.15);
+      border-color:var(--accent);
+      transform:translateY(-2px);
+      box-shadow:0 4px 12px rgba(0,0,0,.3);
+    }
+
+    footer{
+      margin-top:32px; 
+      padding-top:20px;
+      font-size:.85rem; 
+      color:var(--muted);
+      position:relative;
+    }
+    footer::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      width:0;
+      height:1px;
+      background:var(--border);
+      animation:expandLine 1.2s ease-out 0.6s forwards;
+    }
+
+    /* Matrix rain effect toggle */
+    .matrix-container{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+      z-index:1;
+      opacity:0;
+      transition:opacity .5s;
+    }
+    .matrix-container.active{
+      opacity:0.15;
+    }
+
     @media (prefers-reduced-motion: reduce){
       #bg{display:none}
+      *{animation:none !important; transition:none !important}
+      .matrix-container{display:none}
     }
 
-    /* small screens */
     @media (max-width:480px){
-      .card{padding:22px 16px 18px}
-      nav[aria-label="social"] a{padding:.5rem .7rem}
+      .card{padding:28px 20px 24px}
+      body{font-size:14px}
     }
   </style>
 </head>
 <body>
   <canvas id="bg" aria-hidden="true"></canvas>
+  <canvas id="matrix" class="matrix-container" aria-hidden="true"></canvas>
 
   <main>
     <article class="card" role="region" aria-label="About Andrea Procopio">
       <header>
-        <h1>Andrea Procopio</h1>
-        <div class="tag">BSc CS & Economics @ <a href="https://www.unibocconi.it/en/programs/bachelor-science/economics-management-and-computer-science/study-plan" target="_blank" rel="noopener">Bocconi University</a> · Computer Vision @ <a href="https://www.cocodev.org" target="_blank" rel="noopener">Harvard CoCoDev Lab</a></div>
+        <h1><span class="prompt">$</span>Andrea Procopio<span class="cursor-blink"></span></h1>
+        <div class="tag">BSc CS & Economics @ <a href="https://www.unibocconi.it/en/programs/bachelor-science/economics-management-and-computer-science/study-plan" target="_blank" rel="noopener">Bocconi University</a><br>Computer Vision Researcher @ <a href="https://www.cocodev.org" target="_blank" rel="noopener">Harvard CoCoDev Lab</a></div>
       </header>
 
-      <p>I study the computational principles underlying human visual intelligence and how they inform the design of human-like ASI systems.</p>
-      <p>Previously at the <a href="https://dii.univpm.it/en-gb/riot_en/" target="_blank" rel="noopener">RIOT Lab</a> (UNIVPM), I built tiny CNNs for wearables. Now at Harvard's CoCoDev Lab, I analyze shared mechanisms of visual perception between models and humans.</p>
+      <section>
+        <p>I study the computational principles underlying human visual intelligence and how they inform the design of human-like ASI systems.</p>
+        <p>Previously at the <a href="https://dii.univpm.it/en-gb/riot_en/" target="_blank" rel="noopener">RIOT Lab</a> (UNIVPM), I built tiny CNNs for wearables. Now at Harvard's CoCoDev Lab, I analyze shared mechanisms of visual perception between models and humans.</p>
+      </section>
 
-      <div class="row" aria-label="Focus areas">
-        <span class="pill"><i class="fa-solid fa-brain"></i> Computational vision</span>
-        <span class="pill"><i class="fa-solid fa-microchip"></i> Tiny CNNs</span>
-        <span class="pill"><i class="fa-solid fa-eye"></i> Human-model alignment</span>
-        <span class="pill"><i class="fa-solid fa-flask"></i> Methods & psychophysics</span>
-      </div>
+      <section>
+        <h2>RESEARCH_INTERESTS</h2>
+        <div class="pills">
+          <span class="pill"><i class="fa-solid fa-brain"></i> Computational Vision</span>
+          <span class="pill"><i class="fa-solid fa-eye"></i> Human-Model Alignment</span>
+          <span class="pill"><i class="fa-solid fa-microchip"></i> Efficient Neural Networks</span>
+          <span class="pill"><i class="fa-solid fa-flask"></i> Psychophysics</span>
+        </div>
+      </section>
 
       <nav aria-label="social">
         <a href="https://www.linkedin.com/in/procopioandrea/" target="_blank" rel="me noopener"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
         <a href="mailto:aprocopio@fas.harvard.edu"><i class="fa-solid fa-envelope"></i> Email</a>
-        <!-- Optional: add a resume when ready -->
-        <!-- <a href="Andrea_Procopio_Resume.pdf" target="_blank" rel="noopener"><i class="fa-solid fa-file"></i> Resume</a> -->
-        <button id="toggle-anim" type="button" title="Toggle background animation" class="pill" style="cursor:pointer; background:none"><i class="fa-solid fa-circle-pause"></i> Toggle animation</button>
+        <button id="toggle-anim" type="button" title="Toggle background animation"><i class="fa-solid fa-circle-pause"></i> Gradient</button>
+        <button id="toggle-matrix" type="button" title="Toggle matrix effect"><i class="fa-solid fa-code"></i> Matrix</button>
       </nav>
 
       <footer>
-        <span>Last updated <span id="last-updated"></span></span>
+        <span class="prompt">></span> Last updated <span id="last-updated"></span>
       </footer>
     </article>
   </main>
 
   <script>
-    // ===== Utility: date stamp =====
+    // Date stamp
     (function(){
       const el = document.getElementById('last-updated');
       if(el){
@@ -151,24 +331,25 @@
       }
     })();
 
-    // ===== Background heatmap (optimized) =====
+    // Improved gradient background
     (function(){
       const canvas = document.getElementById('bg');
       if(!canvas) return;
       const ctx = canvas.getContext('2d', { alpha: false });
 
       let dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
-      let gridSize = 12; // px in CSS pixels
+      let gridSize = 16;
       let cols = 0, rows = 0;
-      const radius = 10; // in cells
-      const maxValue = 5;
-      // time-based exponential decay (half-life)
-      const halfLife = 1.6; // seconds until intensity halves
+      const radius = 8;
+      const maxValue = 4;
+      
+      const colorDecay = 0.99;
+      const trailDecay = 0.88;
+      
       let lastTS = performance.now();
-      const minVisible = 0.08;
+      const minVisible = 0.01;
       let running = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // active cells map: key -> value
       const active = new Map();
       const key = (x,y)=> y*cols + x;
 
@@ -183,8 +364,7 @@
         ctx.setTransform(dpr,0,0,dpr,0,0);
         cols = Math.ceil(cssW / gridSize);
         rows = Math.ceil(cssH / gridSize);
-        // clear but keep active cells; they will redraw
-        ctx.fillStyle = '#001f3f';
+        ctx.fillStyle = '#0a0e17';
         ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);
       }
 
@@ -217,27 +397,30 @@
           for(let dx=-radius; dx<=radius; dx++){
             const gx = cx+dx, gy = cy+dy;
             if(gx<0||gy<0||gx>=cols||gy>=rows) continue;
-            const d2 = dx*dx+dy*dy; if(d2>radius*radius) continue;
-            const intensity = 1.5 * (1 - Math.sqrt(d2)/radius);
+            const d2 = dx*dx+dy*dy; 
+            if(d2>radius*radius) continue;
+            const intensity = 1.2 * (1 - Math.sqrt(d2)/radius);
             if(intensity>0) heat(gx,gy,intensity);
           }
         }
       }
 
       function getHeatColor(value){
-        // clamp 0..1
         const t = Math.min(value, maxValue) / maxValue;
         let r=0,g=0,b=0;
-        if(t < 0.2){
-          const k = t/0.2; r=0; g=Math.floor(k*255); b=255;
-        } else if(t < 0.4){
-          const k = (t-0.2)/0.2; r=0; g=255; b=Math.floor(255*(1-k));
-        } else if(t < 0.6){
-          const k = (t-0.4)/0.2; r=Math.floor(k*255); g=255; b=0;
-        } else if(t < 0.8){
-          const k = (t-0.6)/0.2; r=255; g=Math.floor(255*(1-k*0.5)); b=0;
+        
+        if(t < 0.25){
+          const k = t/0.25; 
+          r=0; g=Math.floor(k*80); b=Math.floor(120 + k*135);
+        } else if(t < 0.5){
+          const k = (t-0.25)/0.25; 
+          r=0; g=Math.floor(80 + k*140); b=255;
+        } else if(t < 0.75){
+          const k = (t-0.5)/0.25; 
+          r=Math.floor(k*95); g=Math.floor(220 - k*60); b=Math.floor(255 - k*100);
         } else {
-          const k = (t-0.8)/0.2; r=255; g=Math.floor(127*(1-k)); b=0;
+          const k = (t-0.75)/0.25; 
+          r=Math.floor(95 + k*60); g=Math.floor(160 - k*70); b=Math.floor(155 + k*50);
         }
         return `rgb(${r}, ${g}, ${b})`;
       }
@@ -246,72 +429,115 @@
         const now = performance.now();
         const dt = Math.max(0.001, (now - lastTS) / 1000);
         lastTS = now;
-        const decayFactor = Math.pow(0.5, dt / halfLife);
+        
         if(!running){
-          // paused: draw a static low-contrast vignette
-          ctx.fillStyle = '#001f3f';
+          ctx.fillStyle = '#0a0e17';
           ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);
-          ctx.globalAlpha = 0.18;
-          const w = canvas.width/dpr, h = canvas.height/dpr;
-          const grd = ctx.createRadialGradient(w*0.5,h*0.5,10, w*0.5,h*0.5, Math.max(w,h)*0.7);
-          grd.addColorStop(0,'#00345d');
-          grd.addColorStop(1,'#001f3f');
-          ctx.fillStyle = grd; ctx.fillRect(0,0,w,h);
-          ctx.globalAlpha = 1;
           return;
         }
 
-        // fade trail
-        ctx.fillStyle = '#001f3f';
+        ctx.fillStyle = '#0a0e17';
         ctx.fillRect(0,0,canvas.width/dpr,canvas.height/dpr);
 
-        // draw only active cells
         for(const [k, val] of active){
           if(val <= minVisible){ active.delete(k); continue; }
           const x = k % cols; const y = (k - x) / cols;
+          
           ctx.fillStyle = getHeatColor(val);
-          ctx.globalAlpha = Math.min(0.9, val/15);
+          ctx.globalAlpha = Math.min(0.5, val/7);
           ctx.fillRect(x*gridSize, y*gridSize, gridSize, gridSize);
-          const decayed = val * decayFactor;
-          if(decayed > minVisible){ active.set(k, decayed); } else { active.delete(k); }
+          
+          const decayed = val * colorDecay * trailDecay;
+          if(decayed > minVisible){ 
+            active.set(k, decayed); 
+          } else { 
+            active.delete(k); 
+          }
         }
+        ctx.globalAlpha = 1;
 
         requestAnimationFrame(frame);
       }
 
-      // Event wiring
       window.addEventListener('resize', resize, {passive:true});
       window.addEventListener('orientationchange', resize, {passive:true});
       window.addEventListener('pointermove', queuePointer, {passive:true});
       window.addEventListener('pointerdown', queuePointer, {passive:true});
 
-      // Toggle button
       const toggleBtn = document.getElementById('toggle-anim');
       toggleBtn?.addEventListener('click', ()=>{
         running = !running;
-        toggleBtn.querySelector('i')?.classList.toggle('fa-circle-play');
-        toggleBtn.querySelector('i')?.classList.toggle('fa-circle-pause');
+        const icon = toggleBtn.querySelector('i');
+        if(icon){
+          icon.classList.toggle('fa-circle-play');
+          icon.classList.toggle('fa-circle-pause');
+        }
         if(running) requestAnimationFrame(frame); else frame();
       });
 
       resize();
       if(running) requestAnimationFrame(frame); else frame();
     })();
-      // ===== Glow fade control =====
-  (function(){
-    const card = document.querySelector('.card');
-    if(!card) return;
-    const set = (v)=> card.style.setProperty('--glow-opacity', String(v));
-    let timer; const delay = 1800;
-    function poke(){ set(1); clearTimeout(timer); timer = setTimeout(()=> set(0), delay); }
-    // initial fade, then fade after inactivity
-    poke();
-    ['pointermove','pointerdown','focusin','mouseenter','touchstart','keydown'].forEach(evt=>{
-      card.addEventListener(evt, poke, {passive:true});
-    });
-  })();
-</script>
+
+    // Matrix rain effect
+    (function(){
+      const canvas = document.getElementById('matrix');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d', { alpha: true });
+      
+      let w = window.innerWidth;
+      let h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+      
+      const fontSize = 14;
+      const columns = Math.floor(w / fontSize);
+      const drops = Array(columns).fill(0);
+      const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ';
+      
+      let matrixRunning = false;
+      let animFrame;
+      
+      function draw(){
+        ctx.fillStyle = 'rgba(10, 14, 23, 0.05)';
+        ctx.fillRect(0, 0, w, h);
+        
+        ctx.fillStyle = '#5fc890';
+        ctx.font = fontSize + 'px monospace';
+        
+        for(let i = 0; i < drops.length; i++){
+          const text = chars[Math.floor(Math.random() * chars.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          
+          if(drops[i] * fontSize > h && Math.random() > 0.975){
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+        
+        if(matrixRunning) animFrame = requestAnimationFrame(draw);
+      }
+      
+      const toggleMatrix = document.getElementById('toggle-matrix');
+      toggleMatrix?.addEventListener('click', ()=>{
+        matrixRunning = !matrixRunning;
+        canvas.classList.toggle('active');
+        
+        if(matrixRunning){
+          draw();
+        } else {
+          cancelAnimationFrame(animFrame);
+          ctx.clearRect(0, 0, w, h);
+        }
+      });
+      
+      window.addEventListener('resize', ()=>{
+        w = window.innerWidth;
+        h = window.innerHeight;
+        canvas.width = w;
+        canvas.height = h;
+      });
+    })();
+  </script>
 </body>
 </html>
-
-
