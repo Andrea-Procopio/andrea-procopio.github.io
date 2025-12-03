@@ -11,7 +11,6 @@
   <link rel="icon" href="assets/icon1.jpg" type="image/jpeg" />
   <link rel="apple-touch-icon" href="assets/icon1.jpg" />
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -23,6 +22,20 @@
       --grid: #d0d0c8;
       --muted: #606060;
       --surface: #ffffff;
+      --border: rgba(26, 26, 26, 0.12);
+      --hover-bg: #1a1a1a;
+      --hover-fg: #f5f5f0;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0a0a0a;
+      --fg: #e5e5e0;
+      --grid: #2a2a28;
+      --muted: #909090;
+      --surface: #111111;
+      --border: rgba(229, 229, 224, 0.12);
+      --hover-bg: #e5e5e0;
+      --hover-fg: #0a0a0a;
     }
 
     * {
@@ -46,6 +59,7 @@
       position: relative;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     /* Custom crosshair cursor */
@@ -57,26 +71,49 @@
       cursor: crosshair;
     }
 
-    /* Parametric grid background */
+    /* Dense grid background */
     .grid-canvas {
       position: fixed;
       inset: 0;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.8;
+      opacity: 1;
     }
 
-    /* Coordinates display */
-    .coordinates {
+    /* Theme toggle */
+    .theme-toggle {
       position: fixed;
       top: 24px;
       right: 24px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.05em;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--fg);
+      background: transparent;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
       z-index: 100;
-      user-select: none;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--fg);
+      transform: rotate(180deg);
+    }
+
+    .theme-toggle svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--fg);
+      fill: none;
+      stroke-width: 2;
+      transition: stroke 0.3s ease;
+    }
+
+    .theme-toggle:hover svg {
+      stroke: var(--bg);
     }
 
     main {
@@ -90,41 +127,9 @@
 
     /* Header */
     header {
-      margin-bottom: 100px;
+      margin-bottom: 60px;
       position: relative;
-      padding-bottom: 60px;
-    }
-
-    /* Separator line with circuit node */
-    header::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, 
-        var(--fg) 0%, 
-        var(--fg) 45%, 
-        transparent 45%, 
-        transparent 55%, 
-        var(--fg) 55%, 
-        var(--fg) 100%
-      );
-    }
-
-    header::before {
-      content: '';
-      position: absolute;
-      bottom: -3px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 6px;
-      height: 6px;
-      border: 1px solid var(--fg);
-      background: var(--bg);
-      border-radius: 50%;
-      z-index: 1;
+      padding-bottom: 0;
     }
 
     .header-grid {
@@ -221,6 +226,10 @@
       mix-blend-mode: multiply;
     }
 
+    [data-theme="dark"] .avatar::after {
+      mix-blend-mode: screen;
+    }
+
     /* Corner markers */
     .avatar::before {
       content: '';
@@ -228,6 +237,33 @@
       inset: -8px;
       border: 1px solid var(--grid);
       pointer-events: none;
+    }
+
+    /* Separator */
+    .separator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 80px;
+      width: 100%;
+    }
+
+    .separator::before,
+    .separator::after {
+      content: '';
+      height: 1px;
+      background: var(--fg); /* Changed from var(--border) to var(--fg) to match footer thickness */
+      flex: 1;
+    }
+
+    .separator span {
+      display: block;
+      width: 7px;
+      height: 7px;
+      border: 1px solid var(--fg);
+      border-radius: 50%;
+      margin: 0 24px;
+      flex-shrink: 0;
     }
 
     /* Sections */
@@ -294,33 +330,67 @@
       opacity: 0.6;
     }
 
-    /* Fluid simulation container */
-    .fluid-container {
-      margin: 80px 0;
-      height: 500px;
-      border: 1px solid var(--fg);
-      position: relative;
-      background: #0a0a0a;
-      overflow: hidden;
+    /* Publications */
+    .publication {
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .fluid-container canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
+    .publication:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
     }
 
-    .fluid-label {
-      position: absolute;
-      top: 16px;
-      left: 16px;
+    .pub-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 6px;
+    }
+
+    .pub-status {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 10px;
-      letter-spacing: 0.15em;
-      color: #606060;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      pointer-events: none;
-      z-index: 10;
+      color: var(--muted);
+    }
+
+    .pub-year {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .pub-title {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.4;
+      margin-bottom: 6px;
+      font-style: italic;
+      color: var(--fg);
+    }
+
+    .pub-authors {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 300;
+    }
+
+    .pub-title a {
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s ease;
+    }
+
+    .pub-title a:hover {
+      border-bottom-color: var(--fg);
+      opacity: 1;
     }
 
     /* Research grid */
@@ -358,8 +428,8 @@
     }
 
     .research-item:hover {
-      background: var(--fg);
-      color: var(--bg);
+      background: var(--hover-bg);
+      color: var(--hover-fg);
     }
 
     .research-item:hover::before {
@@ -397,7 +467,7 @@
     }
 
     .contact-item:hover {
-      background: var(--fg);
+      background: var(--hover-bg);
     }
 
     .contact-item a {
@@ -413,7 +483,7 @@
     }
 
     .contact-item:hover a {
-      color: var(--bg);
+      color: var(--hover-fg);
     }
 
     /* Footer */
@@ -434,25 +504,27 @@
     footer::before {
       content: '';
       position: absolute;
-      top: -3px;
+      top: -3.5px;
       left: 0;
       width: 6px;
       height: 6px;
       border: 1px solid var(--fg);
       background: var(--bg);
       border-radius: 50%;
+      transition: background 0.3s ease;
     }
 
     footer::after {
       content: '';
       position: absolute;
-      top: -3px;
+      top: -3.5px;
       right: 0;
       width: 6px;
       height: 6px;
       border: 1px solid var(--fg);
       background: var(--bg);
       border-radius: 50%;
+      transition: background 0.3s ease;
     }
 
     .build-info {
@@ -467,17 +539,7 @@
       }
 
       .header-grid {
-        grid-template-columns: 1fr;
         gap: 48px;
-        text-align: center;
-      }
-
-      .avatar-container {
-        margin: 0 auto;
-      }
-
-      .sys-label {
-        justify-content: center;
       }
 
       h2::after {
@@ -488,12 +550,9 @@
         grid-template-columns: 1fr;
       }
 
-      .coordinates {
-        display: none;
-      }
-
-      .fluid-container {
-        height: 350px;
+      .theme-toggle {
+        top: 16px;
+        right: 16px;
       }
 
       footer {
@@ -505,6 +564,12 @@
       .build-info {
         flex-direction: column;
         gap: 8px;
+      }
+
+      .pub-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
       }
     }
 
@@ -524,10 +589,6 @@
       .research-grid {
         grid-template-columns: 1fr;
       }
-
-      .fluid-container {
-        height: 300px;
-      }
     }
 
     /* Reduced Motion */
@@ -536,38 +597,28 @@
         animation: none !important;
         transition: none !important;
       }
-      .grid-canvas,
-      .fluid-container canvas {
+      .grid-canvas {
         display: none;
-      }
-    }
-
-    /* Dark Mode */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0a0a0a;
-        --fg: #e5e5e0;
-        --grid: #2a2a28;
-        --muted: #909090;
-        --surface: #111111;
-      }
-
-      .avatar img {
-        filter: grayscale(100%) contrast(1.1) brightness(0.9);
-      }
-
-      .avatar:hover img {
-        filter: grayscale(60%) contrast(1) brightness(1);
       }
     }
   </style>
 </head>
 <body>
-  <!-- Parametric Grid Background -->
   <canvas id="grid" class="grid-canvas" aria-hidden="true"></canvas>
 
-  <!-- Cursor Coordinates -->
-  <div class="coordinates" id="coords">X:000 Y:000</div>
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+    <svg viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
 
   <main>
     <article>
@@ -588,6 +639,8 @@
           </div>
         </div>
       </header>
+      
+      <div class="separator"><span></span></div>
 
       <section>
         <h2 data-index="01">Abstract</h2>
@@ -595,14 +648,39 @@
         <p>Previously at the <a href="https://dii.univpm.it/en-gb/riot_en/" target="_blank" rel="noopener">RIOT Lab</a> (UNIVPM), I built tiny CNNs for wearables in the context of movement detection for Patients with Parkinson's Disease. Now at Harvard's <a href="https://www.cocodev.org" target="_blank" rel="noopener">CoCoDev Lab</a>, I focus my efforts on investigating shared mechanisms of physical reasoning between computer vision models and humans.</p>
       </section>
 
-      <!-- Fluid Simulation -->
-      <div class="fluid-container">
-        <canvas id="fluid"></canvas>
-        <div class="fluid-label">Interactive Fluid Dynamics</div>
-      </div>
+      <section>
+        <h2 data-index="02">Selected Publications</h2>
+        
+        <div class="publication">
+          <div class="pub-header">
+            <div class="pub-status">Under review at CVPR 2026 — Main track, Explainable Computer Vision</div>
+            <div class="pub-year">2025</div>
+          </div>
+          <div class="pub-title"><a href="#" onclick="event.preventDefault();alert('arXiv link coming soon')">Human-Like Coarse Object Representations in Vision Models</a></div>
+          <div class="pub-authors">Andrey Gizdov*, Andrea Procopio*, Yichen Li, Daniel Harari, Tomer Ullman (* equal contributions)</div>
+        </div>
+
+        <div class="publication">
+          <div class="pub-header">
+            <div class="pub-status">Accepted at AAAI 2026 — XAI4Science Workshop</div>
+            <div class="pub-year">2025</div>
+          </div>
+          <div class="pub-title"><a href="#" onclick="event.preventDefault();alert('arXiv link coming soon')">Towards Aligned Body Representations in vision models</a></div>
+          <div class="pub-authors">Andrey Gizdov*, Andrea Procopio*, Yichen Li, Daniel Harari, Tomer Ullman (* equal contributions)</div>
+        </div>
+
+        <div class="publication">
+          <div class="pub-header">
+            <div class="pub-status">Accepted at AAAI 2026 — AI for Time Series Analysis workshop</div>
+            <div class="pub-year">2025</div>
+          </div>
+          <div class="pub-title"><a href="#" onclick="event.preventDefault();alert('arXiv link coming soon')">Time Series Analysis at the Edge: Tiny Separable CNNs for Wearable Gait Detection and Optimal Sensor Placement</a></div>
+          <div class="pub-authors">Andrea Procopio, Marco Esposito, Sara Raggiunto, Andrey Gizdov, Alberto Belli, Paola Pierleoni</div>
+        </div>
+      </section>
 
       <section>
-        <h2 data-index="02">Research Domains</h2>
+        <h2 data-index="03">Research Interests</h2>
         <div class="research-grid">
           <div class="research-item">Deep Learning</div>
           <div class="research-item">Computer Vision</div>
@@ -613,13 +691,13 @@
       </section>
 
       <section>
-        <h2 data-index="03">Network Endpoints</h2>
+        <h2 data-index="04">Contact</h2>
         <div class="contact-grid">
           <div class="contact-item">
             <a href="https://www.linkedin.com/in/procopioandrea/" target="_blank" rel="me noopener">LinkedIn</a>
           </div>
           <div class="contact-item">
-            <a href="mailto:aprocopio@fas.harvard.edu">Email</a>
+            <a href="/cdn-cgi/l/email-protection#3d5c4d4f525e524d54527d5b5c4e13555c4f4b5c4f5913585948">Email</a>
           </div>
           <div class="contact-item">
             <a href="#" onclick="event.preventDefault();alert('CV download coming soon!')">Curriculum Vitae</a>
@@ -630,24 +708,28 @@
       <footer>
         <div class="build-info">
           <span id="last-updated"></span>
-          <span>BUILD:v2.1.0</span>
+          <span>v2.2.0</span>
         </div>
-        <span>SYSTEM:PROCOPIO.A</span>
+        <span>© 2025 Andrea Procopio</span>
       </footer>
     </article>
   </main>
 
-  <script>
-    // Cursor Coordinates
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // Theme Toggle
     (function() {
-      const coordsEl = document.getElementById('coords');
-      if (coordsEl) {
-        document.addEventListener('mousemove', (e) => {
-          const x = String(Math.floor(e.clientX)).padStart(3, '0');
-          const y = String(Math.floor(e.clientY)).padStart(3, '0');
-          coordsEl.textContent = `X:${x} Y:${y}`;
-        });
-      }
+      const themeToggle = document.getElementById('themeToggle');
+      const html = document.documentElement;
+      
+      // Check for saved theme preference or default to light mode
+      const currentTheme = localStorage.getItem('theme') || 'light';
+      html.setAttribute('data-theme', currentTheme);
+      
+      themeToggle.addEventListener('click', () => {
+        const theme = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+      });
     })();
 
     // Last Updated Date
@@ -658,11 +740,11 @@
         const year = d.getFullYear();
         const month = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        el.textContent = `UPDATED:${year}.${month}.${day}`;
+        el.textContent = `Updated ${year}.${month}.${day}`;
       }
     })();
 
-    // Parametric Grid Background
+    // Dense Grid Background - Corner Brackets with Force Field
     (function() {
       const canvas = document.getElementById('grid');
       if (!canvas) return;
@@ -678,61 +760,154 @@
       canvas.style.height = h + 'px';
       ctx.scale(dpr, dpr);
 
-      const gridSize = 60;
-      const cols = Math.ceil(w / gridSize) + 1;
-      const rows = Math.ceil(h / gridSize) + 1;
+      const gridSize = 100; // Increased spacing (more sparse)
+      const bracketLength = 10; // Length of each bracket arm
+      const cornerGap = 2; // Gap from corner point
       
-      let time = 0;
+      let mouseX = -1000;
+      let mouseY = -1000;
+      const mouseInfluence = 50; // Smaller field
+      const pushStrength = 400; // Stronger force
+      
+      // Store current states with velocity for physics-based animation
+      const lineStates = new Map();
+      
+      // Calculate grid offset to center it
+      function getGridOffset() {
+        const cols = Math.ceil(w / gridSize);
+        const rows = Math.ceil(h / gridSize);
+        const totalWidth = cols * gridSize;
+        const totalHeight = rows * gridSize;
+        return {
+          offsetX: (w - totalWidth) / 2 + gridSize / 2,
+          offsetY: (h - totalHeight) / 2 + gridSize / 2,
+          cols: cols + 1,
+          rows: rows + 1
+        };
+      }
+      
+      // Track mouse position
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
 
-      function drawGrid() {
+      document.addEventListener('mouseleave', () => {
+        mouseX = -1000;
+        mouseY = -1000;
+      });
+
+      function getLineColor(opacity = 0.01) {
+        const theme = document.documentElement.getAttribute('data-theme');
+        return theme === 'dark' ? `rgba(229, 229, 224, ${opacity})` : `rgba(26, 26, 26, ${opacity})`;
+      }
+
+      // Normalize angle to -PI to PI range
+      function normalizeAngle(angle) {
+        while (angle > Math.PI) angle -= 2 * Math.PI;
+        while (angle < -Math.PI) angle += 2 * Math.PI;
+        return angle;
+      }
+
+      // Smooth damping function for natural deceleration
+      function smoothDamp(current, target, velocity, smoothTime, deltaTime) {
+        const omega = 2 / smoothTime;
+        const x = omega * deltaTime;
+        const exp = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
+        const change = current - target;
+        const temp = (velocity + omega * change) * deltaTime;
+        const newVelocity = (velocity - omega * temp) * exp;
+        const newValue = target + (change + temp) * exp;
+        return { value: newValue, velocity: newVelocity };
+      }
+
+      function drawDenseGrid() {
         ctx.clearRect(0, 0, w, h);
-        ctx.strokeStyle = 'rgba(26, 26, 26, 0.15)';
-        ctx.lineWidth = 0.5;
+        ctx.lineWidth = 0.8;
+        ctx.lineCap = 'butt';
+        
+        const grid = getGridOffset();
+        const deltaTime = 1 / 60;
 
-        for (let i = 0; i < cols; i++) {
-          ctx.beginPath();
-          for (let j = 0; j < rows; j++) {
-            const x = i * gridSize;
-            const y = j * gridSize;
+        for (let i = 0; i < grid.cols; i++) {
+          for (let j = 0; j < grid.rows; j++) {
+            const x = i * gridSize + grid.offsetX;
+            const y = j * gridSize + grid.offsetY;
             
-            const waveX = Math.sin(time * 0.5 + i * 0.15 + j * 0.1) * 4;
-            const waveY = Math.cos(time * 0.5 + j * 0.15 + i * 0.1) * 4;
+            // Define 4 corner brackets (L-shapes pointing outward from center)
+            // Each bracket has 2 lines forming an L
+            const brackets = [
+              // Top-left corner
+              { id: `${i}-${j}-tl-h`, x1: x - gridSize/2 + cornerGap, y1: y - gridSize/2, x2: x - gridSize/2 + bracketLength, y2: y - gridSize/2 },
+              { id: `${i}-${j}-tl-v`, x1: x - gridSize/2, y1: y - gridSize/2 + cornerGap, x2: x - gridSize/2, y2: y - gridSize/2 + bracketLength },
+              
+              // Top-right corner
+              { id: `${i}-${j}-tr-h`, x1: x + gridSize/2 - cornerGap, y1: y - gridSize/2, x2: x + gridSize/2 - bracketLength, y2: y - gridSize/2 },
+              { id: `${i}-${j}-tr-v`, x1: x + gridSize/2, y1: y - gridSize/2 + cornerGap, x2: x + gridSize/2, y2: y - gridSize/2 + bracketLength },
+              
+              // Bottom-left corner
+              { id: `${i}-${j}-bl-h`, x1: x - gridSize/2 + cornerGap, y1: y + gridSize/2, x2: x - gridSize/2 + bracketLength, y2: y + gridSize/2 },
+              { id: `${i}-${j}-bl-v`, x1: x - gridSize/2, y1: y + gridSize/2 - cornerGap, x2: x - gridSize/2, y2: y + gridSize/2 - bracketLength },
+              
+              // Bottom-right corner
+              { id: `${i}-${j}-br-h`, x1: x + gridSize/2 - cornerGap, y1: y + gridSize/2, x2: x + gridSize/2 - bracketLength, y2: y + gridSize/2 },
+              { id: `${i}-${j}-br-v`, x1: x + gridSize/2, y1: y + gridSize/2 - cornerGap, x2: x + gridSize/2, y2: y + gridSize/2 - bracketLength }
+            ];
             
-            const finalX = x + waveX;
-            const finalY = y + waveY;
-            
-            if (j === 0) {
-              ctx.moveTo(finalX, finalY);
-            } else {
-              ctx.lineTo(finalX, finalY);
-            }
+            brackets.forEach((line) => {
+              // Calculate line segment's center point
+              const lineCenterX = (line.x1 + line.x2) / 2;
+              const lineCenterY = (line.y1 + line.y2) / 2;
+              
+              // Calculate force from cursor
+              const dx = lineCenterX - mouseX;
+              const dy = lineCenterY - mouseY;
+              const distance = Math.sqrt(dx * dx + dy * dy);
+              
+              let targetOffsetX = 0;
+              let targetOffsetY = 0;
+              let opacity = 0.01;
+              
+              if (distance < mouseInfluence && distance > 0) {
+                const force = Math.pow(1 - distance / mouseInfluence, 2);
+                
+                // Push away from cursor
+                const pushAngle = Math.atan2(dy, dx);
+                targetOffsetX = Math.cos(pushAngle) * force * pushStrength;
+                targetOffsetY = Math.sin(pushAngle) * force * pushStrength;
+                
+                opacity = 0.01 + force * 0.15;
+              }
+              
+              // Get or initialize current state
+              if (!lineStates.has(line.id)) {
+                lineStates.set(line.id, { x: 0, y: 0, vx: 0, vy: 0 });
+              }
+              const state = lineStates.get(line.id);
+              
+              // Physics-based smooth damping
+              const smoothTimePos = 0.15;
+              
+              const dampedX = smoothDamp(state.x, targetOffsetX, state.vx, smoothTimePos, deltaTime);
+              state.x = dampedX.value;
+              state.vx = dampedX.velocity;
+              
+              const dampedY = smoothDamp(state.y, targetOffsetY, state.vy, smoothTimePos, deltaTime);
+              state.y = dampedY.value;
+              state.vy = dampedY.velocity;
+              
+              ctx.strokeStyle = getLineColor(opacity);
+              
+              // Draw line with offset applied
+              ctx.beginPath();
+              ctx.moveTo(line.x1 + state.x, line.y1 + state.y);
+              ctx.lineTo(line.x2 + state.x, line.y2 + state.y);
+              ctx.stroke();
+            });
           }
-          ctx.stroke();
         }
 
-        for (let j = 0; j < rows; j++) {
-          ctx.beginPath();
-          for (let i = 0; i < cols; i++) {
-            const x = i * gridSize;
-            const y = j * gridSize;
-            
-            const waveX = Math.sin(time * 0.5 + i * 0.15 + j * 0.1) * 4;
-            const waveY = Math.cos(time * 0.5 + j * 0.15 + i * 0.1) * 4;
-            
-            const finalX = x + waveX;
-            const finalY = y + waveY;
-            
-            if (i === 0) {
-              ctx.moveTo(finalX, finalY);
-            } else {
-              ctx.lineTo(finalX, finalY);
-            }
-          }
-          ctx.stroke();
-        }
-
-        time += 0.01;
-        requestAnimationFrame(drawGrid);
+        requestAnimationFrame(drawDenseGrid);
       }
 
       function resize() {
@@ -743,375 +918,14 @@
         canvas.style.width = w + 'px';
         canvas.style.height = h + 'px';
         ctx.scale(dpr, dpr);
+        
+        lineStates.clear();
       }
 
       window.addEventListener('resize', resize);
 
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        drawGrid();
-      }
-    })();
-
-    // Enhanced Fluid Simulation
-    (function() {
-      const canvas = document.getElementById('fluid');
-      if (!canvas) return;
-
-      const container = canvas.parentElement;
-      let w = container.offsetWidth;
-      let h = container.offsetHeight;
-      
-      canvas.width = w;
-      canvas.height = h;
-
-      const ctx = canvas.getContext('2d', { alpha: false });
-
-      // Enhanced simulation parameters for heavier, denser fluid
-      const resolution = 96; // Lower resolution for thicker appearance
-      const cellSize = Math.max(w, h) / resolution;
-      const numCellsX = Math.ceil(w / cellSize);
-      const numCellsY = Math.ceil(h / cellSize);
-
-      // Velocity and density fields
-      let vx = new Array(numCellsX * numCellsY).fill(0);
-      let vy = new Array(numCellsX * numCellsY).fill(0);
-      let vx0 = new Array(numCellsX * numCellsY).fill(0);
-      let vy0 = new Array(numCellsX * numCellsY).fill(0);
-      let density = new Array(numCellsX * numCellsY).fill(0);
-      let density0 = new Array(numCellsX * numCellsY).fill(0);
-      
-      // Velocity magnitude tracking for color gradient
-      let velocityMag = new Array(numCellsX * numCellsY).fill(0);
-
-      const diffusion = 0.00003; // Even lower diffusion for denser, slower smoke
-      const viscosity = 0.0002; // Much higher viscosity for very heavy fluid
-      const dt = 0.12;
-      
-      // Throttle smoke emission
-      let lastEmitTime = 0;
-      const emitInterval = 80; // Milliseconds between smoke emissions
-
-      let mouseX = w / 2;
-      let mouseY = h / 2;
-      let pmouseX = w / 2;
-      let pmouseY = h / 2;
-      let mouseDown = false;
-
-      function IX(x, y) {
-        x = Math.max(0, Math.min(numCellsX - 1, x));
-        y = Math.max(0, Math.min(numCellsY - 1, y));
-        return x + y * numCellsX;
-      }
-
-      function diffuse(b, x, x0, diff, dt) {
-        const a = dt * diff * (numCellsX - 2) * (numCellsY - 2);
-        const c = 1 + 4 * a;
-        
-        for (let k = 0; k < 20; k++) {
-          for (let j = 1; j < numCellsY - 1; j++) {
-            for (let i = 1; i < numCellsX - 1; i++) {
-              x[IX(i, j)] = (x0[IX(i, j)] + a * (
-                x[IX(i + 1, j)] + x[IX(i - 1, j)] +
-                x[IX(i, j + 1)] + x[IX(i, j - 1)]
-              )) / c;
-            }
-          }
-          setBounds(b, x);
-        }
-      }
-
-      function project(velocX, velocY, p, div) {
-        for (let j = 1; j < numCellsY - 1; j++) {
-          for (let i = 1; i < numCellsX - 1; i++) {
-            div[IX(i, j)] = -0.5 * (
-              velocX[IX(i + 1, j)] - velocX[IX(i - 1, j)] +
-              velocY[IX(i, j + 1)] - velocY[IX(i, j - 1)]
-            ) / numCellsX;
-            p[IX(i, j)] = 0;
-          }
-        }
-        setBounds(0, div);
-        setBounds(0, p);
-
-        for (let k = 0; k < 20; k++) {
-          for (let j = 1; j < numCellsY - 1; j++) {
-            for (let i = 1; i < numCellsX - 1; i++) {
-              p[IX(i, j)] = (div[IX(i, j)] + p[IX(i + 1, j)] + p[IX(i - 1, j)] +
-                            p[IX(i, j + 1)] + p[IX(i, j - 1)]) / 4;
-            }
-          }
-          setBounds(0, p);
-        }
-
-        for (let j = 1; j < numCellsY - 1; j++) {
-          for (let i = 1; i < numCellsX - 1; i++) {
-            velocX[IX(i, j)] -= 0.5 * (p[IX(i + 1, j)] - p[IX(i - 1, j)]) * numCellsX;
-            velocY[IX(i, j)] -= 0.5 * (p[IX(i, j + 1)] - p[IX(i, j - 1)]) * numCellsX;
-          }
-        }
-        setBounds(1, velocX);
-        setBounds(2, velocY);
-      }
-
-      function advect(b, d, d0, velocX, velocY, dt) {
-        const dtx = dt * (numCellsX - 2);
-        const dty = dt * (numCellsY - 2);
-
-        for (let j = 1; j < numCellsY - 1; j++) {
-          for (let i = 1; i < numCellsX - 1; i++) {
-            let tmp1 = dtx * velocX[IX(i, j)];
-            let tmp2 = dty * velocY[IX(i, j)];
-            let x = i - tmp1;
-            let y = j - tmp2;
-
-            if (x < 0.5) x = 0.5;
-            if (x > numCellsX - 1.5) x = numCellsX - 1.5;
-            let i0 = Math.floor(x);
-            let i1 = i0 + 1;
-
-            if (y < 0.5) y = 0.5;
-            if (y > numCellsY - 1.5) y = numCellsY - 1.5;
-            let j0 = Math.floor(y);
-            let j1 = j0 + 1;
-
-            let s1 = x - i0;
-            let s0 = 1 - s1;
-            let t1 = y - j0;
-            let t0 = 1 - t1;
-
-            d[IX(i, j)] = s0 * (t0 * d0[IX(i0, j0)] + t1 * d0[IX(i0, j1)]) +
-                          s1 * (t0 * d0[IX(i1, j0)] + t1 * d0[IX(i1, j1)]);
-          }
-        }
-        setBounds(b, d);
-      }
-
-      function setBounds(b, x) {
-        for (let i = 1; i < numCellsX - 1; i++) {
-          x[IX(i, 0)] = b === 2 ? -x[IX(i, 1)] : x[IX(i, 1)];
-          x[IX(i, numCellsY - 1)] = b === 2 ? -x[IX(i, numCellsY - 2)] : x[IX(i, numCellsY - 2)];
-        }
-        for (let j = 1; j < numCellsY - 1; j++) {
-          x[IX(0, j)] = b === 1 ? -x[IX(1, j)] : x[IX(1, j)];
-          x[IX(numCellsX - 1, j)] = b === 1 ? -x[IX(numCellsX - 2, j)] : x[IX(numCellsX - 2, j)];
-        }
-        x[IX(0, 0)] = 0.5 * (x[IX(1, 0)] + x[IX(0, 1)]);
-        x[IX(0, numCellsY - 1)] = 0.5 * (x[IX(1, numCellsY - 1)] + x[IX(0, numCellsY - 2)]);
-        x[IX(numCellsX - 1, 0)] = 0.5 * (x[IX(numCellsX - 2, 0)] + x[IX(numCellsX - 1, 1)]);
-        x[IX(numCellsX - 1, numCellsY - 1)] = 0.5 * (x[IX(numCellsX - 2, numCellsY - 1)] + x[IX(numCellsX - 1, numCellsY - 2)]);
-      }
-
-      function step() {
-        // Velocity step
-        diffuse(1, vx0, vx, viscosity, dt);
-        diffuse(2, vy0, vy, viscosity, dt);
-
-        project(vx0, vy0, vx, vy);
-
-        advect(1, vx, vx0, vx0, vy0, dt);
-        advect(2, vy, vy0, vx0, vy0, dt);
-
-        project(vx, vy, vx0, vy0);
-
-        // Density step
-        diffuse(0, density0, density, diffusion, dt);
-        advect(0, density, density0, vx, vy, dt);
-
-        // Calculate velocity magnitude for color gradient
-        for (let i = 0; i < velocityMag.length; i++) {
-          const mag = Math.sqrt(vx[i] * vx[i] + vy[i] * vy[i]);
-          velocityMag[i] = velocityMag[i] * 0.92 + mag * 0.08; // Smooth transition
-        }
-
-        // Slower fade for denser smoke
-        for (let i = 0; i < density.length; i++) {
-          density[i] *= 0.995; // Much slower fade
-        }
-      }
-
-      function render() {
-        // Black background
-        ctx.fillStyle = '#0a0a0a';
-        ctx.fillRect(0, 0, w, h);
-
-        // Draw smoke with gradient colors only on perturbation
-        for (let j = 0; j < numCellsY; j++) {
-          for (let i = 0; i < numCellsX; i++) {
-            const idx = IX(i, j);
-            const d = density[idx];
-            
-            if (d > 0.01) {
-              const x = i * cellSize;
-              const y = j * cellSize;
-              
-              // Velocity magnitude determines color intensity
-              const vel = velocityMag[idx];
-              const colorIntensity = Math.min(vel * 15, 1); // Only show color with movement
-              
-              let r, g, b;
-              
-              if (colorIntensity > 0.1) {
-                // Vibrant gradient from cyan through magenta to orange
-                const normalizedPos = (i / numCellsX + j / numCellsY) / 2;
-                const phase = (normalizedPos + vel * 0.3) % 1;
-                
-                if (phase < 0.33) {
-                  // Cyan to magenta
-                  const t = phase / 0.33;
-                  r = Math.floor(0 + t * 255);
-                  g = Math.floor(200 - t * 100);
-                  b = Math.floor(255 - t * 55);
-                } else if (phase < 0.66) {
-                  // Magenta to orange
-                  const t = (phase - 0.33) / 0.33;
-                  r = Math.floor(255);
-                  g = Math.floor(100 + t * 65);
-                  b = Math.floor(200 - t * 200);
-                } else {
-                  // Orange to yellow
-                  const t = (phase - 0.66) / 0.34;
-                  r = Math.floor(255);
-                  g = Math.floor(165 + t * 90);
-                  b = Math.floor(0 + t * 100);
-                }
-                
-                // Mix with white smoke based on color intensity
-                const whiteAmount = 1 - colorIntensity;
-                r = Math.floor(r * colorIntensity + 220 * whiteAmount);
-                g = Math.floor(g * colorIntensity + 220 * whiteAmount);
-                b = Math.floor(b * colorIntensity + 220 * whiteAmount);
-              } else {
-                // Pure white/gray smoke when not moving
-                const gray = 200 + Math.random() * 20;
-                r = g = b = gray;
-              }
-              
-              // Higher alpha for denser appearance
-              const alpha = Math.min(d * 1.5, 0.95);
-              
-              ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-              
-              // Draw larger cells for denser look
-              ctx.fillRect(x - 1, y - 1, cellSize + 2, cellSize + 2);
-            }
-          }
-        }
-      }
-
-      function addDensity(x, y, amount) {
-        const i = Math.floor(x / cellSize);
-        const j = Math.floor(y / cellSize);
-        
-        // Much tighter spread for concentrated, heavy smoke
-        for (let di = -1; di <= 1; di++) {
-          for (let dj = -1; dj <= 1; dj++) {
-            const ni = i + di;
-            const nj = j + dj;
-            if (ni >= 0 && ni < numCellsX && nj >= 0 && nj < numCellsY) {
-              const dist = Math.sqrt(di * di + dj * dj);
-              const falloff = Math.exp(-dist * 0.8);
-              density[IX(ni, nj)] += amount * falloff;
-            }
-          }
-        }
-      }
-
-      function addVelocity(x, y, amountX, amountY) {
-        const i = Math.floor(x / cellSize);
-        const j = Math.floor(y / cellSize);
-        
-        // Tighter velocity spread for heavy fluid
-        for (let di = -1; di <= 1; di++) {
-          for (let dj = -1; dj <= 1; dj++) {
-            const ni = i + di;
-            const nj = j + dj;
-            if (ni >= 0 && ni < numCellsX && nj >= 0 && nj < numCellsY) {
-              const dist = Math.sqrt(di * di + dj * dj);
-              const falloff = Math.exp(-dist * 1.2);
-              vx[IX(ni, nj)] += amountX * falloff;
-              vy[IX(ni, nj)] += amountY * falloff;
-            }
-          }
-        }
-      }
-
-      // Mouse interaction
-      canvas.addEventListener('mousedown', () => mouseDown = true);
-      canvas.addEventListener('mouseup', () => mouseDown = false);
-      canvas.addEventListener('mouseleave', () => mouseDown = false);
-      
-      canvas.addEventListener('mousemove', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        pmouseX = mouseX;
-        pmouseY = mouseY;
-        mouseX = e.clientX - rect.left;
-        mouseY = e.clientY - rect.top;
-
-        if (mouseDown) {
-          const now = Date.now();
-          // Throttle emission for slower, heavier release
-          if (now - lastEmitTime > emitInterval) {
-            const dx = mouseX - pmouseX;
-            const dy = mouseY - pmouseY;
-            addDensity(mouseX, mouseY, 60); // Much less density
-            addVelocity(mouseX, mouseY, dx * 3, dy * 3); // Lower velocity for heavier feel
-            lastEmitTime = now;
-          }
-        }
-      });
-
-      // Touch support
-      canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        mouseDown = true;
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        mouseX = touch.clientX - rect.left;
-        mouseY = touch.clientY - rect.top;
-        pmouseX = mouseX;
-        pmouseY = mouseY;
-        lastEmitTime = Date.now();
-      });
-
-      canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        const touch = e.touches[0];
-        pmouseX = mouseX;
-        pmouseY = mouseY;
-        mouseX = touch.clientX - rect.left;
-        mouseY = touch.clientY - rect.top;
-
-        const now = Date.now();
-        // Throttle emission for slower, heavier release
-        if (now - lastEmitTime > emitInterval) {
-          const dx = mouseX - pmouseX;
-          const dy = mouseY - pmouseY;
-          addDensity(mouseX, mouseY, 60);
-          addVelocity(mouseX, mouseY, dx * 3, dy * 3);
-          lastEmitTime = now;
-        }
-      });
-
-      canvas.addEventListener('touchend', () => mouseDown = false);
-
-      function animate() {
-        step();
-        render();
-        requestAnimationFrame(animate);
-      }
-
-      function resize() {
-        w = container.offsetWidth;
-        h = container.offsetHeight;
-        canvas.width = w;
-        canvas.height = h;
-      }
-
-      window.addEventListener('resize', resize);
-
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        animate();
+        drawDenseGrid();
       }
     })();
   </script>
