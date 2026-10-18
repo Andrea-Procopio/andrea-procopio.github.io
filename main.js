@@ -543,23 +543,6 @@ function botanical(svg){
  if('IntersectionObserver'in window){const ob=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){ob.disconnect();show()}},{threshold:.15});ob.observe(svg)}else show();
 }
 const tree=document.getElementById('botanical-tree');if(tree)botanical(tree);
-function makeTexture(mode){
- const can=document.createElement('canvas');can.width=420;can.height=560;const ctx=can.getContext('2d');
- if(!ctx)return null;
- ctx.fillStyle='#f7f6f2';ctx.fillRect(0,0,420,560);
- const img=ctx.createImageData(420,560);
- for(let y=0;y<560;y++)for(let x=0;x<420;x++){
-  const nx=(x-210)/210,ny=(y-275)/275;
-  const envelope=Math.max(0,1-Math.pow(Math.hypot(nx,ny),1.25));
-  const threads=mode==='research'?Math.abs(Math.sin(nx*9+Math.sin(ny*11)*.8)*Math.cos(ny*7)):Math.abs(Math.sin(nx*4+ny*9));
-  const shade=Math.round(247-130*envelope*(.20+.8*threads));
-  const i=(y*420+x)*4;img.data[i]=shade;img.data[i+1]=shade;img.data[i+2]=shade;img.data[i+3]=255;
- }
- ctx.putImageData(img,0,0);const image=new Image();image.src=can.toDataURL('image/png');return image;
-}
-for(const [id,mode] of [['research-specimen','research'],['botanical-halftone','career']]){
- const el=document.getElementById(id);if(!el||!capable)continue;const img=makeTexture(mode);if(img)render(el,img,{size:mode==='research'?.62:.70,contrast:.4});
-}
 if('IntersectionObserver'in window&&!reduced){
  const ob=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){e.target.classList.add('revealed');ob.unobserve(e.target)}},{threshold:.04});
  document.querySelectorAll('[data-reveal]').forEach(x=>ob.observe(x));document.documentElement.classList.add('js-motion');
