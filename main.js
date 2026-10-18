@@ -538,7 +538,7 @@ if(portrait&&surface){
   const key='andrea-halftone-portrait-session-v1';
   const finalSize=0.45;
   const animate=playOnceInSession(key);
-  render(surface,image,{size:animate?1:finalSize,contrast:.48,offsetY:.035,scale:.84}).then(mount=>{
+  render(surface,image,{size:animate?1:finalSize,contrast:.48,offsetY:.035,scale:.74}).then(mount=>{
     if(!mount)return;
     portrait.classList.add('shader-ready');
     function enableHover(){
