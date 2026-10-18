@@ -1,7 +1,7 @@
 name: Site preview checks
 on:
   pull_request:
-    branches: [main, fix/halftone-redesign-preview]
+    branches: [main, fix/halftone-redesign-preview, design/halftone-v2-editorial]
   workflow_dispatch:
 jobs:
   smoke:
