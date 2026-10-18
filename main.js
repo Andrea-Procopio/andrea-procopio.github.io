@@ -555,3 +555,49 @@ void main() {
     document.documentElement.classList.add('js-motion');
   }
 })();
+
+/* V2: shared hexagonal gooey field for editorial continuity.
+   A generated grayscale image encodes tonal shape; Paper Shaders renders the actual dots. */
+(function(){
+ 'use strict';
+ const P=typeof PaperShaders!=='undefined'?PaperShaders:null;
+ if(!P)return;
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ function source(kind){
+   const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;
+   const ctx=canvas.getContext('2d');if(!ctx)return null;
+   ctx.fillStyle='#f7f6f2';ctx.fillRect(0,0,512,512);
+   const center=kind==='research'?[256,245]:[280,255];
+   // One continuous, low-frequency tonal structure with fine scientific interference.
+   for(let y=0;y<512;y+=3)for(let x=0;x<512;x+=3){
+     const nx=(x-center[0])/256,ny=(y-center[1])/256;
+     const angle=Math.atan2(ny,nx),r=Math.hypot(nx,ny);
+     const wave=Math.sin(14*r-3*angle+Math.sin(5*angle)*1.1);
+     const envelope=Math.max(0,1-r/1.12);
+     const level=Math.max(0,Math.min(1,envelope*(.55+.4*wave)));
+     const shade=Math.round(247-150*level);
+     ctx.fillStyle='rgb('+shade+','+shade+','+shade+')';ctx.fillRect(x,y,3,3);
+   }
+   const img=new Image();img.src=canvas.toDataURL('image/png');return img;
+ }
+ function init(el){
+   const img=source(el.dataset.field);if(!img)return;
+   img.onload=()=>{
+     try{
+       const uniforms={u_image:img,u_colorFront:P.getShaderColorFromString('#33332f'),u_colorBack:P.getShaderColorFromString('#f7f6f2'),u_size:.66,u_radius:1.34,u_contrast:.43,u_originalColors:false,u_inverted:false,u_grainMixer:.03,u_grainOverlay:.015,u_grainSize:.4,u_grid:P.HalftoneDotsGrids.hex,u_type:P.HalftoneDotsTypes.gooey,u_fit:P.ShaderFitOptions.cover,u_scale:1,u_rotation:0,u_offsetX:0,u_offsetY:0,u_originX:.5,u_originY:.5,u_worldWidth:0,u_worldHeight:0};
+       const m=new P.ShaderMount(el,P.halftoneDotsFragmentShader,uniforms,undefined,0,0,1);
+       if(!m.program){m.dispose();return}
+       if(!reduced&&'IntersectionObserver'in window){
+         let done=false;
+         new IntersectionObserver((entries,observer)=>{
+           if(entries.some(e=>e.isIntersecting)&&!done){
+             done=true;observer.disconnect();
+             m.setUniforms({u_size:.54});
+           }
+         },{threshold:.1}).observe(el);
+       }
+     }catch(e){console.warn('Supplementary halftone unavailable',e)}
+   };
+ }
+ if(document.createElement('canvas').getContext('webgl2'))document.querySelectorAll('[data-field]').forEach(init);
+})();
