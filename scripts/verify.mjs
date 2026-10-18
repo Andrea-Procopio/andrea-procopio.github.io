@@ -47,12 +47,12 @@ assert.ok(css.includes('color:#62625b'),'Description contrast must remain readab
 assert.equal((career.match(/data-tip="/g)||[]).length,6,'Six labeled connector endpoints required');
 assert.equal((career.match(/data-track="/g)||[]).length,6,'Six duration stems required');
 // Institution heading, then role, then date: the reference's hierarchy, preserving a full description.
-for(const match of career.matchAll(/<article class="career-entry[\\s\\S]*?<\\/article>/g)){
-  const entry=match[0];
-  assert.ok(entry.indexOf('<h2>')<entry.indexOf('class="career-role"')&&entry.indexOf('class="career-role"')<entry.indexOf('class="career-date"'),
+for(const part of career.split('<article class="career-entry').slice(1)){
+  const entry=part.split('</article>')[0];
+  assert.ok(entry.indexOf('<h2>')<entry.indexOf('class="career-role"') &&
+    entry.indexOf('class="career-role"')<entry.indexOf('class="career-date"'),
     'Career title, role, and date should have a consistent reading order');
 }
-
 
 const content=career.split('</head>')[1];
 const expected=[
