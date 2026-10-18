@@ -1,0 +1,13 @@
+{
+  "name": "andrea-editorial-preview",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "start": "vite --host 0.0.0.0",
+    "check": "node --check main.js && node scripts/check.mjs"
+  },
+  "devDependencies": {
+    "vite": "^6.3.0"
+  }
+}
