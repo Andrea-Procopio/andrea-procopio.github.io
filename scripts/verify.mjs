@@ -6,7 +6,7 @@ for(const page of pages){
  const html=readFileSync(page,'utf8');
  assert.ok(html.includes('style.css')&&html.includes('main.js'),page+' missing shared assets');
  for(const route of ['research.html','career.html'])assert.ok(html.includes(route),page+' missing navigation');
- assert.equal((html.match(/<h1\\b/g)||[]).length,1,page+' needs one heading');
+ assert.equal(html.split('<h1 ').length-1,1,page+' needs one heading');
 }
 const home=readFileSync('index.html','utf8');
 const research=readFileSync('research.html','utf8');
