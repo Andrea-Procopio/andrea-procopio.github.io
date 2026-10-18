@@ -508,7 +508,7 @@ async function render(host,img,opts={}){
  }catch(err){console.warn('Halftone fallback active',err);return null}
 }
 // Shader coarseness: 1 is largest dots; 0 is the finest dot grid.
-const TRANSITION_MS=5000;
+const TRANSITION_MS=4000;
 function transitionCoarseness(mount,from,to,onComplete){
   if(reduced){
     mount.setUniforms({u_size:to});
@@ -559,7 +559,7 @@ if(portrait&&surface){
 const branchImage=document.getElementById('branch-image');
 if(branchImage){
   const layer=document.getElementById('branch-shader');
-  const finalSize=0;
+  const finalSize=0.2;
   render(layer,branchImage,{size:reduced?finalSize:1,radius:1.05,contrast:0.5}).then(mount=>{
     if(!mount)return;
     transitionCoarseness(mount,1,finalSize);
