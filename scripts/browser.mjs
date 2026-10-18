@@ -11,14 +11,18 @@ try{
  const page=await browser.newPage({viewport});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:4173/'+route,{waitUntil:'domcontentloaded',timeout:20000});
- await page.waitForTimeout(400);
+ await page.waitForTimeout(700);
  assert.equal(await page.locator('h1').count(),1,'one page heading');
  assert.deepEqual(errors,[],'page runtime errors');
  const w=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,view:innerWidth}));
  assert.ok(w.scroll<=w.view+2,'horizontal overflow '+route+' '+viewport.width+': '+JSON.stringify(w));
  if(route==='research.html')assert.equal(await page.locator('.publication-row').count(),5);
- if(route==='career.html')assert.ok(await page.locator('#botanical-tree path').count()>100);
- await page.screenshot({path:'v3-'+(route||'home').replace('.html','')+'-'+viewport.width+'.png',fullPage:true,animations:'disabled',timeout:20000});
+ if(route==='career.html'){
+   assert.equal(await page.locator('.timeline-branch h2').count(),6);
+   assert.equal(await page.locator('#branch-image').count(),1);
+   assert.ok(await page.locator('#branch-image').evaluate(x=>x.complete&&x.naturalWidth>0),'career image must load');
+ }
+ await page.screenshot({path:'v3-'+(route||'home').replace('.html','')+'-'+viewport.width+'.png',fullPage:true,animations:'disabled',timeout:25000});
  await page.close();
  }}
  console.log('All six browser routes passed');
