@@ -18,7 +18,7 @@ const research=readFileSync('research.html','utf8');
 const career=readFileSync('career.html','utf8');
 const js=readFileSync('main.js','utf8');
 assert.ok(home.includes('assets/profile.jpeg')&&home.includes('id="contact"'));
-const biography=home.match(/<div class="introduction">([\\s\\S]*?)<\\/div>/)?.[1]||'';
+const biography=home.split('<div class="introduction">')[1]?.split('</div>')[0]||'';
 assert.equal((biography.match(/<p>/g)||[]).length,4,'Landing biography must have exactly four paragraphs');
 for(const phrase of [
   "I'm a PhD student at MIT working with Prof. Dimitris Bertsimas, and a Research Fellow at Harvard.",
