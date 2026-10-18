@@ -1,0 +1,13 @@
+import {readFileSync,existsSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const html=readFileSync('index.html','utf8');
+const css=readFileSync('style.css','utf8');
+const js=readFileSync('main.js','utf8');
+for (const file of ['assets/profile.jpeg','assets/icon1.jpg','style.css','main.js']) assert.ok(existsSync(file), 'Missing '+file);
+for(const id of ['portrait','portrait-shader','research','experience','contact']) assert.ok(html.includes('id="'+id+'"'),'Missing section '+id);
+assert.ok(js.includes('halftoneDotsFragmentShader'),'Paper shader missing');
+assert.ok(js.includes('portrait.classList.add(\'is-live\')'),'Shader activation missing');
+assert.ok(css.includes('.hero-art img{position:absolute;z-index:0}'),'Portrait fallback layout missing');
+assert.ok(html.includes('assets/profile.jpeg'),'Portrait source missing');
+assert.ok(!html.includes('data-controls'),'Legacy control panel still present');
+console.log('Static site checks passed');
