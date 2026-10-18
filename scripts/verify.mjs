@@ -7,10 +7,11 @@ for(const page of pages){
   const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
   assert.ok(embedded,page+' missing inline style fallback');
   assert.equal(embedded[1].trim(),css.trim(),page+' styles differ from style.css');
-  assert.ok(html.includes('style.css?v=20261018-temporal-tree-v4'),page+' CSS version mismatch');
-  assert.ok(html.includes('main.js?v=20261018-session-v1'),page+' script version mismatch');
+  assert.ok(html.includes('style.css?v=20261018-temporal-tree-v5'),page+' CSS version mismatch');
+  assert.ok(html.includes('main.js?v=20261018-session-v2'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
+  assert.ok(!html.includes('class="wordmark"'),page+' should not include top Andrea Procopio link');
 }
 const home=readFileSync('index.html','utf8');
 const research=readFileSync('research.html','utf8');
@@ -47,6 +48,14 @@ assert.ok(css.includes('color:#62625b'),'Description contrast must remain readab
 const treeSvg=career.split('<svg viewBox="0 0 180 920"')[1]?.split('</svg>')[0]||'';
 assert.equal((treeSvg.match(/data-tip="/g)||[]).length,6,'Six labeled connector endpoints required');
 assert.equal((treeSvg.match(/data-track="/g)||[]).length,6,'Six duration stems required');
+assert.equal((treeSvg.match(/class="tree-hitbox"/g)||[]).length,12,'Each stem and leader needs a hover hitbox');
+for(const slug of branches.map(branch=>branch[0])){
+  assert.equal((treeSvg.match(new RegExp('data-hit="'+slug+'"','g'))||[]).length,2,'Missing branch and leader hover targets for '+slug);
+}
+assert.ok(css.includes('.tree-hitbox{fill:none;stroke:transparent;stroke-width:14px;pointer-events:stroke'),'Hovered branches should have a wide invisible stroke target');
+assert.ok(css.includes('stroke-width:2.9;fill:none'),'Hovered branches must become bolder without filling their enclosed space');
+assert.ok(!css.includes('opacity:1;stroke:#2a2a27;fill:#2a2a27'),'The black triangle hover bug must never return');
+assert.ok(css.includes('pointer-events:auto}')&&css.includes('svg{display:block;width:100%;height:100%;overflow:visible;pointer-events:none'),'Diagram must allow stroke hover targets only');
 // Institution heading, then role, then date: the reference's hierarchy, preserving a full description.
 for(const part of career.split('<article class="career-entry').slice(1)){
   const entry=part.split('</article>')[0];
@@ -74,7 +83,10 @@ const links=[
 for(const link of links)assert.ok(content.includes('href="'+link+'"'),'Missing clickable career link: '+link);
 assert.ok(!content.includes('Research & academia')&&!content.includes('Entrepreneurship & other'));
 assert.ok(js.includes('TRANSITION_MS=3500'),'Animations must take 3.5 seconds');
-assert.ok(js.includes('const finalSize=0.5'),'Portrait must finish at size 0.5');
+assert.ok(js.includes('const finalSize=0.45'),'Portrait must finish at size 0.45');
+assert.ok(js.includes('scale:.84'),'Smaller portrait shader scale must match photo fallback');
+assert.ok(css.includes('portrait-fallback{transform:scale(.84)'),'Portrait fallback should use the same smaller scale');
+assert.ok(css.includes('.site-header{justify-content:flex-end}'),'Header must right-align navigation without wordmark');
 assert.ok(js.includes('const finalSize=0.2'),'Tree must finish at size 0.2');
 assert.ok(js.includes('sessionStorage.getItem')&&js.includes('sessionStorage.setItem'),'Must run once per tab session');
 assert.ok(js.includes('andrea-halftone-portrait-session-v1')&&js.includes('andrea-halftone-tree-session-v1'),'Each page needs independent state');
