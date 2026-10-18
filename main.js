@@ -495,7 +495,7 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function supportsWebGL(){try{return !!document.createElement('canvas').getContext('webgl2')}catch{return false}}
 const capable=!!P&&supportsWebGL();
 function uniforms(img,opts={}){
-return {u_image:img,u_colorFront:P.getShaderColorFromString('#282824'),u_colorBack:P.getShaderColorFromString('#f7f6f2'),u_size:opts.size??.55,u_radius:1.3,u_contrast:opts.contrast??.42,u_originalColors:false,u_inverted:false,u_grainMixer:.08,u_grainOverlay:.025,u_grainSize:.4,u_grid:P.HalftoneDotsGrids.hex,u_type:P.HalftoneDotsTypes.gooey,u_fit:P.ShaderFitOptions.cover,u_scale:1,u_rotation:0,u_offsetX:0,u_offsetY:opts.offsetY??0,u_originX:.5,u_originY:.5,u_worldWidth:0,u_worldHeight:0};
+return {u_image:img,u_colorFront:P.getShaderColorFromString('#282824'),u_colorBack:P.getShaderColorFromString('#f7f6f2'),u_size:opts.size??.55,u_radius:opts.radius??1.3,u_contrast:opts.contrast??.42,u_originalColors:false,u_inverted:false,u_grainMixer:.08,u_grainOverlay:.025,u_grainSize:.4,u_grid:P.HalftoneDotsGrids.hex,u_type:P.HalftoneDotsTypes.gooey,u_fit:P.ShaderFitOptions.cover,u_scale:1,u_rotation:0,u_offsetX:0,u_offsetY:opts.offsetY??0,u_originX:.5,u_originY:.5,u_worldWidth:0,u_worldHeight:0};
 }
 async function render(host,img,opts={}){
  if(!capable||!host||!img)return null;
@@ -516,33 +516,13 @@ if(portrait&&surface){
    if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const r=portrait.getBoundingClientRect();m.setUniforms({u_size:.50+.09*Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))})})});portrait.addEventListener('pointerleave',()=>m.setUniforms({u_size:.55}))}
  });
 }
-let seed=82739;function rng(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296}
-const ns='http://www.w3.org/2000/svg';
-function botanical(svg){
- if(!svg)return;
- const group=document.createElementNS(ns,'g');svg.append(group);
- const queue=[];
- function branch(x,y,ang,len,depth,dist){
-  if(depth===0||queue.length>850)return;
-  const ex=x+Math.sin(ang)*len,ey=y-Math.cos(ang)*len;
-  const path=document.createElementNS(ns,'path');
-  const fmt=n=>n.toFixed(2);
-  path.setAttribute('d',`M${fmt(x)} ${fmt(y)} Q${fmt((x+ex)/2+Math.cos(ang)*len*.02)} ${fmt((y+ey)/2)} ${fmt(ex)} ${fmt(ey)}`);
-  path.setAttribute('pathLength','1');
-  path.style.setProperty('--width',Math.max(.45,(depth/10)*2.7).toFixed(2));
-  path.style.setProperty('--birth',Math.min(1,dist/710).toFixed(3));
-  group.append(path);queue.push(path);
-  const noise=rng();
-  branch(ex,ey,ang+(noise-.5)*.17,len*.79,depth-1,dist+len);
-  if(depth>2)branch(ex,ey,ang-(.34+rng()*.15),len*.72,depth-2,dist+len);
-  if(depth>3)branch(ex,ey,ang+(.36+rng()*.15),len*.70,depth-2,dist+len);
- }
- branch(306,682,-.02,115,10,0);
- if(reduced){svg.classList.add('is-grown');return}
- const show=()=>{svg.classList.add('is-growing');setTimeout(()=>{svg.classList.remove('is-growing');svg.classList.add('is-grown')},4900)};
- if('IntersectionObserver'in window){const ob=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){ob.disconnect();show()}},{threshold:.15});ob.observe(svg)}else show();
+const branchImage=document.getElementById('branch-image');
+if(branchImage){
+ const layer=document.getElementById('branch-shader');
+ render(layer,branchImage,{size:0.14,radius:1.05,contrast:0.5}).then(mount=>{
+   if(!mount)console.warn('Career photo using image fallback');
+ });
 }
-const tree=document.getElementById('botanical-tree');if(tree)botanical(tree);
 if('IntersectionObserver'in window&&!reduced){
  const ob=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){e.target.classList.add('revealed');ob.unobserve(e.target)}},{threshold:.04});
  document.querySelectorAll('[data-reveal]').forEach(x=>ob.observe(x));document.documentElement.classList.add('js-motion');
