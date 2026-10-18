@@ -1,5 +1,5 @@
 import { chromium } from 'playwright';import {spawn} from 'node:child_process';import assert from 'node:assert/strict';
-const server=spawn('npm',['run','dev','--','--port','4173','--strictPort'],{stdio:'pipe'});
+const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','4173','--strictPort'],{stdio:'pipe'});
 const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 let browser;
 try{
