@@ -41,8 +41,8 @@ for(const phrase of [
   'reliably and meaningfully automate scientific discovery',
   'continual learning and recursive self improvement',
   'raise the median quality of life.',
-  'where my thesis was co-advised by Prof. Tomer Ullman',
-  'Harvard’s Computation, Cognition, and Development Lab.',
+  'I studied Computer Science and Economics at Bocconi. My thesis grew out of research with Prof. Tomer Ullman',
+  'Harvard’s Computation, Cognition, and Development Lab, where I continue to collaborate.',
   'Italy’s largest student-run AI research lab',
   'a community for Europe’s brightest founders under 26.'
 ]) assert.ok(biography.includes(phrase),'Missing biography copy: '+phrase);
