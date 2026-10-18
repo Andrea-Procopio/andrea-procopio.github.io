@@ -1,0 +1,14 @@
+{
+  "name": "andrea-v3-site",
+  "private": true,
+  "version": "3.0.0",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "check": "node --check main.js && node scripts/verify.mjs",
+    "test": "node scripts/browser.mjs"
+  },
+  "devDependencies": {
+    "vite": "^6.3.0",
+    "playwright": "^1.58.0"
+  }
+}
