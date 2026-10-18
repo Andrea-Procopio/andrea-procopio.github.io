@@ -7,7 +7,7 @@ for(const page of pages){
   const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
   assert.ok(embedded,page+' missing inline style fallback');
   assert.equal(embedded[1].trim(),css.trim(),page+' styles differ from style.css');
-  assert.ok(html.includes('style.css?v=20261018-contact-v1'),page+' CSS version mismatch');
+  assert.ok(html.includes('style.css?v=20261018-mobile-v1'),page+' CSS version mismatch');
   assert.ok(html.includes('main.js?v=20261018-session-v4'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
@@ -20,6 +20,16 @@ for(const page of pages){
   assert.ok(head.includes('<meta property="og:image:type" content="image/jpeg">'),page+' missing OG image type');
   assert.ok(!head.includes('property="og:image" content="https://andrea-procopio.github.io/assets/profile.jpeg"'),page+' outdated preview');
 }
+// Vector arrows avoid the iOS emoji font on every page.
+for(const page of pages){
+  const body=readFileSync(page,'utf8').split('</head>')[1]||'';
+  assert.ok(!body.includes('↗'),page+' must not use Unicode emoji-prone arrows');
+  assert.ok(body.includes('class="link-arrow-icon"'),page+' missing vector icons');
+}
+assert.ok(css.includes('.link-arrow-icon{')&&css.includes('fill:none;stroke:currentColor'),'Arrows must render as unfilled vector strokes');
+assert.ok(css.includes('inset:7px -29% auto -9%;height:492px'),'Mobile portrait crop must move left');
+assert.ok(css.includes('.page-home .introduction p{text-align:left}'),'Mobile bio must avoid word-spaced justification');
+assert.ok(css.includes('max-width:none;padding:315px 0 69px'),'Mobile hero must have compact vertical spacing');
 const home=readFileSync('index.html','utf8');
 const research=readFileSync('research.html','utf8');
 const career=readFileSync('career.html','utf8');
