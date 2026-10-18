@@ -138,8 +138,8 @@
   column-gap:var(--tree-gutter);
   align-items:stretch
 }
-.page-career .career-tree-plot{grid-column:2;grid-row:1 / 5;min-width:0;position:relative;pointer-events:none}
-.page-career .career-tree-plot svg{display:block;width:100%;height:100%;overflow:visible}
+.page-career .career-tree-plot{grid-column:2;grid-row:1 / 5;min-width:0;position:relative;pointer-events:auto}
+.page-career .career-tree-plot svg{display:block;width:100%;height:100%;overflow:visible;pointer-events:none}
 .page-career .tree-trunk{fill:none;stroke:#b8b7ad;stroke-width:1.05}
 .page-career .tree-stem{
   fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.8;
@@ -183,30 +183,36 @@
   margin-top:12px;max-width:44ch
 }
 @media(min-width:1041px){
-  /* Connections are SVG-only; dots terminate at the diagram edge. */
+  /* Only the actual SVG strokes are interactive; the interiors never paint. */
+  .page-career .tree-hitbox{fill:none;stroke:transparent;stroke-width:14px;pointer-events:stroke;cursor:default}
+  .page-career .tree-stem,.page-career .tree-leader{fill:none}
   .page-career .career-entry::before,.page-career .career-entry::after{content:none}
-  .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within)) .tree-stem,
-  .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within)) .tree-leader,
-  .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within)) .tree-leader-dots circle{opacity:.26}
-  .page-career .career-tree-grid:has(.career-entry--mit:is(:hover,:focus-within)) [data-track="mit"],
-  .page-career .career-tree-grid:has(.career-entry--mit:is(:hover,:focus-within)) [data-leader="mit"],
-  .page-career .career-tree-grid:has(.career-entry--mit:is(:hover,:focus-within)) [data-tip="mit"],
-  .page-career .career-tree-grid:has(.career-entry--harvard:is(:hover,:focus-within)) [data-track="harvard"],
-  .page-career .career-tree-grid:has(.career-entry--harvard:is(:hover,:focus-within)) [data-leader="harvard"],
-  .page-career .career-tree-grid:has(.career-entry--harvard:is(:hover,:focus-within)) [data-tip="harvard"],
-  .page-career .career-tree-grid:has(.career-entry--marche:is(:hover,:focus-within)) [data-track="marche"],
-  .page-career .career-tree-grid:has(.career-entry--marche:is(:hover,:focus-within)) [data-leader="marche"],
-  .page-career .career-tree-grid:has(.career-entry--marche:is(:hover,:focus-within)) [data-tip="marche"],
-  .page-career .career-tree-grid:has(.career-entry--bocconi:is(:hover,:focus-within)) [data-track="bocconi"],
-  .page-career .career-tree-grid:has(.career-entry--bocconi:is(:hover,:focus-within)) [data-leader="bocconi"],
-  .page-career .career-tree-grid:has(.career-entry--bocconi:is(:hover,:focus-within)) [data-tip="bocconi"],
-  .page-career .career-tree-grid:has(.career-entry--eurotech:is(:hover,:focus-within)) [data-track="eurotech"],
-  .page-career .career-tree-grid:has(.career-entry--eurotech:is(:hover,:focus-within)) [data-leader="eurotech"],
-  .page-career .career-tree-grid:has(.career-entry--eurotech:is(:hover,:focus-within)) [data-tip="eurotech"],
-  .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within)) [data-track="bainsa"],
-  .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within)) [data-leader="bainsa"],
-  .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within)) [data-tip="bainsa"]{
-    opacity:1;stroke:#2a2a27;fill:#2a2a27
+  .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within),.tree-hitbox:hover) .tree-stem,
+  .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within),.tree-hitbox:hover) .tree-leader,
+  .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within),.tree-hitbox:hover) .tree-leader-dots circle{opacity:.23}
+  .page-career .career-tree-grid:has(.career-entry--mit:is(:hover,:focus-within),.tree-hitbox[data-hit="mit"]:hover) [data-track="mit"],
+  .page-career .career-tree-grid:has(.career-entry--harvard:is(:hover,:focus-within),.tree-hitbox[data-hit="harvard"]:hover) [data-track="harvard"],
+  .page-career .career-tree-grid:has(.career-entry--marche:is(:hover,:focus-within),.tree-hitbox[data-hit="marche"]:hover) [data-track="marche"],
+  .page-career .career-tree-grid:has(.career-entry--bocconi:is(:hover,:focus-within),.tree-hitbox[data-hit="bocconi"]:hover) [data-track="bocconi"],
+  .page-career .career-tree-grid:has(.career-entry--eurotech:is(:hover,:focus-within),.tree-hitbox[data-hit="eurotech"]:hover) [data-track="eurotech"],
+  .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within),.tree-hitbox[data-hit="bainsa"]:hover) [data-track="bainsa"]{
+    opacity:1;stroke:#292925;stroke-width:2.9;fill:none
+  }
+  .page-career .career-tree-grid:has(.career-entry--mit:is(:hover,:focus-within),.tree-hitbox[data-hit="mit"]:hover) [data-leader="mit"],
+  .page-career .career-tree-grid:has(.career-entry--harvard:is(:hover,:focus-within),.tree-hitbox[data-hit="harvard"]:hover) [data-leader="harvard"],
+  .page-career .career-tree-grid:has(.career-entry--marche:is(:hover,:focus-within),.tree-hitbox[data-hit="marche"]:hover) [data-leader="marche"],
+  .page-career .career-tree-grid:has(.career-entry--bocconi:is(:hover,:focus-within),.tree-hitbox[data-hit="bocconi"]:hover) [data-leader="bocconi"],
+  .page-career .career-tree-grid:has(.career-entry--eurotech:is(:hover,:focus-within),.tree-hitbox[data-hit="eurotech"]:hover) [data-leader="eurotech"],
+  .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within),.tree-hitbox[data-hit="bainsa"]:hover) [data-leader="bainsa"]{
+    opacity:1;stroke:#292925;stroke-width:1.65;fill:none
+  }
+  .page-career .career-tree-grid:has(.career-entry--mit:is(:hover,:focus-within),.tree-hitbox[data-hit="mit"]:hover) [data-tip="mit"],
+  .page-career .career-tree-grid:has(.career-entry--harvard:is(:hover,:focus-within),.tree-hitbox[data-hit="harvard"]:hover) [data-tip="harvard"],
+  .page-career .career-tree-grid:has(.career-entry--marche:is(:hover,:focus-within),.tree-hitbox[data-hit="marche"]:hover) [data-tip="marche"],
+  .page-career .career-tree-grid:has(.career-entry--bocconi:is(:hover,:focus-within),.tree-hitbox[data-hit="bocconi"]:hover) [data-tip="bocconi"],
+  .page-career .career-tree-grid:has(.career-entry--eurotech:is(:hover,:focus-within),.tree-hitbox[data-hit="eurotech"]:hover) [data-tip="eurotech"],
+  .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within),.tree-hitbox[data-hit="bainsa"]:hover) [data-tip="bainsa"]{
+    opacity:1;fill:#292925
   }
 }
 @media(max-width:1040px){
