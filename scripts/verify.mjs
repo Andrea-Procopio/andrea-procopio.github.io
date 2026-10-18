@@ -30,7 +30,7 @@ assert.ok(career.includes('assets/branch-reference.jpg'));
 assert.ok(!career.includes('id="botanical-tree"'));
 assert.equal((career.match(/class="timeline-branch academic"/g)||[]).length,4);
 assert.equal((career.match(/class="timeline-branch enterprise"/g)||[]).length,4);
-for(const name of ['Bocconi University','RIOT Lab','Harvard University','MIT Operations Research Center','BAINSA','EuroTech Federation'])
+for(const name of ['Bocconi University','Marche Polytechnic','Harvard University','MIT Operations Research Center','BAINSA','EuroTech Federation'])
  assert.ok(career.includes(name),'Missing career entry '+name);
 assert.ok(js.includes('size:0.14,radius:1.05,contrast:0.5'),'Incorrect shader parameters');
 for(const asset of ['assets/profile.jpeg','assets/icon1.jpg','assets/branch-reference.jpg','style.css','main.js'])
