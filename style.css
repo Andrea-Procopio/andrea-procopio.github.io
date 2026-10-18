@@ -126,100 +126,87 @@
 .page-career .timeline-branch .career-link-arrow{font-size:.65em}
 }
 
-/* Career / temporal tree: exact durations, restrained branch curves, protected text. */
-.page-career .career-chronology{max-width:1120px;padding:40px 0 96px}
+/* Career — rounded, diagrammatic tree in the Swiss editorial language.
+   Branch duration uses one consistent annual scale; every leader ends in a dot
+   inside the dedicated diagram gutter, with nothing extending into typography. */
+.page-career .career-chronology{max-width:1160px;padding:48px 0 105px}
 .page-career .career-tree-grid{
-  --tree-gutter:clamp(28px,2.8vw,40px);
+  --tree-gutter:clamp(32px,3.2vw,44px);
   display:grid;
-  grid-template-columns:minmax(0,1fr) clamp(166px,14vw,184px) minmax(0,1fr);
-  grid-template-rows:repeat(4,204px);
+  grid-template-columns:minmax(0,1fr) 180px minmax(0,1fr);
+  grid-template-rows:repeat(4,230px);
   column-gap:var(--tree-gutter);
   align-items:stretch
 }
-.page-career .career-tree-plot{
-  grid-column:2;grid-row:1 / 5;min-width:0;position:relative;
-  pointer-events:none
-}
+.page-career .career-tree-plot{grid-column:2;grid-row:1 / 5;min-width:0;position:relative;pointer-events:none}
 .page-career .career-tree-plot svg{display:block;width:100%;height:100%;overflow:visible}
-.page-career .tree-trunk{fill:none;stroke:#b7b6ad;stroke-width:1.12}
-.page-career .tree-stem{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.7;transition:opacity .16s ease,stroke .16s ease}
-.page-career .tree-stem.active{stroke:#55554f}
-.page-career .tree-stem.complete{stroke:#98978f;stroke-width:1.45}
-.page-career .tree-leader{
-  fill:none;stroke:#9e9d93;stroke-linecap:round;stroke-width:.85;opacity:.50;
+.page-career .tree-trunk{fill:none;stroke:#b8b7ad;stroke-width:1.05}
+.page-career .tree-stem{
+  fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.8;
   transition:opacity .16s ease,stroke .16s ease
 }
-.page-career .tree-terminal{fill:none;stroke:#98978f;stroke-width:1.2}
-.page-career .tree-growing-tips{fill:#55554f}
-.page-career .tree-year-markers text{
-  font:9.7px var(--mono);fill:#74736b;text-anchor:start;letter-spacing:.025em
+.page-career .tree-stem.active{stroke:#565650}
+.page-career .tree-stem.complete{stroke:#a6a59d;stroke-width:1.55}
+.page-career .tree-leader{
+  fill:none;stroke:#85857f;stroke-linecap:round;stroke-width:.95;opacity:.55;
+  transition:opacity .16s ease,stroke .16s ease
 }
-.page-career .tree-now{
-  font:9.7px var(--mono);fill:#74736b;text-anchor:middle;letter-spacing:.035em
-}
-.page-career .career-entry{
-  position:relative;align-self:center;min-width:0;padding-block:14px;
-  z-index:1;text-align:left
-}
+.page-career .tree-leader-dots{fill:#676761}
+.page-career .tree-leader-dots circle{transition:opacity .16s ease,fill .16s ease}
+.page-career .tree-terminal{fill:none;stroke:#a6a59d;stroke-width:1.15}
+.page-career .tree-growing-tips{fill:#565650}
+.page-career .tree-now{font:10px var(--mono);fill:#77766f;text-anchor:middle;letter-spacing:.035em}
+.page-career .career-entry{position:relative;align-self:center;min-width:0;padding:12px 0;z-index:1;text-align:left}
 .page-career .career-entry--mit{grid-column:1;grid-row:1}
 .page-career .career-entry--harvard{grid-column:1;grid-row:2}
 .page-career .career-entry--marche{grid-column:1;grid-row:3}
 .page-career .career-entry--bocconi{grid-column:1;grid-row:4}
 .page-career .career-entry--eurotech{grid-column:3;grid-row:2}
 .page-career .career-entry--bainsa{grid-column:3;grid-row:4}
-.page-career .career-date{
-  font:11px/1.5 var(--mono);letter-spacing:.015em;color:#77766d;margin-bottom:10px
-}
-.page-career .career-entry h2{
-  font-size:clamp(21px,2.1vw,28px);font-weight:450;
-  letter-spacing:-.042em;line-height:1.22
-}
+.page-career .career-entry h2{font-size:clamp(24px,2.35vw,34px);font-weight:450;letter-spacing:-.045em;line-height:1.18}
 .page-career .career-entry h2 a{color:inherit;text-decoration:none;cursor:pointer}
-.page-career .career-entry h2 a:hover{
-  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px
-}
+.page-career .career-entry h2 a:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
 .page-career .career-entry h2 a:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
 .page-career .career-entry .career-link-arrow{
   display:inline-block;font:12px var(--mono);vertical-align:middle;
-  margin-left:8px;color:var(--muted)
+  margin-left:9px;color:var(--muted)
 }
 .page-career .career-entry .career-role{
-  font-size:14px;line-height:1.56;color:#383834;margin-top:9px
+  font-size:15px;line-height:1.55;color:#45453f;margin-top:12px
+}
+.page-career .career-entry .career-date{
+  font:11px/1.5 var(--mono);letter-spacing:.012em;
+  color:#75746e;margin-top:12px
 }
 .page-career .career-entry .career-detail{
-  font-size:13.5px;line-height:1.67;color:#62625b;
-  margin-top:9px;max-width:45ch
+  font-size:13.5px;line-height:1.65;color:#62625b;
+  margin-top:12px;max-width:44ch
 }
 @media(min-width:1041px){
-  /* A reserved 27px inner buffer guarantees leaders never touch words. */
-  .page-career .career-entry.academic{padding-right:27px}
-  .page-career .career-entry.enterprise{padding-left:27px}
-  .page-career .career-entry::before{
-    content:"";position:absolute;top:calc(50% - 18px);
-    height:1px;width:var(--tree-gutter);
-    background:#9e9d93;opacity:.50;pointer-events:none
-  }
-  .page-career .career-entry.academic::before{right:calc(-1 * var(--tree-gutter) - 3px)}
-  .page-career .career-entry.enterprise::before{left:calc(-1 * var(--tree-gutter) - 3px)}
-  .page-career .career-entry:is(:hover,:focus-within)::before{background:#2b2b28;opacity:.86}
-  /* Focus and hover identify one corresponding path, without moving any text. */
+  /* Connections are SVG-only; dots terminate at the diagram edge. */
+  .page-career .career-entry::before,.page-career .career-entry::after{content:none}
   .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within)) .tree-stem,
-  .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within)) .tree-leader{
-    opacity:.22
-  }
+  .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within)) .tree-leader,
+  .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within)) .tree-leader-dots circle{opacity:.26}
   .page-career .career-tree-grid:has(.career-entry--mit:is(:hover,:focus-within)) [data-track="mit"],
   .page-career .career-tree-grid:has(.career-entry--mit:is(:hover,:focus-within)) [data-leader="mit"],
+  .page-career .career-tree-grid:has(.career-entry--mit:is(:hover,:focus-within)) [data-tip="mit"],
   .page-career .career-tree-grid:has(.career-entry--harvard:is(:hover,:focus-within)) [data-track="harvard"],
   .page-career .career-tree-grid:has(.career-entry--harvard:is(:hover,:focus-within)) [data-leader="harvard"],
+  .page-career .career-tree-grid:has(.career-entry--harvard:is(:hover,:focus-within)) [data-tip="harvard"],
   .page-career .career-tree-grid:has(.career-entry--marche:is(:hover,:focus-within)) [data-track="marche"],
   .page-career .career-tree-grid:has(.career-entry--marche:is(:hover,:focus-within)) [data-leader="marche"],
+  .page-career .career-tree-grid:has(.career-entry--marche:is(:hover,:focus-within)) [data-tip="marche"],
   .page-career .career-tree-grid:has(.career-entry--bocconi:is(:hover,:focus-within)) [data-track="bocconi"],
   .page-career .career-tree-grid:has(.career-entry--bocconi:is(:hover,:focus-within)) [data-leader="bocconi"],
+  .page-career .career-tree-grid:has(.career-entry--bocconi:is(:hover,:focus-within)) [data-tip="bocconi"],
   .page-career .career-tree-grid:has(.career-entry--eurotech:is(:hover,:focus-within)) [data-track="eurotech"],
   .page-career .career-tree-grid:has(.career-entry--eurotech:is(:hover,:focus-within)) [data-leader="eurotech"],
+  .page-career .career-tree-grid:has(.career-entry--eurotech:is(:hover,:focus-within)) [data-tip="eurotech"],
   .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within)) [data-track="bainsa"],
-  .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within)) [data-leader="bainsa"]{
-    opacity:1;stroke:#2b2b28
+  .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within)) [data-leader="bainsa"],
+  .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within)) [data-tip="bainsa"]{
+    opacity:1;stroke:#2a2a27;fill:#2a2a27
   }
 }
 @media(max-width:1040px){
