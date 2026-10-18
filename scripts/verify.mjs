@@ -13,6 +13,13 @@ for(const page of pages){
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
   assert.ok(!html.includes('class="wordmark"'),page+' should not include top Andrea Procopio link');
 }
+// All shared pages must use the actual favicon asset as their OG/WhatsApp preview.
+for(const page of pages){
+  const head=readFileSync(page,'utf8').split('</head>')[0];
+  assert.ok(head.includes('<meta property="og:image" content="https://andrea-procopio.github.io/assets/icon1.jpg">'),page+' incorrect social preview image');
+  assert.ok(head.includes('<meta property="og:image:type" content="image/jpeg">'),page+' missing OG image type');
+  assert.ok(!head.includes('property="og:image" content="https://andrea-procopio.github.io/assets/profile.jpeg"'),page+' outdated preview');
+}
 const home=readFileSync('index.html','utf8');
 const research=readFileSync('research.html','utf8');
 const career=readFileSync('career.html','utf8');
