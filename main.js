@@ -536,9 +536,9 @@ const surface=document.getElementById('portrait-shader');
 if(portrait&&surface){
   const image=portrait.querySelector('img');
   const key='andrea-halftone-portrait-session-v1';
-  const finalSize=0.5;
+  const finalSize=0.45;
   const animate=playOnceInSession(key);
-  render(surface,image,{size:animate?1:finalSize,contrast:.48,offsetY:.035,scale:.94}).then(mount=>{
+  render(surface,image,{size:animate?1:finalSize,contrast:.48,offsetY:.035,scale:.84}).then(mount=>{
     if(!mount)return;
     portrait.classList.add('shader-ready');
     function enableHover(){
@@ -552,7 +552,7 @@ if(portrait&&surface){
           pending=false;
           const bounds=portrait.getBoundingClientRect();
           const x=Math.max(0,Math.min(1,(mouseX-bounds.left)/Math.max(bounds.width,1)));
-          mount.setUniforms({u_size:.48+.04*x});
+          mount.setUniforms({u_size:.43+.04*x});
         });
       },{passive:true});
       portrait.addEventListener('pointerleave',()=>mount.setUniforms({u_size:finalSize}));
