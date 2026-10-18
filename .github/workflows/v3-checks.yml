@@ -28,7 +28,7 @@ jobs:
       - run: npm install --no-audit --no-fund
       - run: npx playwright install --with-deps chromium webkit
       - name: Check responsive layout and capture screenshots
-        run: node scripts/tree-regression.mjs
+        run: npm test && node scripts/tree-regression.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
