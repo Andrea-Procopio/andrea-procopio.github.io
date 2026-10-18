@@ -495,7 +495,7 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function supportsWebGL(){try{return !!document.createElement('canvas').getContext('webgl2')}catch{return false}}
 const capable=!!P&&supportsWebGL();
 function uniforms(img,opts={}){
-return {u_image:img,u_colorFront:P.getShaderColorFromString('#282824'),u_colorBack:P.getShaderColorFromString('#f7f6f2'),u_size:opts.size??.55,u_radius:opts.radius??1.3,u_contrast:opts.contrast??.42,u_originalColors:false,u_inverted:false,u_grainMixer:.08,u_grainOverlay:.025,u_grainSize:.4,u_grid:P.HalftoneDotsGrids.hex,u_type:P.HalftoneDotsTypes.gooey,u_fit:P.ShaderFitOptions.cover,u_scale:1,u_rotation:0,u_offsetX:0,u_offsetY:opts.offsetY??0,u_originX:.5,u_originY:.5,u_worldWidth:0,u_worldHeight:0};
+return {u_image:img,u_colorFront:P.getShaderColorFromString('#282824'),u_colorBack:P.getShaderColorFromString('#f7f6f2'),u_size:opts.size??.55,u_radius:opts.radius??1.3,u_contrast:opts.contrast??.42,u_originalColors:false,u_inverted:false,u_grainMixer:.08,u_grainOverlay:.025,u_grainSize:.4,u_grid:P.HalftoneDotsGrids.hex,u_type:P.HalftoneDotsTypes.gooey,u_fit:P.ShaderFitOptions.cover,u_scale:opts.scale??1,u_rotation:0,u_offsetX:0,u_offsetY:opts.offsetY??0,u_originX:.5,u_originY:.5,u_worldWidth:0,u_worldHeight:0};
 }
 async function render(host,img,opts={}){
  if(!capable||!host||!img)return null;
@@ -510,10 +510,49 @@ async function render(host,img,opts={}){
 const portrait=document.getElementById('portrait'),surface=document.getElementById('portrait-shader');
 if(portrait&&surface){
  const img=portrait.querySelector('img');
- render(surface,img,{size:.55,contrast:.48,offsetY:.035}).then(m=>{
-  if(!m)return;portrait.classList.add('shader-ready');
-  if(!reduced){let raf=0;portrait.addEventListener('pointermove',e=>{
-   if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const r=portrait.getBoundingClientRect();m.setUniforms({u_size:.50+.09*Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))})})});portrait.addEventListener('pointerleave',()=>m.setUniforms({u_size:.55}))}
+ const TARGET_SIZE=0.55;
+ const START_SIZE=1.0;
+ const INTRO_DURATION_MS=6000;
+ const INTRO_KEY='andrea-portrait-halftone-intro-v1';
+ // Returning visitors keep the settled image; ?replay=1 is a preview-only override.
+ let hasSeenIntro=false;
+ try{hasSeenIntro=window.localStorage.getItem(INTRO_KEY)==='complete'}catch(e){}
+ const replay=new URLSearchParams(window.location.search).has('replay');
+ const animateIntro=!reduced&&(!hasSeenIntro||replay);
+ const initialSize=animateIntro?START_SIZE:TARGET_SIZE;
+ render(surface,img,{size:initialSize,contrast:.48,offsetY:.035,scale:.94}).then(m=>{
+  if(!m)return;
+  portrait.classList.add('shader-ready');
+  function enableHover(){
+   if(reduced||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+   let pending=false,mouseX=null;
+   portrait.addEventListener('pointermove',e=>{
+    mouseX=e.clientX;
+    if(pending)return;
+    pending=true;
+    requestAnimationFrame(()=>{
+     pending=false;
+     const r=portrait.getBoundingClientRect();
+     const x=Math.max(0,Math.min(1,(mouseX-r.left)/Math.max(1,r.width)));
+     m.setUniforms({u_size:.50+.09*x});
+    });
+   },{passive:true});
+   portrait.addEventListener('pointerleave',()=>m.setUniforms({u_size:TARGET_SIZE}));
+  }
+  if(!animateIntro){enableHover();return}
+  let startedAt=null;
+  function tick(now){
+   if(startedAt===null)startedAt=now;
+   const progress=Math.min(1,(now-startedAt)/INTRO_DURATION_MS);
+   // Smoothstep avoids an abrupt change in detail when the transition starts or ends.
+   const eased=progress*progress*(3-2*progress);
+   m.setUniforms({u_size:START_SIZE+(TARGET_SIZE-START_SIZE)*eased});
+   if(progress<1){requestAnimationFrame(tick);return}
+   m.setUniforms({u_size:TARGET_SIZE});
+   if(!replay){try{window.localStorage.setItem(INTRO_KEY,'complete')}catch(e){}}
+   enableHover();
+  }
+  requestAnimationFrame(tick);
  });
 }
 const branchImage=document.getElementById('branch-image');
