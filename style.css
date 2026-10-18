@@ -126,56 +126,116 @@
 .page-career .timeline-branch .career-link-arrow{font-size:.65em}
 }
 
-/* Career / temporal tree — a measured time diagram, not an illustration.
-   Diagram geometry is isolated in the center column; typography never touches it. */
-.page-career .career-chronology{max-width:1220px;padding:46px 0 100px}
+/* Career / temporal tree: exact durations, restrained branch curves, protected text. */
+.page-career .career-chronology{max-width:1120px;padding:40px 0 96px}
 .page-career .career-tree-grid{
+  --tree-gutter:clamp(28px,2.8vw,40px);
   display:grid;
-  grid-template-columns:minmax(0,1fr) clamp(195px,19vw,240px) minmax(0,1fr);
-  grid-template-rows:repeat(4,240px);
-  column-gap:clamp(28px,3.6vw,48px);
-  align-items:stretch;
+  grid-template-columns:minmax(0,1fr) clamp(166px,14vw,184px) minmax(0,1fr);
+  grid-template-rows:repeat(4,204px);
+  column-gap:var(--tree-gutter);
+  align-items:stretch
 }
-.page-career .career-tree-plot{grid-column:2;grid-row:1 / 5;min-width:0;position:relative;pointer-events:none}
+.page-career .career-tree-plot{
+  grid-column:2;grid-row:1 / 5;min-width:0;position:relative;
+  pointer-events:none
+}
 .page-career .career-tree-plot svg{display:block;width:100%;height:100%;overflow:visible}
-.page-career .tree-trunk{fill:none;stroke:#b9b8b0;stroke-width:1.2}
-.page-career .tree-stem{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.75}
+.page-career .tree-trunk{fill:none;stroke:#b7b6ad;stroke-width:1.12}
+.page-career .tree-stem{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.7;transition:opacity .16s ease,stroke .16s ease}
 .page-career .tree-stem.active{stroke:#55554f}
-.page-career .tree-stem.complete{stroke:#aaa9a0;stroke-width:1.55}
-.page-career .tree-terminal{fill:none;stroke:#aaa9a0;stroke-width:1.25}
-.page-career .tree-growing-tips{fill:#55554f}
-.page-career .tree-year-markers rect{fill:var(--paper)}
-.page-career .tree-year-markers text,.page-career .tree-now{
-  font:11px var(--mono);fill:var(--muted);text-anchor:middle;letter-spacing:.025em
+.page-career .tree-stem.complete{stroke:#98978f;stroke-width:1.45}
+.page-career .tree-leader{
+  fill:none;stroke:#9e9d93;stroke-linecap:round;stroke-width:.85;opacity:.50;
+  transition:opacity .16s ease,stroke .16s ease
 }
-.page-career .tree-now{font-size:10px}
-.page-career .career-entry{position:relative;align-self:center;min-width:0;padding:18px 0;z-index:1;text-align:left}
+.page-career .tree-terminal{fill:none;stroke:#98978f;stroke-width:1.2}
+.page-career .tree-growing-tips{fill:#55554f}
+.page-career .tree-year-markers text{
+  font:9.7px var(--mono);fill:#74736b;text-anchor:start;letter-spacing:.025em
+}
+.page-career .tree-now{
+  font:9.7px var(--mono);fill:#74736b;text-anchor:middle;letter-spacing:.035em
+}
+.page-career .career-entry{
+  position:relative;align-self:center;min-width:0;padding-block:14px;
+  z-index:1;text-align:left
+}
 .page-career .career-entry--mit{grid-column:1;grid-row:1}
 .page-career .career-entry--harvard{grid-column:1;grid-row:2}
 .page-career .career-entry--marche{grid-column:1;grid-row:3}
 .page-career .career-entry--bocconi{grid-column:1;grid-row:4}
 .page-career .career-entry--eurotech{grid-column:3;grid-row:2}
 .page-career .career-entry--bainsa{grid-column:3;grid-row:4}
-.page-career .career-date{font:11px/1.5 var(--mono);letter-spacing:.025em;color:var(--muted);margin-bottom:11px}
-.page-career .career-entry h2{font-size:clamp(21px,2.15vw,29px);font-weight:450;letter-spacing:-.045em;line-height:1.22}
-.page-career .career-entry h2 a{text-decoration:none;color:inherit;cursor:pointer}
-.page-career .career-entry h2 a:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
-.page-career .career-entry .career-link-arrow{display:inline-block;font:12px var(--mono);vertical-align:middle;margin-left:8px;color:var(--muted)}
-.page-career .career-entry .career-role{font-size:14px;line-height:1.55;color:#383834;margin-top:10px}
-.page-career .career-entry .career-detail{font-size:13px;line-height:1.68;color:var(--muted);margin-top:10px;max-width:37ch}
+.page-career .career-date{
+  font:11px/1.5 var(--mono);letter-spacing:.015em;color:#77766d;margin-bottom:10px
+}
+.page-career .career-entry h2{
+  font-size:clamp(21px,2.1vw,28px);font-weight:450;
+  letter-spacing:-.042em;line-height:1.22
+}
+.page-career .career-entry h2 a{color:inherit;text-decoration:none;cursor:pointer}
+.page-career .career-entry h2 a:hover{
+  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px
+}
+.page-career .career-entry h2 a:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.page-career .career-entry .career-link-arrow{
+  display:inline-block;font:12px var(--mono);vertical-align:middle;
+  margin-left:8px;color:var(--muted)
+}
+.page-career .career-entry .career-role{
+  font-size:14px;line-height:1.56;color:#383834;margin-top:9px
+}
+.page-career .career-entry .career-detail{
+  font-size:13.5px;line-height:1.67;color:#62625b;
+  margin-top:9px;max-width:45ch
+}
+@media(min-width:1041px){
+  /* A reserved 27px inner buffer guarantees leaders never touch words. */
+  .page-career .career-entry.academic{padding-right:27px}
+  .page-career .career-entry.enterprise{padding-left:27px}
+  .page-career .career-entry::before{
+    content:"";position:absolute;top:calc(50% - 18px);
+    height:1px;width:calc(var(--tree-gutter) - 7px);
+    background:#9e9d93;opacity:.50;pointer-events:none
+  }
+  .page-career .career-entry.academic::before{right:calc(3px - var(--tree-gutter))}
+  .page-career .career-entry.enterprise::before{left:calc(3px - var(--tree-gutter))}
+  /* Focus and hover identify one corresponding path, without moving any text. */
+  .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within)) .tree-stem,
+  .page-career .career-tree-grid:has(.career-entry:is(:hover,:focus-within)) .tree-leader{
+    opacity:.22
+  }
+  .page-career .career-tree-grid:has(.career-entry--mit:is(:hover,:focus-within)) [data-track="mit"],
+  .page-career .career-tree-grid:has(.career-entry--mit:is(:hover,:focus-within)) [data-leader="mit"],
+  .page-career .career-tree-grid:has(.career-entry--harvard:is(:hover,:focus-within)) [data-track="harvard"],
+  .page-career .career-tree-grid:has(.career-entry--harvard:is(:hover,:focus-within)) [data-leader="harvard"],
+  .page-career .career-tree-grid:has(.career-entry--marche:is(:hover,:focus-within)) [data-track="marche"],
+  .page-career .career-tree-grid:has(.career-entry--marche:is(:hover,:focus-within)) [data-leader="marche"],
+  .page-career .career-tree-grid:has(.career-entry--bocconi:is(:hover,:focus-within)) [data-track="bocconi"],
+  .page-career .career-tree-grid:has(.career-entry--bocconi:is(:hover,:focus-within)) [data-leader="bocconi"],
+  .page-career .career-tree-grid:has(.career-entry--eurotech:is(:hover,:focus-within)) [data-track="eurotech"],
+  .page-career .career-tree-grid:has(.career-entry--eurotech:is(:hover,:focus-within)) [data-leader="eurotech"],
+  .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within)) [data-track="bainsa"],
+  .page-career .career-tree-grid:has(.career-entry--bainsa:is(:hover,:focus-within)) [data-leader="bainsa"]{
+    opacity:1;stroke:#2b2b28
+  }
+}
 @media(max-width:1040px){
-  /* Mobile/tablet: a single column with a precise left-hand branching spine. */
-  .page-career .career-chronology{padding:25px 0 80px}
+  /* Mobile/tablet: a purpose-built readable chronology, not a shrunken tree. */
+  .page-career .career-chronology{padding:22px 0 78px}
   .page-career .career-tree-grid{display:flex;flex-direction:column;position:relative;gap:0;padding:6px 0 0 45px}
   .page-career .career-tree-grid::before{
-    content:"";position:absolute;left:13px;top:10px;bottom:22px;width:1px;background:#b3b2a9
+    content:"";position:absolute;left:13px;top:10px;bottom:22px;
+    width:1px;background:#b3b2a9
   }
   .page-career .career-tree-plot{display:none}
   .page-career .career-entry{
-    align-self:stretch;padding:23px 0 26px;border-bottom:1px solid var(--line);
+    align-self:stretch;padding:23px 0 26px;border-bottom:1px solid var(--line)
   }
   .page-career .career-entry::before{
-    content:"";position:absolute;top:37px;left:-32px;width:20px;height:1px;background:#a5a49d
+    content:"";position:absolute;top:37px;left:-32px;
+    width:20px;height:1px;background:#a5a49d
   }
   .page-career .career-entry::after{
     content:"";position:absolute;top:33px;left:-36px;width:8px;height:8px;
@@ -202,4 +262,7 @@
   .page-career .career-entry h2{font-size:22px}
   .page-career .career-entry .career-role{font-size:13px;line-height:1.55;margin-top:8px}
   .page-career .career-entry .career-detail{font-size:13px;line-height:1.65;margin-top:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  .page-career .tree-stem,.page-career .tree-leader{transition:none}
 }
