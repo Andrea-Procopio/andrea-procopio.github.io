@@ -7,7 +7,7 @@ for(const page of pages){
   const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
   assert.ok(embedded,page+' missing inline style fallback');
   assert.equal(embedded[1].trim(),css.trim(),page+' styles differ from style.css');
-  assert.ok(html.includes('style.css?v=20261018-temporal-tree-v2'),page+' CSS version mismatch');
+  assert.ok(html.includes('style.css?v=20261018-temporal-tree-v3'),page+' CSS version mismatch');
   assert.ok(html.includes('main.js?v=20261018-session-v1'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
@@ -39,6 +39,7 @@ assert.ok(css.includes('grid-template-columns:minmax(0,1fr) clamp(166px,14vw,184
 assert.ok(css.includes('@media(max-width:1040px)')&&css.includes('.career-tree-plot{display:none}'),'Mobile must use distinct legible layout');
 assert.ok(css.includes('grid-template-rows:repeat(4,204px)'),'Chronology should be fifteen percent more compact');
 assert.ok(css.includes('padding-right:27px')&&css.includes('padding-left:27px'),'Text requires a protected inner gutter');
+assert.ok(css.includes('width:var(--tree-gutter)')&&css.includes('calc(-1 * var(--tree-gutter) - 3px)'),'Leaders should join chart edge without approaching text');
 assert.ok(css.includes('top:calc(50% - 18px)'),'Horizontal connector must align to date track');
 assert.ok(css.includes(':focus-within')&&css.includes('[data-track="harvard"]'),'Hover and keyboard focus must identify their related branch');
 assert.ok(career.includes('class="tree-year-markers"')&&!career.includes('<rect x="97" y="110"'),'Years should sit beside, not over, the trunk');
