@@ -8,7 +8,7 @@ for(const page of pages){
  assert.ok(embedded, page+' must include inline CSS fallback');
  assert.ok(embedded[1].includes('.page-width')&&embedded[1].includes('.portrait-graphic'),page+' missing layout CSS');
  assert.ok(html.includes('style.css?v=20261018-portrait-v1'),page+' missing cache-busted stylesheet');
- assert.ok(html.includes('main.js?v=20261018-anim-v2'),page+' missing versioned script');
+ assert.ok(html.includes('main.js?v=20261018-anim-v3'),page+' missing versioned script');
  assert.equal(embedded[1].trim(),readFileSync('style.css','utf8').trim(),page+' inline and linked styles must match');
  assert.ok(html.includes('style.css')&&html.includes('main.js'),page+' missing shared assets');
  for(const route of ['research.html','career.html'])assert.ok(html.includes(route),page+' missing navigation');
@@ -41,9 +41,9 @@ for(const phrase of ['MIT — PhD student','Advised by Prof. Dimitris Bertsimas'
  'Advised by Prof. Tomer Ullman','Marche Polytechnic — Research Intern',
  'Advised by Prof. Paola Pierleoni','2024–2025','Co-Founder and Advisor','Co-Founder, President','2024–2026'])
  assert.ok(careerBody.includes(phrase),'Missing updated career copy: '+phrase);
-assert.ok(js.includes('TRANSITION_MS=5000'),'Both effects should take five seconds');
+assert.ok(js.includes('TRANSITION_MS=4000'),'Both effects should take four seconds');
 assert.ok(js.includes('const finalSize=0.45'),'Portrait must settle at 0.45');
-assert.ok(js.includes('const finalSize=0'),'Tree must settle at zero');
+assert.ok(js.includes('const finalSize=0.2'),'Tree must settle at 0.2');
 assert.ok(js.includes('transitionCoarseness(mount,1,finalSize'),'Both effects should start at maximum coarseness');
 assert.ok(!js.includes('localStorage')&&!js.includes('sessionStorage'),'Animations must replay on reload');
 assert.ok(js.includes("if(reduced)"),'Respect reduced-motion preferences');
