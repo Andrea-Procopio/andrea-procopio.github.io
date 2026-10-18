@@ -58,3 +58,22 @@ body{overflow-x:hidden}
 .contact-section .contact-links{align-self:stretch;max-width:300px;z-index:1}
 }
 @media(prefers-reduced-motion:reduce){.botanical-specimen img{transition:none}}
+
+/* Progressive drawing follows each branch's encoded birth position. */
+.botanical-specimen .tree-svg{display:block;width:100%;height:auto;overflow:visible;opacity:.83}
+.botanical-specimen .tree-svg path{stroke-dasharray:1;stroke-dashoffset:0}
+.botanical-specimen .tree-svg circle{opacity:.65}
+@media(prefers-reduced-motion:no-preference){
+.botanical-specimen .tree-svg path{stroke-dashoffset:1}
+.botanical-specimen .tree-svg circle{opacity:0}
+.botanical-specimen.tree-growing .tree-svg path{animation:branch-reveal .65s cubic-bezier(.18,.4,.4,1) both;animation-delay:calc(var(--birth,0) * 3.1s)}
+.botanical-specimen.tree-growing .tree-svg circle{animation:bud-reveal .4s both;animation-delay:calc(var(--birth,0) * 3.1s + .3s)}
+}
+@keyframes branch-reveal{to{stroke-dashoffset:0}}
+@keyframes bud-reveal{to{opacity:.6}}
+.botanical-specimen.tree-grown .tree-svg path{stroke-dashoffset:0}
+.botanical-specimen.tree-grown .tree-svg circle{opacity:.6}
+/* Prevent oversized generative art from inflating scrollWidth. */
+html,body{max-width:100%;overflow-x:clip}
+.contact-environment,.research-environment{overflow:clip}
+@media(max-width:600px){.botanical-specimen .tree-svg{max-width:100%}}
