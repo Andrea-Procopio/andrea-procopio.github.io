@@ -7,7 +7,7 @@ for(const page of pages){
   const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
   assert.ok(embedded,page+' missing inline style fallback');
   assert.equal(embedded[1].trim(),css.trim(),page+' styles differ from style.css');
-  assert.ok(html.includes('style.css?v=20261018-temporal-tree-v7'),page+' CSS version mismatch');
+  assert.ok(html.includes('style.css?v=20261018-contact-v1'),page+' CSS version mismatch');
   assert.ok(html.includes('main.js?v=20261018-session-v4'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
@@ -18,6 +18,15 @@ const research=readFileSync('research.html','utf8');
 const career=readFileSync('career.html','utf8');
 const js=readFileSync('main.js','utf8');
 assert.ok(home.includes('assets/profile.jpeg')&&home.includes('id="contact"'));
+const contact=home.split('<section class="contact-home page-width"')[1]?.split('</section>')[0]||'';
+assert.equal((contact.match(/class="contact-method"/g)||[]).length,2,'Contact must have exactly two editorial links');
+assert.ok(contact.includes('href="mailto:procopio@mit.edu"'),'Missing email destination');
+assert.ok(contact.includes('href="https://www.linkedin.com/in/procopioandrea/"'),'Missing LinkedIn destination');
+assert.ok(contact.includes('procopio@mit.edu')&&contact.includes('linkedin.com/in/procopioandrea'),'Contact methods should show their destinations');
+assert.ok(!contact.includes('GitHub')&&!contact.includes('github.com'),'GitHub must not appear in contact section');
+assert.ok(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'Desktop contact links must have two equal columns');
+assert.ok(css.includes('.page-home .contact-list{grid-template-columns:minmax(0,1fr);gap:0}'),'Mobile contact links must stack');
+
 const biography=home.split('<div class="introduction">')[1]?.split('</div>')[0]||'';
 assert.equal((biography.match(/<p>/g)||[]).length,4,'Landing biography must have exactly four paragraphs');
 for(const phrase of [
