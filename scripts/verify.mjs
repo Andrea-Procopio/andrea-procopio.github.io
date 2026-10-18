@@ -7,7 +7,7 @@ for(const page of pages){
   const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
   assert.ok(embedded,page+' missing inline style fallback');
   assert.equal(embedded[1].trim(),css.trim(),page+' styles differ from style.css');
-  assert.ok(html.includes('style.css?v=20261018-temporal-tree-v1'),page+' CSS version mismatch');
+  assert.ok(html.includes('style.css?v=20261018-temporal-tree-v2'),page+' CSS version mismatch');
   assert.ok(html.includes('main.js?v=20261018-session-v1'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
@@ -22,7 +22,7 @@ assert.ok(research.includes('Modeling the Object Representations Underlying Huma
 assert.ok(career.includes('assets/branch-reference.jpg'));
 assert.equal((career.match(/class="career-entry career-entry--/g)||[]).length,6,'Expect exactly six career entries');
 assert.ok(!career.includes('class="timeline-row"'),'Old connector timeline should not be present');
-assert.ok(career.includes('class="career-tree-plot"')&&career.includes('viewBox="0 0 240 960"'),'Missing duration tree geometry');
+assert.ok(career.includes('class="career-tree-plot"')&&career.includes('viewBox="0 0 180 816"'),'Missing duration tree geometry');
 const branches=[
  ['mit','2026','present'],['harvard','2025','present'],
  ['marche','2024','2025'],['bocconi','2023','2026'],
@@ -33,9 +33,17 @@ for(const [slug,start,end] of branches){
  assert.ok(entry,'Missing experience '+slug);
  assert.ok(entry[0].includes('data-start="'+start+'"')&&entry[0].includes('data-end="'+end+'"'),'Wrong duration for '+slug);
  assert.ok(career.includes('data-track="'+slug+'"'),'Missing duration line for '+slug);
+ assert.ok(career.includes('data-leader="'+slug+'"'),'Missing aligned text leader for '+slug);
 }
-assert.ok(css.includes('grid-template-columns:minmax(0,1fr) clamp(195px,19vw,240px) minmax(0,1fr)'),'Desktop diagram must have its own protected column');
+assert.ok(css.includes('grid-template-columns:minmax(0,1fr) clamp(166px,14vw,184px) minmax(0,1fr)'),'Desktop diagram must have its own protected column');
 assert.ok(css.includes('@media(max-width:1040px)')&&css.includes('.career-tree-plot{display:none}'),'Mobile must use distinct legible layout');
+assert.ok(css.includes('grid-template-rows:repeat(4,204px)'),'Chronology should be fifteen percent more compact');
+assert.ok(css.includes('padding-right:27px')&&css.includes('padding-left:27px'),'Text requires a protected inner gutter');
+assert.ok(css.includes('top:calc(50% - 18px)'),'Horizontal connector must align to date track');
+assert.ok(css.includes(':focus-within')&&css.includes('[data-track="harvard"]'),'Hover and keyboard focus must identify their related branch');
+assert.ok(career.includes('class="tree-year-markers"')&&!career.includes('<rect x="97" y="110"'),'Years should sit beside, not over, the trunk');
+assert.ok(css.includes('color:#62625b'),'Description contrast must be stronger');
+
 
 const content=career.split('</head>')[1];
 const expected=[
