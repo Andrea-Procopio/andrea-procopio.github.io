@@ -110,3 +110,18 @@
 @media(max-width:640px){
   .page-home .portrait-graphic{inset:6px -56% auto 13%;height:570px}
 }
+
+/* Career entries: three clear text levels, linked institution names. */
+.page-career .timeline-branch h2 a{color:inherit;text-decoration:none;cursor:pointer}
+.page-career .timeline-branch h2 a:hover{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
+.page-career .timeline-branch .career-link-arrow{font-family:var(--mono);font-size:.58em;color:var(--muted);vertical-align:middle;white-space:nowrap}
+.page-career .timeline-branch .career-role{font-size:13px;line-height:1.5;color:#3e3e3a;margin-top:8px}
+.page-career .timeline-branch .career-detail{font-size:12px;line-height:1.65;color:var(--muted);margin-top:10px;max-width:330px}
+.page-career .timeline-branch.academic .career-detail{margin-left:auto}
+.page-career .timeline-row{min-height:205px}
+@media(max-width:640px){
+.page-career .timeline-row{min-height:225px}
+.page-career .timeline-branch .career-role{font-size:11px;line-height:1.45;margin-top:6px}
+.page-career .timeline-branch .career-detail{font-size:10.5px;line-height:1.55;margin-top:7px}
+.page-career .timeline-branch .career-link-arrow{font-size:.65em}
+}
