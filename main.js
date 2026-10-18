@@ -495,7 +495,7 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function supportsWebGL(){try{return !!document.createElement('canvas').getContext('webgl2')}catch{return false}}
 const capable=!!P&&supportsWebGL();
 function uniforms(img,opts={}){
-return {u_image:img,u_colorFront:P.getShaderColorFromString('#282824'),u_colorBack:P.getShaderColorFromString('#f7f6f2'),u_size:opts.size??.55,u_radius:opts.radius??1.3,u_contrast:opts.contrast??.42,u_originalColors:false,u_inverted:false,u_grainMixer:.08,u_grainOverlay:.025,u_grainSize:.4,u_grid:P.HalftoneDotsGrids.hex,u_type:P.HalftoneDotsTypes.gooey,u_fit:P.ShaderFitOptions.cover,u_scale:1,u_rotation:0,u_offsetX:0,u_offsetY:opts.offsetY??0,u_originX:.5,u_originY:.5,u_worldWidth:0,u_worldHeight:0};
+return {u_image:img,u_colorFront:P.getShaderColorFromString('#282824'),u_colorBack:P.getShaderColorFromString('#f7f6f2'),u_size:opts.size??.55,u_radius:opts.radius??1.3,u_contrast:opts.contrast??.42,u_originalColors:false,u_inverted:false,u_grainMixer:.08,u_grainOverlay:.025,u_grainSize:.4,u_grid:P.HalftoneDotsGrids.hex,u_type:P.HalftoneDotsTypes.gooey,u_fit:P.ShaderFitOptions.cover,u_scale:opts.scale??1,u_rotation:0,u_offsetX:0,u_offsetY:opts.offsetY??0,u_originX:.5,u_originY:.5,u_worldWidth:0,u_worldHeight:0};
 }
 async function render(host,img,opts={}){
  if(!capable||!host||!img)return null;
@@ -507,21 +507,63 @@ async function render(host,img,opts={}){
  host.classList.add('ready');return mount;
  }catch(err){console.warn('Halftone fallback active',err);return null}
 }
-const portrait=document.getElementById('portrait'),surface=document.getElementById('portrait-shader');
-if(portrait&&surface){
- const img=portrait.querySelector('img');
- render(surface,img,{size:.55,contrast:.48,offsetY:.035}).then(m=>{
-  if(!m)return;portrait.classList.add('shader-ready');
-  if(!reduced){let raf=0;portrait.addEventListener('pointermove',e=>{
-   if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const r=portrait.getBoundingClientRect();m.setUniforms({u_size:.50+.09*Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))})})});portrait.addEventListener('pointerleave',()=>m.setUniforms({u_size:.55}))}
- });
+// Shader coarseness: 1 is largest dots; 0 is the finest dot grid.
+const TRANSITION_MS=4000;
+function transitionCoarseness(mount,from,to,onComplete){
+  if(reduced){
+    mount.setUniforms({u_size:to});
+    if(onComplete)onComplete();
+    return;
+  }
+  let startTime=null;
+  function frame(now){
+    if(startTime===null)startTime=now;
+    const progress=Math.min(1,(now-startTime)/TRANSITION_MS);
+    const smooth=progress*progress*(3-2*progress);
+    mount.setUniforms({u_size:from+(to-from)*smooth});
+    if(progress<1){requestAnimationFrame(frame);return}
+    mount.setUniforms({u_size:to});
+    if(onComplete)onComplete();
+  }
+  requestAnimationFrame(frame);
 }
+
+const portrait=document.getElementById('portrait');
+const surface=document.getElementById('portrait-shader');
+if(portrait&&surface){
+  const image=portrait.querySelector('img');
+  const finalSize=0.45;
+  render(surface,image,{size:reduced?finalSize:1,contrast:.48,offsetY:.035,scale:.94}).then(mount=>{
+    if(!mount)return; // Keep the original image if WebGL is unavailable.
+    portrait.classList.add('shader-ready');
+    function enableHover(){
+      if(reduced||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+      let pending=false,mouseX=null;
+      portrait.addEventListener('pointermove',event=>{
+        mouseX=event.clientX;
+        if(pending)return;
+        pending=true;
+        requestAnimationFrame(()=>{
+          pending=false;
+          const bounds=portrait.getBoundingClientRect();
+          const x=Math.max(0,Math.min(1,(mouseX-bounds.left)/Math.max(bounds.width,1)));
+          mount.setUniforms({u_size:.43+.04*x});
+        });
+      },{passive:true});
+      portrait.addEventListener('pointerleave',()=>mount.setUniforms({u_size:finalSize}));
+    }
+    transitionCoarseness(mount,1,finalSize,enableHover);
+  });
+}
+
 const branchImage=document.getElementById('branch-image');
 if(branchImage){
- const layer=document.getElementById('branch-shader');
- render(layer,branchImage,{size:0.14,radius:1.05,contrast:0.5}).then(mount=>{
-   if(!mount)console.warn('Career photo using image fallback');
- });
+  const layer=document.getElementById('branch-shader');
+  const finalSize=0.2;
+  render(layer,branchImage,{size:reduced?finalSize:1,radius:1.05,contrast:0.5}).then(mount=>{
+    if(!mount)return;
+    transitionCoarseness(mount,1,finalSize);
+  });
 }
 if('IntersectionObserver'in window&&!reduced){
  const ob=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){e.target.classList.add('revealed');ob.unobserve(e.target)}},{threshold:.04});

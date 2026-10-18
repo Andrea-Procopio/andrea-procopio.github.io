@@ -7,7 +7,9 @@ for(const page of pages){
  const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
  assert.ok(embedded, page+' must include inline CSS fallback');
  assert.ok(embedded[1].includes('.page-width')&&embedded[1].includes('.portrait-graphic'),page+' missing layout CSS');
- assert.ok(html.includes('style.css?v=20261018-hotfix'),page+' missing cache-busted stylesheet');
+ assert.ok(html.includes('style.css?v=20261018-portrait-v1'),page+' missing cache-busted stylesheet');
+ assert.ok(html.includes('main.js?v=20261018-anim-v3'),page+' missing versioned script');
+ assert.equal(embedded[1].trim(),readFileSync('style.css','utf8').trim(),page+' inline and linked styles must match');
  assert.ok(html.includes('style.css')&&html.includes('main.js'),page+' missing shared assets');
  for(const route of ['research.html','career.html'])assert.ok(html.includes(route),page+' missing navigation');
  assert.equal(html.split('<h1 ').length-1,1,page+' needs one heading');
@@ -28,9 +30,21 @@ assert.ok(career.includes('assets/branch-reference.jpg'));
 assert.ok(!career.includes('id="botanical-tree"'));
 assert.equal((career.match(/class="timeline-branch academic"/g)||[]).length,4);
 assert.equal((career.match(/class="timeline-branch enterprise"/g)||[]).length,4);
-for(const name of ['Bocconi University','RIOT Lab','Harvard University','MIT Operations Research Center','BAINSA','EuroTech Federation'])
+for(const name of ['Bocconi University','Marche Polytechnic','Harvard University','MIT — PhD student','BAINSA','EuroTech Federation'])
  assert.ok(career.includes(name),'Missing career entry '+name);
-assert.ok(js.includes('size:0.14,radius:1.05,contrast:0.5'),'Incorrect shader parameters');
+assert.ok(js.includes('radius:1.05,contrast:0.5'),'Incorrect tree shader radius/contrast');
 for(const asset of ['assets/profile.jpeg','assets/icon1.jpg','assets/branch-reference.jpg','style.css','main.js'])
  assert.ok(existsSync(asset),asset+' missing');
-console.log('V3.1 content, site structure, and asset checks passed');
+const careerBody=career.split('</head>')[1]||'';
+assert.ok(!careerBody.includes('Research & academia')&&!careerBody.includes('Entrepreneurship & other'),'Career column labels should be removed');
+for(const phrase of ['MIT — PhD student','Advised by Prof. Dimitris Bertsimas','Harvard University — Research Fellow',
+ 'Advised by Prof. Tomer Ullman','Marche Polytechnic — Research Intern',
+ 'Advised by Prof. Paola Pierleoni','2024–2025','Co-Founder and Advisor','Co-Founder, President','2024–2026'])
+ assert.ok(careerBody.includes(phrase),'Missing updated career copy: '+phrase);
+assert.ok(js.includes('TRANSITION_MS=4000'),'Both effects should take four seconds');
+assert.ok(js.includes('const finalSize=0.45'),'Portrait must settle at 0.45');
+assert.ok(js.includes('const finalSize=0.2'),'Tree must settle at 0.2');
+assert.ok(js.includes('transitionCoarseness(mount,1,finalSize'),'Both effects should start at maximum coarseness');
+assert.ok(!js.includes('localStorage')&&!js.includes('sessionStorage'),'Animations must replay on reload');
+assert.ok(js.includes("if(reduced)"),'Respect reduced-motion preferences');
+console.log('Career, embedded styles, and per-load animations validated');

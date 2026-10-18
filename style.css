@@ -100,3 +100,13 @@
 .page-career .branch-dates,.page-career .timeline-year{font-size:9px}
 .page-career .timeline-node{width:6px;height:6px;outline-width:4px}
 }
+
+/* Portrait: slightly smaller subject, preserving the editorial composition. */
+.page-home .portrait-graphic{inset:-65px -9% -35px 32%}
+.page-home .portrait-fallback{transform:scale(.94);transform-origin:52% 46%}
+@media(max-width:980px){
+  .page-home .portrait-graphic{inset:-32px -26% -20px 27%}
+}
+@media(max-width:640px){
+  .page-home .portrait-graphic{inset:6px -56% auto 13%;height:570px}
+}
