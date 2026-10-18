@@ -37,3 +37,24 @@ body{overflow-x:hidden}
 .specimen-caption{margin-top:20px}
 }
 @media(prefers-reduced-motion:reduce){.paper .entry-index{transition:none}.hero-art .shader-layer{transition:none}}
+
+/* V2.1 — no opaque halo: fine-grained paper lift beneath actual text. */
+.hero-wash{background:linear-gradient(90deg,rgba(247,246,242,.83) 0%,rgba(247,246,242,.46) 27%,rgba(247,246,242,.08) 52%,transparent 74%)}
+.hero-copy::before{inset:-16px -26px -18px -14px;background:radial-gradient(ellipse at 27% 54%,rgba(247,246,242,.57) 0%,rgba(247,246,242,.19) 55%,transparent 82%)}
+.contact-field{display:none!important}
+.contact-environment{overflow:hidden}
+.contact-section{min-height:570px;position:relative;grid-template-columns:30% minmax(0,1fr);padding-bottom:100px;align-content:start}
+.contact-section::before{display:none}
+.botanical-specimen{position:absolute;right:0;top:-160px;bottom:auto;width:min(53%,650px);margin:0;pointer-events:none;z-index:-1}
+.botanical-specimen img{width:100%;height:auto;display:block;opacity:.73}
+.botanical-specimen figcaption{font:9px var(--mono);letter-spacing:.07em;color:var(--soft);text-align:right;margin-top:-25px}
+.botanical-specimen img{transform-origin:50% 100%}
+@media(max-width:900px){.hero-wash{background:linear-gradient(90deg,rgba(247,246,242,.78),rgba(247,246,242,.3) 48%,transparent 78%)}.botanical-specimen{width:55%;top:-80px;right:-5%}}
+@media(max-width:600px){
+.hero-wash{background:linear-gradient(to bottom,transparent 0%,rgba(247,246,242,.28) 30%,rgba(247,246,242,.92) 58%,var(--paper) 82%)}
+.contact-section{min-height:640px;display:flex;flex-direction:column;align-items:stretch;padding-bottom:55px}
+.botanical-specimen{position:relative;order:4;top:auto;right:auto;width:min(100%,430px);align-self:center;margin:-50px 0 0}
+.botanical-specimen figcaption{margin-top:2px}
+.contact-section .contact-links{align-self:stretch;max-width:300px;z-index:1}
+}
+@media(prefers-reduced-motion:reduce){.botanical-specimen img{transition:none}}
