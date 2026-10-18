@@ -44,8 +44,9 @@ assert.ok(css.includes('.page-career .career-entry::before,.page-career .career-
 assert.ok(css.includes(':focus-within')&&css.includes('[data-tip="harvard"]'),'Mouse and keyboard focus must identify the right branch and dot');
 assert.ok(!career.includes('class="tree-year-markers"'),'Avoid redundant year labels over the tree geometry');
 assert.ok(css.includes('color:#62625b'),'Description contrast must remain readable');
-assert.equal((career.match(/data-tip="/g)||[]).length,6,'Six labeled connector endpoints required');
-assert.equal((career.match(/data-track="/g)||[]).length,6,'Six duration stems required');
+const treeSvg=career.split('<svg viewBox="0 0 180 920"')[1]?.split('</svg>')[0]||'';
+assert.equal((treeSvg.match(/data-tip="/g)||[]).length,6,'Six labeled connector endpoints required');
+assert.equal((treeSvg.match(/data-track="/g)||[]).length,6,'Six duration stems required');
 // Institution heading, then role, then date: the reference's hierarchy, preserving a full description.
 for(const part of career.split('<article class="career-entry').slice(1)){
   const entry=part.split('</article>')[0];
