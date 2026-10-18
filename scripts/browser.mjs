@@ -6,7 +6,7 @@ try{
  let ready=false;for(let i=0;i<50;i++){try{const r=await fetch('http://127.0.0.1:4173/');if(r.ok){ready=true;break}}catch{}await wait(250)}
  assert.ok(ready,'Vite did not start');
  browser=await chromium.launch({headless:true,args:['--disable-dev-shm-usage']});
- for(const viewport of [{width:1440,height:900},{width:390,height:844}]){
+ for(const viewport of [{width:1440,height:900},{width:320,height:740},{width:390,height:844},{width:430,height:932},{width:640,height:900}]){
  for(const route of ['','research.html','career.html']){
  const page=await browser.newPage({viewport});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -16,14 +16,29 @@ try{
  assert.deepEqual(errors,[],'page runtime errors');
  const w=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,view:innerWidth}));
  assert.ok(w.scroll<=w.view+2,'horizontal overflow '+route+' '+viewport.width+': '+JSON.stringify(w));
+ if(route===''&&viewport.width<=640){
+   const portrait=await page.locator('#portrait').boundingBox();
+   const heading=await page.locator('h1').boundingBox();
+   const bio=await page.locator('.introduction').boundingBox();
+   assert.ok(portrait.x>=0&&portrait.x+portrait.width<=viewport.width,'portrait fits screen');
+   assert.ok(Math.abs(portrait.height-portrait.width)<1,'portrait preserves square source framing');
+   assert.ok(portrait.y+portrait.height<=heading.y,'portrait must not overlap title');
+   assert.ok(heading.y+heading.height<=bio.y,'title must not overlap biography');
+   assert.equal(await page.locator('#portrait').evaluate(el=>getComputedStyle(el).maskImage),'none');
+   assert.equal(await page.locator('h1').evaluate(el=>getComputedStyle(el,'::before').content),'none');
+   assert.equal(await page.locator('.introduction p').first().evaluate(el=>getComputedStyle(el).textAlign),'justify');
+   for(const link of await page.locator('.site-header nav a').all()){
+     assert.ok((await link.boundingBox()).height>=44,'navigation touch target');
+   }
+ }
  if(route==='research.html')assert.equal(await page.locator('.publication-row').count(),5);
  if(route==='career.html'){
-   assert.equal(await page.locator('.timeline-branch h2').count(),6);
+   assert.equal(await page.locator('.career-entry h2').count(),6);
    assert.equal(await page.locator('#branch-image').count(),1);
    assert.ok(await page.locator('#branch-image').evaluate(x=>x.complete&&x.naturalWidth>0),'career image must load');
  }
  await page.screenshot({path:'v3-'+(route||'home').replace('.html','')+'-'+viewport.width+'.png',fullPage:true,animations:'disabled',timeout:25000});
  await page.close();
  }}
- console.log('All six browser routes passed');
+ console.log('All 15 responsive browser routes passed');
 }finally{if(browser)await browser.close();server.kill('SIGTERM')}

@@ -537,9 +537,14 @@ if(portrait&&surface){
   const image=portrait.querySelector('img');
   const key='andrea-halftone-portrait-session-v1';
   const finalSize=0.45;
-  const animate=playOnceInSession(key);
+  const mobilePortrait=matchMedia('(max-width:640px)');
+  // Keep the mobile portrait crisp and still; retain the desktop introduction.
+  const animate=!mobilePortrait.matches&&playOnceInSession(key);
+  const framing=()=>mobilePortrait.matches?{u_scale:1,u_offsetY:0}:{u_scale:.84,u_offsetY:.035};
   render(surface,image,{size:animate?1:finalSize,contrast:.48,offsetY:.035,scale:.84}).then(mount=>{
     if(!mount)return;
+    mount.setUniforms(framing());
+    mobilePortrait.addEventListener('change',()=>mount.setUniforms(framing()));
     portrait.classList.add('shader-ready');
     function enableHover(){
       if(reduced||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
