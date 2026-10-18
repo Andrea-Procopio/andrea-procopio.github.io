@@ -7,7 +7,9 @@ for(const page of pages){
  const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
  assert.ok(embedded, page+' must include inline CSS fallback');
  assert.ok(embedded[1].includes('.page-width')&&embedded[1].includes('.portrait-graphic'),page+' missing layout CSS');
- assert.ok(html.includes('style.css?v=20261018-hotfix'),page+' missing cache-busted stylesheet');
+ assert.ok(html.includes('style.css?v=20261018-portrait-v1'),page+' missing cache-busted stylesheet');
+ assert.ok(html.includes('main.js?v=20261018-portrait-v1'),page+' missing versioned script');
+ assert.equal(embedded[1].trim(),readFileSync('style.css','utf8').trim(),page+' inline and linked styles must match');
  assert.ok(html.includes('style.css')&&html.includes('main.js'),page+' missing shared assets');
  for(const route of ['research.html','career.html'])assert.ok(html.includes(route),page+' missing navigation');
  assert.equal(html.split('<h1 ').length-1,1,page+' needs one heading');
@@ -33,4 +35,13 @@ for(const name of ['Bocconi University','RIOT Lab','Harvard University','MIT Ope
 assert.ok(js.includes('size:0.14,radius:1.05,contrast:0.5'),'Incorrect shader parameters');
 for(const asset of ['assets/profile.jpeg','assets/icon1.jpg','assets/branch-reference.jpg','style.css','main.js'])
  assert.ok(existsSync(asset),asset+' missing');
-console.log('V3.1 content, site structure, and asset checks passed');
+const careerBody=career.split('</head>')[1]||'';
+assert.ok(!careerBody.includes('Research & academia')&&!careerBody.includes('Entrepreneurship & other'),'Career column labels should be removed');
+for(const phrase of ['MIT — PhD student','Advised by Prof. Dimitris Bertsimas','Harvard University — Research Fellow',
+ 'Advised by Prof. Tomer Ullman','Marche Polytechnic — Research Intern',
+ 'Advised by Prof. Paola Pierleoni','2024–2025','Co-Founder and Advisor','Co-Founder, President','2024–2026'])
+ assert.ok(careerBody.includes(phrase),'Missing updated career copy: '+phrase);
+assert.ok(js.includes('INTRO_DURATION_MS=6000'),'Missing six-second introduction');
+assert.ok(js.includes('window.localStorage.getItem(INTRO_KEY)'),'Intro must be limited to first visit');
+assert.ok(js.includes('reduced')&&js.includes('START_SIZE=1.0')&&js.includes('TARGET_SIZE=0.55'));
+console.log('Career, assets, embedded styles, and first-visit animation checks passed');
