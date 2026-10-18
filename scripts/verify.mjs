@@ -7,7 +7,7 @@ for(const page of pages){
   const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
   assert.ok(embedded,page+' missing inline style fallback');
   assert.equal(embedded[1].trim(),css.trim(),page+' styles differ from style.css');
-  assert.ok(html.includes('style.css?v=20261018-mobile-v2'),page+' CSS version mismatch');
+  assert.ok(html.includes('style.css?v=20261018-mobile-v3'),page+' CSS version mismatch');
   assert.ok(html.includes('main.js?v=20261018-session-v4'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
@@ -33,6 +33,10 @@ assert.ok(css.includes('max-width:none;padding:315px 0 69px'),'Mobile hero must 
 assert.ok(css.includes('mask-image:linear-gradient(to bottom,black 70%,transparent 97%)'),'Mobile portrait must not fade at eye level');
 assert.ok(css.includes('background:none;\n    -webkit-mask-image:none;mask-image:none'),'Mobile bio must not wash out portrait with a second overlay');
 assert.ok(css.includes('inset:-24px -13% auto -25%;height:555px'),'Small phones must preserve visible face');
+assert.ok(css.includes('.page-home .cover-copy h1::before{'),'Mobile name must have a dedicated readability veil');
+assert.ok(css.includes('background:radial-gradient(ellipse 83% 84% at 43% 55%'),'Mobile title contrast must be localized to the name');
+assert.ok(css.includes('rgba(247,246,242,.98) 40%'),'Name must remain readable against dark portrait areas');
+
 const home=readFileSync('index.html','utf8');
 const research=readFileSync('research.html','utf8');
 const career=readFileSync('career.html','utf8');

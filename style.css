@@ -366,3 +366,17 @@
   .page-home .cover-copy{padding-top:292px}
   .page-home .cover-copy h1{font-size:clamp(55px,15vw,68px)}
 }
+
+/* Mobile title contrast: a soft, local paper veil behind the name only.
+   Keep the visible face, photo crop, fade, and all desktop styles unchanged. */
+@media(max-width:640px){
+  .page-home .cover-copy h1{position:relative;isolation:isolate}
+  .page-home .cover-copy h1::before{
+    content:"";position:absolute;z-index:-1;pointer-events:none;
+    inset:-22px -20px -20px;
+    background:radial-gradient(ellipse 83% 84% at 43% 55%,
+      rgba(247,246,242,.98) 40%,
+      rgba(247,246,242,.90) 67%,
+      rgba(247,246,242,0) 100%)
+  }
+}
