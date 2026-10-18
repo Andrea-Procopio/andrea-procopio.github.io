@@ -7,8 +7,8 @@ for(const page of pages){
   const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
   assert.ok(embedded,page+' missing inline style fallback');
   assert.equal(embedded[1].trim(),css.trim(),page+' styles differ from style.css');
-  assert.ok(html.includes('style.css?v=20261018-temporal-tree-v6'),page+' CSS version mismatch');
-  assert.ok(html.includes('main.js?v=20261018-session-v3'),page+' script version mismatch');
+  assert.ok(html.includes('style.css?v=20261018-temporal-tree-v7'),page+' CSS version mismatch');
+  assert.ok(html.includes('main.js?v=20261018-session-v4'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
   assert.ok(!html.includes('class="wordmark"'),page+' should not include top Andrea Procopio link');
@@ -33,6 +33,7 @@ for(const phrase of [
 assert.ok(biography.includes('href="https://bainsa.ai/"'),'BAINSA link missing from biography');
 assert.ok(biography.includes('href="https://www.eurotech-federation.com"'),'EuroTech link missing from biography');
 assert.ok(!biography.includes('recursive self-improvement'),'The phrase must not contain a hyphen');
+assert.ok(css.includes('.page-home .introduction p{text-align:justify;text-justify:inter-word;hyphens:none}'),'Homepage biography must be justified');
 assert.ok(!biography.includes('I work on AI systems that do research:'),
  'Old biography text should be removed');
 assert.equal((research.match(/class="publication-row"/g)||[]).length,5);
@@ -101,8 +102,8 @@ for(const link of links)assert.ok(content.includes('href="'+link+'"'),'Missing c
 assert.ok(!content.includes('Research & academia')&&!content.includes('Entrepreneurship & other'));
 assert.ok(js.includes('TRANSITION_MS=3500'),'Animations must take 3.5 seconds');
 assert.ok(js.includes('const finalSize=0.45'),'Portrait must finish at size 0.45');
-assert.ok(js.includes('scale:.74'),'Smaller portrait shader scale must match photo fallback');
-assert.ok(css.includes('portrait-fallback{transform:scale(.74)'),'Portrait fallback should use the same smaller scale');
+assert.ok(js.includes('scale:.84'),'Smaller portrait shader scale must match photo fallback');
+assert.ok(css.includes('portrait-fallback{transform:scale(.84)'),'Portrait fallback should use the same smaller scale');
 assert.ok(css.includes('.site-header{justify-content:flex-end}'),'Header must right-align navigation without wordmark');
 assert.ok(js.includes('const finalSize=0.2'),'Tree must finish at size 0.2');
 assert.ok(js.includes('sessionStorage.getItem')&&js.includes('sessionStorage.setItem'),'Must run once per tab session');
