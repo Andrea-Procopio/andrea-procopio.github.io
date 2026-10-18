@@ -1,50 +1,112 @@
 import {readFileSync,existsSync} from 'node:fs';
 import assert from 'node:assert/strict';
 const pages=['index.html','research.html','career.html'];
+const css=readFileSync('style.css','utf8');
 for(const page of pages){
- assert.ok(existsSync(page),page+' missing');
- const html=readFileSync(page,'utf8');
- const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
- assert.ok(embedded, page+' must include inline CSS fallback');
- assert.ok(embedded[1].includes('.page-width')&&embedded[1].includes('.portrait-graphic'),page+' missing layout CSS');
- assert.ok(html.includes('style.css?v=20261018-portrait-v1'),page+' missing cache-busted stylesheet');
- assert.ok(html.includes('main.js?v=20261018-anim-v3'),page+' missing versioned script');
- assert.equal(embedded[1].trim(),readFileSync('style.css','utf8').trim(),page+' inline and linked styles must match');
- assert.ok(html.includes('style.css')&&html.includes('main.js'),page+' missing shared assets');
- for(const route of ['research.html','career.html'])assert.ok(html.includes(route),page+' missing navigation');
- assert.equal(html.split('<h1 ').length-1,1,page+' needs one heading');
+  const html=readFileSync(page,'utf8');
+  const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
+  assert.ok(embedded,page+' missing inline style fallback');
+  assert.equal(embedded[1].trim(),css.trim(),page+' styles differ from style.css');
+  assert.ok(html.includes('style.css?v=20261018-temporal-tree-v5'),page+' CSS version mismatch');
+  assert.ok(html.includes('main.js?v=20261018-session-v2'),page+' script version mismatch');
+  assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
+  assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
+  assert.ok(!html.includes('class="wordmark"'),page+' should not include top Andrea Procopio link');
 }
 const home=readFileSync('index.html','utf8');
 const research=readFileSync('research.html','utf8');
 const career=readFileSync('career.html','utf8');
 const js=readFileSync('main.js','utf8');
 assert.ok(home.includes('assets/profile.jpeg')&&home.includes('id="contact"'));
-for(const phrase of ['RESEARCH / SCIENTIFIC DISCOVERY','Researcher <span>','CORRESPONDENCE / 02'])
- assert.ok(!home.includes(phrase),'Unwanted home text: '+phrase);
+const biography=home.split('<div class="introduction">')[1]?.split('</div>')[0]||'';
+assert.equal((biography.match(/<p>/g)||[]).length,4,'Landing biography must have exactly four paragraphs');
+for(const phrase of [
+  "I'm a PhD student at MIT working with Prof. Dimitris Bertsimas, and a Research Fellow at Harvard.",
+  'reliably and meaningfully automate scientific discovery',
+  'continual learning and recursive self-improvement',
+  'raise the median quality of life.',
+  'where my thesis was co-advised by Prof. Tomer Ullman',
+  'Harvard’s Computation, Cognition, and Development Lab.',
+  'Italy’s largest student-run AI research lab',
+  'a community for Europe’s brightest founders under 26.'
+]) assert.ok(biography.includes(phrase),'Missing biography copy: '+phrase);
+assert.ok(biography.includes('href="https://bainsa.ai/"'),'BAINSA link missing from biography');
+assert.ok(biography.includes('href="https://www.eurotech-federation.com"'),'EuroTech link missing from biography');
+assert.ok(!biography.includes('I work on AI systems that do research:'),
+ 'Old biography text should be removed');
 assert.equal((research.match(/class="publication-row"/g)||[]).length,5);
-assert.ok(research.toLowerCase().includes('under review')&&research.includes('https://arxiv.org/abs/2602.12486'));
-assert.ok(!research.includes('Human-Like Coarse Object Representations in Vision Models'));
-assert.ok(!research.includes('01—06 / PAPERS'));
-assert.ok(research.includes('>Career <span'));
+assert.ok(research.includes('Modeling the Object Representations Underlying Human Physical Reasoning'));
 assert.ok(career.includes('assets/branch-reference.jpg'));
-assert.ok(!career.includes('id="botanical-tree"'));
-assert.equal((career.match(/class="timeline-branch academic"/g)||[]).length,4);
-assert.equal((career.match(/class="timeline-branch enterprise"/g)||[]).length,4);
-for(const name of ['Bocconi University','Marche Polytechnic','Harvard University','MIT — PhD student','BAINSA','EuroTech Federation'])
- assert.ok(career.includes(name),'Missing career entry '+name);
-assert.ok(js.includes('radius:1.05,contrast:0.5'),'Incorrect tree shader radius/contrast');
+assert.equal((career.match(/class="career-entry career-entry--/g)||[]).length,6,'Expect exactly six career entries');
+assert.ok(!career.includes('class="timeline-row"'),'Old connector timeline should not be present');
+assert.ok(career.includes('class="career-tree-plot"')&&career.includes('viewBox="0 0 180 920"'),'Missing duration tree geometry');
+const branches=[
+ ['mit','2026','present'],['harvard','2025','present'],
+ ['marche','2024','2025'],['bocconi','2023','2026'],
+ ['bainsa','2023','present'],['eurotech','2025','present']
+];
+for(const [slug,start,end] of branches){
+ const entry=career.match(new RegExp('<article class="career-entry career-entry--'+slug+'[^>]*>'));
+ assert.ok(entry,'Missing experience '+slug);
+ assert.ok(entry[0].includes('data-start="'+start+'"')&&entry[0].includes('data-end="'+end+'"'),'Wrong duration for '+slug);
+ assert.ok(career.includes('data-track="'+slug+'"'),'Missing duration line for '+slug);
+ assert.ok(career.includes('data-leader="'+slug+'"'),'Missing aligned text leader for '+slug);
+ assert.ok(career.includes('data-tip="'+slug+'"'),'Missing leader endpoint dot for '+slug);
+}
+assert.ok(css.includes('grid-template-columns:minmax(0,1fr) 180px minmax(0,1fr)'),'Desktop diagram must have its own protected column');
+assert.ok(css.includes('@media(max-width:1040px)')&&css.includes('.career-tree-plot{display:none}'),'Mobile must use distinct legible layout');
+assert.ok(css.includes('grid-template-rows:repeat(4,230px)'),'Chronology should be fifteen percent more compact');
+assert.ok(css.includes('tree-leader-dots')&&css.includes('stroke-linecap:round'),'Rounded branches and terminal-dot connectors must be styled');
+assert.ok(css.includes('.page-career .career-entry::before,.page-career .career-entry::after{content:none}'),'Desktop must not use CSS-generated dashes');
+assert.ok(css.includes(':focus-within')&&css.includes('[data-tip="harvard"]'),'Mouse and keyboard focus must identify the right branch and dot');
+assert.ok(!career.includes('class="tree-year-markers"'),'Avoid redundant year labels over the tree geometry');
+assert.ok(css.includes('color:#62625b'),'Description contrast must remain readable');
+const treeSvg=career.split('<svg viewBox="0 0 180 920"')[1]?.split('</svg>')[0]||'';
+assert.equal((treeSvg.match(/data-tip="/g)||[]).length,6,'Six labeled connector endpoints required');
+assert.equal((treeSvg.match(/data-track="/g)||[]).length,6,'Six duration stems required');
+assert.equal((treeSvg.match(/class="tree-hitbox"/g)||[]).length,12,'Each stem and leader needs a hover hitbox');
+for(const slug of branches.map(branch=>branch[0])){
+  assert.equal((treeSvg.match(new RegExp('data-hit="'+slug+'"','g'))||[]).length,2,'Missing branch and leader hover targets for '+slug);
+}
+assert.ok(css.includes('.tree-hitbox{fill:none;stroke:transparent;stroke-width:14px;pointer-events:stroke'),'Hovered branches should have a wide invisible stroke target');
+assert.ok(css.includes('stroke-width:2.9;fill:none'),'Hovered branches must become bolder without filling their enclosed space');
+assert.ok(!css.includes('opacity:1;stroke:#2a2a27;fill:#2a2a27'),'The black triangle hover bug must never return');
+assert.ok(css.includes('pointer-events:auto}')&&css.includes('svg{display:block;width:100%;height:100%;overflow:visible;pointer-events:none'),'Diagram must allow stroke hover targets only');
+// Institution heading, then role, then date: the reference's hierarchy, preserving a full description.
+for(const part of career.split('<article class="career-entry').slice(1)){
+  const entry=part.split('</article>')[0];
+  assert.ok(entry.indexOf('<h2>')<entry.indexOf('class="career-role"') &&
+    entry.indexOf('class="career-role"')<entry.indexOf('class="career-date"'),
+    'Career title, role, and date should have a consistent reading order');
+}
+
+const content=career.split('</head>')[1];
+const expected=[
+  'MIT','PhD student, advised by Prof. Dimitris Bertsimas','Continual learning in autonomous research systems',
+  'Harvard University','Research Fellow, advised by Prof. Tomer Ullman',
+  "Work at the intersection of computer vision and human cognition that led to my bachelor's thesis",
+  'Marche Polytechnic University','Researcher, advised by Prof. Paola Pierleoni',
+  'Designed and trained light ML models for movement detection on wearables',
+  'BAINSA','2023–present','Co-Founder, Chairman',
+  "Italy's first student-led research labs on AI, Neuroscience, and Robotics. Active in Bocconi, Polimi, Sapienza, and more soon.",
+  'EuroTech Federation','Co-Founder, Advisor','Non-profit network of the brightest European founders U26.'
+];
+for(const phrase of expected)assert.ok(content.includes(phrase),'Missing career text: '+phrase);
+const links=[
+  'https://orc.mit.edu','https://www.cocodev.org','https://dii.univpm.it/riot_it/',
+  'https://bainsa.ai','https://www.eurotech-federation.com'
+];
+for(const link of links)assert.ok(content.includes('href="'+link+'"'),'Missing clickable career link: '+link);
+assert.ok(!content.includes('Research & academia')&&!content.includes('Entrepreneurship & other'));
+assert.ok(js.includes('TRANSITION_MS=3500'),'Animations must take 3.5 seconds');
+assert.ok(js.includes('const finalSize=0.45'),'Portrait must finish at size 0.45');
+assert.ok(js.includes('scale:.84'),'Smaller portrait shader scale must match photo fallback');
+assert.ok(css.includes('portrait-fallback{transform:scale(.84)'),'Portrait fallback should use the same smaller scale');
+assert.ok(css.includes('.site-header{justify-content:flex-end}'),'Header must right-align navigation without wordmark');
+assert.ok(js.includes('const finalSize=0.2'),'Tree must finish at size 0.2');
+assert.ok(js.includes('sessionStorage.getItem')&&js.includes('sessionStorage.setItem'),'Must run once per tab session');
+assert.ok(js.includes('andrea-halftone-portrait-session-v1')&&js.includes('andrea-halftone-tree-session-v1'),'Each page needs independent state');
+assert.ok(js.includes('if(reduced)'),'Reduced motion must skip animation');
 for(const asset of ['assets/profile.jpeg','assets/icon1.jpg','assets/branch-reference.jpg','style.css','main.js'])
- assert.ok(existsSync(asset),asset+' missing');
-const careerBody=career.split('</head>')[1]||'';
-assert.ok(!careerBody.includes('Research & academia')&&!careerBody.includes('Entrepreneurship & other'),'Career column labels should be removed');
-for(const phrase of ['MIT — PhD student','Advised by Prof. Dimitris Bertsimas','Harvard University — Research Fellow',
- 'Advised by Prof. Tomer Ullman','Marche Polytechnic — Research Intern',
- 'Advised by Prof. Paola Pierleoni','2024–2025','Co-Founder and Advisor','Co-Founder, President','2024–2026'])
- assert.ok(careerBody.includes(phrase),'Missing updated career copy: '+phrase);
-assert.ok(js.includes('TRANSITION_MS=4000'),'Both effects should take four seconds');
-assert.ok(js.includes('const finalSize=0.45'),'Portrait must settle at 0.45');
-assert.ok(js.includes('const finalSize=0.2'),'Tree must settle at 0.2');
-assert.ok(js.includes('transitionCoarseness(mount,1,finalSize'),'Both effects should start at maximum coarseness');
-assert.ok(!js.includes('localStorage')&&!js.includes('sessionStorage'),'Animations must replay on reload');
-assert.ok(js.includes("if(reduced)"),'Respect reduced-motion preferences');
-console.log('Career, embedded styles, and per-load animations validated');
+  assert.ok(existsSync(asset),asset+' missing');
+console.log('All fast career, asset, and session animation checks passed');

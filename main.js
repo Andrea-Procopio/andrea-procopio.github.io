@@ -507,34 +507,39 @@ async function render(host,img,opts={}){
  host.classList.add('ready');return mount;
  }catch(err){console.warn('Halftone fallback active',err);return null}
 }
-// Shader coarseness: 1 is largest dots; 0 is the finest dot grid.
-const TRANSITION_MS=4000;
+// Halftone introductions: once per page, per tab session.
+// sessionStorage survives normal navigation but clears when the browsing session ends.
+const TRANSITION_MS=3500;
+function playOnceInSession(key){
+  if(reduced)return false;
+  try{return sessionStorage.getItem(key)!=='played'}catch{return true}
+}
+function rememberPlayed(key){
+  try{sessionStorage.setItem(key,'played')}catch{}
+}
 function transitionCoarseness(mount,from,to,onComplete){
-  if(reduced){
-    mount.setUniforms({u_size:to});
-    if(onComplete)onComplete();
-    return;
-  }
-  let startTime=null;
+  if(reduced){mount.setUniforms({u_size:to});onComplete?.();return}
+  let startedAt=null;
   function frame(now){
-    if(startTime===null)startTime=now;
-    const progress=Math.min(1,(now-startTime)/TRANSITION_MS);
-    const smooth=progress*progress*(3-2*progress);
-    mount.setUniforms({u_size:from+(to-from)*smooth});
+    if(startedAt===null)startedAt=now;
+    const progress=Math.min(1,(now-startedAt)/TRANSITION_MS);
+    const eased=progress*progress*(3-2*progress);
+    mount.setUniforms({u_size:from+(to-from)*eased});
     if(progress<1){requestAnimationFrame(frame);return}
     mount.setUniforms({u_size:to});
-    if(onComplete)onComplete();
+    onComplete?.();
   }
   requestAnimationFrame(frame);
 }
-
 const portrait=document.getElementById('portrait');
 const surface=document.getElementById('portrait-shader');
 if(portrait&&surface){
   const image=portrait.querySelector('img');
+  const key='andrea-halftone-portrait-session-v1';
   const finalSize=0.45;
-  render(surface,image,{size:reduced?finalSize:1,contrast:.48,offsetY:.035,scale:.94}).then(mount=>{
-    if(!mount)return; // Keep the original image if WebGL is unavailable.
+  const animate=playOnceInSession(key);
+  render(surface,image,{size:animate?1:finalSize,contrast:.48,offsetY:.035,scale:.84}).then(mount=>{
+    if(!mount)return;
     portrait.classList.add('shader-ready');
     function enableHover(){
       if(reduced||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
@@ -552,17 +557,24 @@ if(portrait&&surface){
       },{passive:true});
       portrait.addEventListener('pointerleave',()=>mount.setUniforms({u_size:finalSize}));
     }
-    transitionCoarseness(mount,1,finalSize,enableHover);
+    if(animate){
+      rememberPlayed(key);
+      transitionCoarseness(mount,1,finalSize,enableHover);
+    }else enableHover();
   });
 }
-
 const branchImage=document.getElementById('branch-image');
 if(branchImage){
   const layer=document.getElementById('branch-shader');
+  const key='andrea-halftone-tree-session-v1';
   const finalSize=0.2;
-  render(layer,branchImage,{size:reduced?finalSize:1,radius:1.05,contrast:0.5}).then(mount=>{
+  const animate=playOnceInSession(key);
+  render(layer,branchImage,{size:animate?1:finalSize,radius:1.05,contrast:0.5}).then(mount=>{
     if(!mount)return;
-    transitionCoarseness(mount,1,finalSize);
+    if(animate){
+      rememberPlayed(key);
+      transitionCoarseness(mount,1,finalSize);
+    }
   });
 }
 if('IntersectionObserver'in window&&!reduced){
