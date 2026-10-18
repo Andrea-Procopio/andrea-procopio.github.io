@@ -18,6 +18,22 @@ const research=readFileSync('research.html','utf8');
 const career=readFileSync('career.html','utf8');
 const js=readFileSync('main.js','utf8');
 assert.ok(home.includes('assets/profile.jpeg')&&home.includes('id="contact"'));
+const biography=home.match(/<div class="introduction">([\\s\\S]*?)<\\/div>/)?.[1]||'';
+assert.equal((biography.match(/<p>/g)||[]).length,4,'Landing biography must have exactly four paragraphs');
+for(const phrase of [
+  "I'm a PhD student at MIT working with Prof. Dimitris Bertsimas, and a Research Fellow at Harvard.",
+  'reliably and meaningfully automate scientific discovery',
+  'continual learning and recursive self-improvement',
+  'raise the median quality of life.',
+  'where my thesis was co-advised by Prof. Tomer Ullman',
+  'Harvard’s Computation, Cognition, and Development Lab.',
+  'Italy’s largest student-run AI research lab',
+  'a community for Europe’s brightest founders under 26.'
+]) assert.ok(biography.includes(phrase),'Missing biography copy: '+phrase);
+assert.ok(biography.includes('href="https://bainsa.ai/"'),'BAINSA link missing from biography');
+assert.ok(biography.includes('href="https://www.eurotech-federation.com"'),'EuroTech link missing from biography');
+assert.ok(!biography.includes('I work on AI systems that do research:'),
+ 'Old biography text should be removed');
 assert.equal((research.match(/class="publication-row"/g)||[]).length,5);
 assert.ok(research.includes('Modeling the Object Representations Underlying Human Physical Reasoning'));
 assert.ok(career.includes('assets/branch-reference.jpg'));
