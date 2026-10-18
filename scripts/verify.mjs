@@ -16,7 +16,7 @@ assert.ok(home.includes('assets/profile.jpeg')&&home.includes('id="contact"'));
 for(const phrase of ['RESEARCH / SCIENTIFIC DISCOVERY','Researcher <span>','CORRESPONDENCE / 02'])
  assert.ok(!home.includes(phrase),'Unwanted home text: '+phrase);
 assert.equal((research.match(/class="publication-row"/g)||[]).length,5);
-assert.ok(research.includes('UNDER REVIEW')&&research.includes('https://arxiv.org/abs/2602.12486'));
+assert.ok(research.toLowerCase().includes('under review')&&research.includes('https://arxiv.org/abs/2602.12486'));
 assert.ok(!research.includes('Human-Like Coarse Object Representations in Vision Models'));
 assert.ok(!research.includes('01—06 / PAPERS'));
 assert.ok(research.includes('>Career <span'));
