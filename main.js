@@ -486,257 +486,82 @@ void main() {
 `,z={classic:0,gooey:1,holes:2,soft:3},U={square:0,hex:1};function w(t){if(Array.isArray(t))return t.length===4?t:t.length===3?[...t,1]:m;if(typeof t!="string")return m;let e,i,r,a=1;if(t.startsWith("#"))[e,i,r,a]=N(t);else if(t.startsWith("rgb")){let o=X(t);if(o===null)return m;[e,i,r,a]=o}else if(t.startsWith("hsl")){let o=j(t);if(o===null)return m;[e,i,r,a]=k(o)}else return console.error("Unsupported color format",t),m;return[v(e,0,1),v(i,0,1),v(r,0,1),v(a,0,1)]}function N(t){if(t=t.replace(/^#/,""),(t.length===3||t.length===4)&&(t=t.split("").map(o=>o+o).join("")),t.length===6&&(t=t+"ff"),!/^[0-9a-f]{8}$/i.test(t))return console.warn("Invalid hex color"),m;let e=parseInt(t.slice(0,2),16)/255,i=parseInt(t.slice(2,4),16)/255,r=parseInt(t.slice(4,6),16)/255,a=parseInt(t.slice(6,8),16)/255;return[e,i,r,a]}function X(t){let e=t.match(/^rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([0-9.]+))?\s*\)$/i);return e?[parseInt(e[1]??"0")/255,parseInt(e[2]??"0")/255,parseInt(e[3]??"0")/255,e[4]===void 0?1:parseFloat(e[4])]:null}function j(t){let e=t.match(/^hsla?\s*\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*(?:,\s*([0-9.]+))?\s*\)$/i);return e?[parseInt(e[1]??"0"),parseInt(e[2]??"0"),parseInt(e[3]??"0"),e[4]===void 0?1:parseFloat(e[4])]:null}function k(t){let[e,i,r,a]=t,o=e/360,s=i/100,n=r/100,c,u,l;if(i===0)c=u=l=n;else{let h=(d,_,f)=>(f<0&&(f+=1),f>1&&(f-=1),f<.16666666666666666?d+(_-d)*6*f:f<.5?_:f<.6666666666666666?d+(_-d)*(.6666666666666666-f)*6:d),p=n<.5?n*(1+s):n+s-n*s,x=2*n-p;c=h(x,p,o+1/3),u=h(x,p,o),l=h(x,p,o-1/3)}return[c,u,l,a]}var v=(t,e,i)=>Math.min(Math.max(t,e),i),m=[.5,.5,.5,1];return I($);})();
 
 
-/* ==========================================================
-   Andrea Procopio: site script
-   1. Theme       follows the system; footer button overrides it
-   2. Copy        copy-to-clipboard buttons
-   3. Portrait    live halftone portrait, presets, sliders, hover
-   ========================================================== */
 
-/* ---------- 1. Theme ----------
-   Cycles auto -> the opposite theme -> the system theme -> auto,
-   so the first press always changes what you see. A manual choice is remembered. */
-(function () {
-  var root = document.documentElement;
-  var btn = document.getElementById('theme');
-  if (!btn) return;
-  var systemDark = window.matchMedia('(prefers-color-scheme: dark)');
-
-  function modes() { return systemDark.matches ? ['auto', 'light', 'dark'] : ['auto', 'dark', 'light']; }
-  function current() {
-    var t = root.getAttribute('data-theme');
-    return (t === 'light' || t === 'dark') ? t : 'auto';
-  }
-  function render() {
-    var m = current();
-    btn.textContent = 'Theme: ' + m;
-    btn.setAttribute('aria-label', 'Color theme: ' + m + '. Press to change.');
-  }
-
-  btn.addEventListener('click', function () {
-    var m = modes();
-    var next = m[(m.indexOf(current()) + 1) % m.length];
-    if (next === 'auto') {
-      root.removeAttribute('data-theme');
-      try { localStorage.removeItem('theme'); } catch (e) {}
-    } else {
-      root.setAttribute('data-theme', next);
-      try { localStorage.setItem('theme', next); } catch (e) {}
-    }
-    render();
-  });
-
-  btn.hidden = false;
-  render();
-})();
-
-/* ---------- 2. Copy buttons ----------
-   Copy the value and confirm for a moment. Without clipboard access, open the mail app. */
-(function () {
-  document.querySelectorAll('[data-copy]').forEach(function (btn) {
-    var label = btn.querySelector('[data-label]');
-    var original = label ? label.textContent : '';
-    btn.addEventListener('click', function () {
-      var value = btn.getAttribute('data-copy');
-      function done() {
-        if (!label) return;
-        label.textContent = 'copied';
-        clearTimeout(btn._t);
-        btn._t = setTimeout(function () { label.textContent = original; }, 1400);
-      }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(value).then(done, function () { location.href = 'mailto:' + value; });
-      } else {
-        location.href = 'mailto:' + value;
-      }
-    });
-  });
-})();
-
-/* ---------- 3. Portrait ----------
-   The photo rendered live by the Paper Shaders halftone-dots shader (bundled above).
-   The panel's presets and sliders set the shader parameters.
-   Moving the pointer across the portrait bends two of them (x: dot size, y: contrast)
-   on critically damped springs, and the sliders follow. Leaving lets them settle back.
-   With reduced motion, the pointer does nothing; presets and sliders still work.
-   Without WebGL2, the plain grayscale photo stays and the controls are hidden. */
-(function () {
-  const {
-    ShaderMount,
-    halftoneDotsFragmentShader,
-    getShaderColorFromString,
-    HalftoneDotsTypes,
-    HalftoneDotsGrids,
-    ShaderFitOptions,
-  } = PaperShaders;
-
-  const box = document.getElementById('portrait');
-  const img = box && box.querySelector('img');
-  const caption = document.getElementById('portrait-caption');
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-  // "print" is Paper's default halftone; the others are tuned for this page.
-  const PRESETS = {
-    print:    { size: 0.5, radius: 1.25, contrast: 0.4,  grain: 0.2, grid: 'hex',    type: 'gooey',   back: '#f2f1e8', front: '#2b2b2b', original: false, inverted: false },
-    screen:   { size: 0.5, radius: 1.5,  contrast: 0.3,  grain: 0,   grid: 'square', type: 'soft',    back: '#000000', front: '#f0efe4', original: false, inverted: false },
-    mosaic:   { size: 0.6, radius: 2,    contrast: 0.01, grain: 0,   grid: 'hex',    type: 'classic', back: '#000000', front: '#b2aeae', original: true,  inverted: false },
-    negative: { size: 0.8, radius: 1,    contrast: 1,    grain: 0.2, grid: 'square', type: 'holes',   back: '#141414', front: '#f0efe4', original: false, inverted: true  },
-  };
-  const ORDER = Object.keys(PRESETS);
-  const FRAME_Y = 0.12; // shifts the crop down so the 4:3 frame keeps the hair
-
-  let base = { ...PRESETS.print };
-  let preset = 'print';
-  let mount = null;
-
-  // pointer modulation, each in [-0.5, 0.5]
-  const m = { x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0 };
-  let raf = 0, last = 0, DV = 0;
-
-  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-
-  // Critically damped spring toward a target (Unity-style smoothDamp).
-  function damp(cur, target, vel, smoothTime, dt) {
-    const omega = 2 / smoothTime, x = omega * dt;
-    const e = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
-    const change = cur - target;
-    const temp = (vel + omega * change) * dt;
-    DV = (vel - omega * temp) * e;
-    return target + (change + temp) * e;
-  }
-
-  function effective() {
-    return {
-      ...base,
-      size: clamp(base.size * (1 + m.x * 1.1), 0.05, 1),
-      contrast: clamp(base.contrast - m.y * 0.7, 0, 1),
-    };
-  }
-
-  function uniforms(p) {
-    return {
-      u_image: img,
-      u_colorFront: getShaderColorFromString(p.front),
-      u_colorBack: getShaderColorFromString(p.back),
-      u_size: p.size,
-      u_radius: p.radius,
-      u_contrast: p.contrast,
-      u_originalColors: p.original,
-      u_inverted: p.inverted,
-      u_grainMixer: p.grain,
-      u_grainOverlay: p.grain,
-      u_grainSize: 0.5,
-      u_grid: HalftoneDotsGrids[p.grid],
-      u_type: HalftoneDotsTypes[p.type],
-      u_fit: ShaderFitOptions.cover,
-      u_scale: 1,
-      u_rotation: 0,
-      u_offsetX: 0,
-      u_offsetY: FRAME_Y,
-      u_originX: 0.5,
-      u_originY: 0.5,
-      u_worldWidth: 0,
-      u_worldHeight: 0,
-    };
-  }
-
-  const inputs = Array.from(document.querySelectorAll('[data-param]'));
-  const outs = {};
-  document.querySelectorAll('[data-out]').forEach((o) => { outs[o.dataset.out] = o; });
-  const presetButtons = Array.from(document.querySelectorAll('[data-preset]'));
-
-  function sync(p) {
-    for (const el of inputs) {
-      const k = el.dataset.param;
-      if (el !== document.activeElement || el.tagName === 'SELECT') el.value = p[k];
-      if (outs[k]) outs[k].textContent = Number(p[k]).toFixed(2);
-    }
-  }
-
-  function apply() {
-    const p = effective();
-    if (mount) mount.setUniforms(uniforms(p));
-    box.style.background = p.back;
-    sync(p);
-  }
-
-  function setPreset(name) {
-    base = { ...PRESETS[name] };
-    preset = name;
-    presetButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.preset === name)));
-    apply();
-  }
-
-  function step(ts) {
-    // real elapsed time (capped), so slow devices settle on time instead of in slow motion
-    const dt = last ? Math.min((ts - last) / 1000, 0.1) : 1 / 60;
-    last = ts;
-    m.x = damp(m.x, m.tx, m.vx, 0.18, dt); m.vx = DV;
-    m.y = damp(m.y, m.ty, m.vy, 0.18, dt); m.vy = DV;
-    const moving = Math.abs(m.x - m.tx) > 1e-4 || Math.abs(m.y - m.ty) > 1e-4 ||
-                   Math.abs(m.vx) > 1e-4 || Math.abs(m.vy) > 1e-4;
-    if (!moving) { m.x = m.tx; m.y = m.ty; m.vx = 0; m.vy = 0; }
-    apply();
-    if (moving) { raf = requestAnimationFrame(step); } else { raf = 0; last = 0; }
-  }
-  function kick() { if (!raf) raf = requestAnimationFrame(step); }
-
-  function wire() {
-    for (const el of inputs) {
-      el.addEventListener('input', () => {
-        const k = el.dataset.param;
-        base[k] = el.type === 'range' ? parseFloat(el.value) : el.value;
-        preset = null;
-        presetButtons.forEach((b) => b.setAttribute('aria-pressed', 'false'));
-        apply();
-      });
-    }
-    presetButtons.forEach((b) => b.addEventListener('click', () => setPreset(b.dataset.preset)));
-
-    box.addEventListener('pointermove', (e) => {
-      if (e.pointerType === 'touch' || reduceMotion.matches) return;
-      const r = box.getBoundingClientRect();
-      m.tx = clamp((e.clientX - r.left) / r.width - 0.5, -0.5, 0.5);
-      m.ty = clamp((e.clientY - r.top) / r.height - 0.5, -0.5, 0.5);
-      kick();
-    });
-    box.addEventListener('pointerleave', () => { m.tx = 0; m.ty = 0; kick(); });
-    box.addEventListener('click', () => {
-      const i = preset ? ORDER.indexOf(preset) : -1;
-      setPreset(ORDER[(i + 1) % ORDER.length]);
-    });
-  }
-
-  function fail() {
-    document.documentElement.classList.add('no-shader');
-  }
-
-  function hasWebGL2() {
-    try { return !!document.createElement('canvas').getContext('webgl2'); } catch (e) { return false; }
-  }
-
-  async function init() {
-    if (!box || !img) return;
-    try { await img.decode(); } catch (e) { /* checked below */ }
-    if (!img.naturalWidth || !hasWebGL2()) { fail(); return; }
-    try {
-      mount = new ShaderMount(box, halftoneDotsFragmentShader, uniforms(effective()), undefined, 0, 0, 2);
-    } catch (e) {
-      fail();
-      return;
-    }
-    img.hidden = true; // the canvas now shows the portrait
-    box.setAttribute('role', 'img');
-    box.setAttribute('aria-label', img.alt);
-    box.classList.add('is-live');
-    if (caption) {
-      caption.textContent = reduceMotion.matches
-        ? 'Click the portrait for the next preset.'
-        : 'Move across the portrait to change dot size and contrast. Click for the next preset.';
-    }
-    wire();
-    apply();
-  }
-
-  init();
+/* V3: shared halftone renderer and deterministic L-system inspired botany. */
+(function(){
+'use strict';
+const P=typeof PaperShaders==='undefined'?null:PaperShaders;
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function supportsWebGL(){try{return !!document.createElement('canvas').getContext('webgl2')}catch{return false}}
+const capable=!!P&&supportsWebGL();
+function uniforms(img,opts={}){
+return {u_image:img,u_colorFront:P.getShaderColorFromString('#282824'),u_colorBack:P.getShaderColorFromString('#f7f6f2'),u_size:opts.size??.55,u_radius:1.3,u_contrast:opts.contrast??.42,u_originalColors:false,u_inverted:false,u_grainMixer:.08,u_grainOverlay:.025,u_grainSize:.4,u_grid:P.HalftoneDotsGrids.hex,u_type:P.HalftoneDotsTypes.gooey,u_fit:P.ShaderFitOptions.cover,u_scale:1,u_rotation:0,u_offsetX:0,u_offsetY:opts.offsetY??0,u_originX:.5,u_originY:.5,u_worldWidth:0,u_worldHeight:0};
+}
+async function render(host,img,opts={}){
+ if(!capable||!host||!img)return null;
+ try{
+ if(!img.complete)await new Promise((resolve,reject)=>{img.addEventListener('load',resolve,{once:true});img.addEventListener('error',reject,{once:true})});
+ if(!img.naturalWidth)return null;
+ const mount=new P.ShaderMount(host,P.halftoneDotsFragmentShader,uniforms(img,opts),undefined,0,0,1);
+ if(!mount.program){mount.dispose();return null}
+ host.classList.add('ready');return mount;
+ }catch(err){console.warn('Halftone fallback active',err);return null}
+}
+const portrait=document.getElementById('portrait'),surface=document.getElementById('portrait-shader');
+if(portrait&&surface){
+ const img=portrait.querySelector('img');
+ render(surface,img,{size:.55,contrast:.48,offsetY:.035}).then(m=>{
+  if(!m)return;portrait.classList.add('shader-ready');
+  if(!reduced){let raf=0;portrait.addEventListener('pointermove',e=>{
+   if(raf)return;raf=requestAnimationFrame(()=>{raf=0;const r=portrait.getBoundingClientRect();m.setUniforms({u_size:.50+.09*Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))})})});portrait.addEventListener('pointerleave',()=>m.setUniforms({u_size:.55}))}
+ });
+}
+let seed=82739;function rng(){seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296}
+const ns='http://www.w3.org/2000/svg';
+function botanical(svg){
+ if(!svg)return;
+ const group=document.createElementNS(ns,'g');svg.append(group);
+ const queue=[];
+ function branch(x,y,ang,len,depth,dist){
+  if(depth===0||queue.length>850)return;
+  const ex=x+Math.sin(ang)*len,ey=y-Math.cos(ang)*len;
+  const path=document.createElementNS(ns,'path');
+  const fmt=n=>n.toFixed(2);
+  path.setAttribute('d',`M${fmt(x)} ${fmt(y)} Q${fmt((x+ex)/2+Math.cos(ang)*len*.02)} ${fmt((y+ey)/2)} ${fmt(ex)} ${fmt(ey)}`);
+  path.setAttribute('pathLength','1');
+  path.style.setProperty('--width',Math.max(.45,(depth/10)*2.7).toFixed(2));
+  path.style.setProperty('--birth',Math.min(1,dist/710).toFixed(3));
+  group.append(path);queue.push(path);
+  const noise=rng();
+  branch(ex,ey,ang+(noise-.5)*.17,len*.79,depth-1,dist+len);
+  if(depth>2)branch(ex,ey,ang-(.34+rng()*.15),len*.72,depth-2,dist+len);
+  if(depth>3)branch(ex,ey,ang+(.36+rng()*.15),len*.70,depth-2,dist+len);
+ }
+ branch(306,682,-.02,115,10,0);
+ if(reduced){svg.classList.add('is-grown');return}
+ const show=()=>{svg.classList.add('is-growing');setTimeout(()=>{svg.classList.remove('is-growing');svg.classList.add('is-grown')},4900)};
+ if('IntersectionObserver'in window){const ob=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){ob.disconnect();show()}},{threshold:.15});ob.observe(svg)}else show();
+}
+const tree=document.getElementById('botanical-tree');if(tree)botanical(tree);
+function makeTexture(mode){
+ const can=document.createElement('canvas');can.width=420;can.height=560;const ctx=can.getContext('2d');
+ if(!ctx)return null;
+ ctx.fillStyle='#f7f6f2';ctx.fillRect(0,0,420,560);
+ const img=ctx.createImageData(420,560);
+ for(let y=0;y<560;y++)for(let x=0;x<420;x++){
+  const nx=(x-210)/210,ny=(y-275)/275;
+  const envelope=Math.max(0,1-Math.pow(Math.hypot(nx,ny),1.25));
+  const threads=mode==='research'?Math.abs(Math.sin(nx*9+Math.sin(ny*11)*.8)*Math.cos(ny*7)):Math.abs(Math.sin(nx*4+ny*9));
+  const shade=Math.round(247-130*envelope*(.20+.8*threads));
+  const i=(y*420+x)*4;img.data[i]=shade;img.data[i+1]=shade;img.data[i+2]=shade;img.data[i+3]=255;
+ }
+ ctx.putImageData(img,0,0);const image=new Image();image.src=can.toDataURL('image/png');return image;
+}
+for(const [id,mode] of [['research-specimen','research'],['botanical-halftone','career']]){
+ const el=document.getElementById(id);if(!el||!capable)continue;const img=makeTexture(mode);if(img)render(el,img,{size:mode==='research'?.62:.70,contrast:.4});
+}
+if('IntersectionObserver'in window&&!reduced){
+ const ob=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){e.target.classList.add('revealed');ob.unobserve(e.target)}},{threshold:.04});
+ document.querySelectorAll('[data-reveal]').forEach(x=>ob.observe(x));document.documentElement.classList.add('js-motion');
+}
 })();
