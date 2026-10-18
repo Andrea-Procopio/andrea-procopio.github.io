@@ -7,8 +7,8 @@ for(const page of pages){
   const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
   assert.ok(embedded,page+' missing inline style fallback');
   assert.equal(embedded[1].trim(),css.trim(),page+' styles differ from style.css');
-  assert.ok(html.includes('style.css?v=20261018-mobile-v4'),page+' CSS version mismatch');
-  assert.ok(html.includes('main.js?v=20261018-session-v5'),page+' script version mismatch');
+  assert.ok(html.includes('style.css?v=20261018-tree-v1'),page+' CSS version mismatch');
+  assert.ok(html.includes('main.js?v=20261018-session-v6'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
   assert.ok(!html.includes('class="wordmark"'),page+' should not include top Andrea Procopio link');

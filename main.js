@@ -521,6 +521,7 @@ function transitionCoarseness(mount,from,to,onComplete){
   if(reduced){mount.setUniforms({u_size:to});onComplete?.();return}
   let startedAt=null;
   function frame(now){
+    if(mount.hasBeenDisposed)return;
     if(startedAt===null)startedAt=now;
     const progress=Math.min(1,(now-startedAt)/TRANSITION_MS);
     const eased=progress*progress*(3-2*progress);
@@ -576,9 +577,37 @@ if(branchImage){
   const animate=playOnceInSession(key);
   render(layer,branchImage,{size:animate?1:finalSize,radius:1.05,contrast:0.5}).then(mount=>{
     if(!mount)return;
+    let finished=false;
+    function fallback(){
+      if(finished)return;
+      finished=true;
+      layer.classList.remove('ready');
+      mount.dispose();
+    }
+    // A restored page must not depend on a retained GPU drawing buffer.
+    // Capture the final shader frame synchronously, then display a normal image.
+    async function freezeTree(){
+      if(finished)return;
+      try{
+        if(mount.gl.isContextLost()){fallback();return}
+        mount.setUniforms({u_size:finalSize});
+        const still=new Image();
+        still.className='tree-still';still.alt='';
+        still.src=mount.canvasElement.toDataURL('image/png');
+        await still.decode();
+        if(finished)return;
+        finished=true;
+        mount.dispose();
+        layer.replaceChildren(still);
+      }catch{fallback()}
+    }
+    mount.canvasElement.addEventListener('webglcontextlost',fallback,{once:true});
     if(animate){
       rememberPlayed(key);
-      transitionCoarseness(mount,1,finalSize);
+      transitionCoarseness(mount,1,finalSize,freezeTree);
+    }else{
+      // Let the initial ResizeObserver set the canvas resolution before capture.
+      requestAnimationFrame(()=>requestAnimationFrame(freezeTree));
     }
   });
 }
