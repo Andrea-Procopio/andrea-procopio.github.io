@@ -507,60 +507,63 @@ async function render(host,img,opts={}){
  host.classList.add('ready');return mount;
  }catch(err){console.warn('Halftone fallback active',err);return null}
 }
-const portrait=document.getElementById('portrait'),surface=document.getElementById('portrait-shader');
-if(portrait&&surface){
- const img=portrait.querySelector('img');
- const TARGET_SIZE=0.55;
- const START_SIZE=1.0;
- const INTRO_DURATION_MS=6000;
- const INTRO_KEY='andrea-portrait-halftone-intro-v1';
- // Returning visitors keep the settled image; ?replay=1 is a preview-only override.
- let hasSeenIntro=false;
- try{hasSeenIntro=window.localStorage.getItem(INTRO_KEY)==='complete'}catch(e){}
- const replay=new URLSearchParams(window.location.search).has('replay');
- const animateIntro=!reduced&&(!hasSeenIntro||replay);
- const initialSize=animateIntro?START_SIZE:TARGET_SIZE;
- render(surface,img,{size:initialSize,contrast:.48,offsetY:.035,scale:.94}).then(m=>{
-  if(!m)return;
-  portrait.classList.add('shader-ready');
-  function enableHover(){
-   if(reduced||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
-   let pending=false,mouseX=null;
-   portrait.addEventListener('pointermove',e=>{
-    mouseX=e.clientX;
-    if(pending)return;
-    pending=true;
-    requestAnimationFrame(()=>{
-     pending=false;
-     const r=portrait.getBoundingClientRect();
-     const x=Math.max(0,Math.min(1,(mouseX-r.left)/Math.max(1,r.width)));
-     m.setUniforms({u_size:.50+.09*x});
-    });
-   },{passive:true});
-   portrait.addEventListener('pointerleave',()=>m.setUniforms({u_size:TARGET_SIZE}));
+// Shader coarseness: 1 is largest dots; 0 is the finest dot grid.
+const TRANSITION_MS=5000;
+function transitionCoarseness(mount,from,to,onComplete){
+  if(reduced){
+    mount.setUniforms({u_size:to});
+    if(onComplete)onComplete();
+    return;
   }
-  if(!animateIntro){enableHover();return}
-  let startedAt=null;
-  function tick(now){
-   if(startedAt===null)startedAt=now;
-   const progress=Math.min(1,(now-startedAt)/INTRO_DURATION_MS);
-   // Smoothstep avoids an abrupt change in detail when the transition starts or ends.
-   const eased=progress*progress*(3-2*progress);
-   m.setUniforms({u_size:START_SIZE+(TARGET_SIZE-START_SIZE)*eased});
-   if(progress<1){requestAnimationFrame(tick);return}
-   m.setUniforms({u_size:TARGET_SIZE});
-   if(!replay){try{window.localStorage.setItem(INTRO_KEY,'complete')}catch(e){}}
-   enableHover();
+  let startTime=null;
+  function frame(now){
+    if(startTime===null)startTime=now;
+    const progress=Math.min(1,(now-startTime)/TRANSITION_MS);
+    const smooth=progress*progress*(3-2*progress);
+    mount.setUniforms({u_size:from+(to-from)*smooth});
+    if(progress<1){requestAnimationFrame(frame);return}
+    mount.setUniforms({u_size:to});
+    if(onComplete)onComplete();
   }
-  requestAnimationFrame(tick);
- });
+  requestAnimationFrame(frame);
 }
+
+const portrait=document.getElementById('portrait');
+const surface=document.getElementById('portrait-shader');
+if(portrait&&surface){
+  const image=portrait.querySelector('img');
+  const finalSize=0.45;
+  render(surface,image,{size:reduced?finalSize:1,contrast:.48,offsetY:.035,scale:.94}).then(mount=>{
+    if(!mount)return; // Keep the original image if WebGL is unavailable.
+    portrait.classList.add('shader-ready');
+    function enableHover(){
+      if(reduced||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
+      let pending=false,mouseX=null;
+      portrait.addEventListener('pointermove',event=>{
+        mouseX=event.clientX;
+        if(pending)return;
+        pending=true;
+        requestAnimationFrame(()=>{
+          pending=false;
+          const bounds=portrait.getBoundingClientRect();
+          const x=Math.max(0,Math.min(1,(mouseX-bounds.left)/Math.max(bounds.width,1)));
+          mount.setUniforms({u_size:.43+.04*x});
+        });
+      },{passive:true});
+      portrait.addEventListener('pointerleave',()=>mount.setUniforms({u_size:finalSize}));
+    }
+    transitionCoarseness(mount,1,finalSize,enableHover);
+  });
+}
+
 const branchImage=document.getElementById('branch-image');
 if(branchImage){
- const layer=document.getElementById('branch-shader');
- render(layer,branchImage,{size:0.14,radius:1.05,contrast:0.5}).then(mount=>{
-   if(!mount)console.warn('Career photo using image fallback');
- });
+  const layer=document.getElementById('branch-shader');
+  const finalSize=0;
+  render(layer,branchImage,{size:reduced?finalSize:1,radius:1.05,contrast:0.5}).then(mount=>{
+    if(!mount)return;
+    transitionCoarseness(mount,1,finalSize);
+  });
 }
 if('IntersectionObserver'in window&&!reduced){
  const ob=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){e.target.classList.add('revealed');ob.unobserve(e.target)}},{threshold:.04});
