@@ -49,10 +49,19 @@ try{
  await reduced.close();
  // If the GPU is lost during the intro, the original picture must return.
  const loss=await browser.newPage();
+ await loss.addInitScript(()=>{
+  const getContext=HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext=function(type,...args){
+   const gl=getContext.call(this,type,...args);
+   if(type==='webgl2'&&gl&&this.parentElement?.id==='branch-shader'){
+    this.addEventListener('webglcontextlost',()=>{window.treeContextLost=true},{once:true});
+    setTimeout(()=>gl.getExtension('WEBGL_lose_context').loseContext(),100);
+   }
+   return gl;
+  };
+ });
  await loss.goto('http://127.0.0.1:4173/career.html',{waitUntil:'domcontentloaded'});
- await loss.locator('#branch-shader canvas').waitFor();
- await loss.locator('#branch-shader').evaluate(el=>el.paperShaderMount.gl.getExtension('WEBGL_lose_context').loseContext());
- await loss.waitForFunction(()=>getComputedStyle(document.getElementById('branch-image')).opacity==='1');
+ await loss.waitForFunction(()=>window.treeContextLost&&getComputedStyle(document.getElementById('branch-image')).opacity==='1');
  assert.equal(await loss.locator('#branch-shader.ready').count(),0);
  await loss.close();
  await browser.close();browser=null;
