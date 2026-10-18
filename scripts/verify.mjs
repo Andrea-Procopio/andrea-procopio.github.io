@@ -4,6 +4,10 @@ const pages=['index.html','research.html','career.html'];
 for(const page of pages){
  assert.ok(existsSync(page),page+' missing');
  const html=readFileSync(page,'utf8');
+ const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
+ assert.ok(embedded, page+' must include inline CSS fallback');
+ assert.ok(embedded[1].includes('.page-width')&&embedded[1].includes('.portrait-graphic'),page+' missing layout CSS');
+ assert.ok(html.includes('style.css?v=20261018-hotfix'),page+' missing cache-busted stylesheet');
  assert.ok(html.includes('style.css')&&html.includes('main.js'),page+' missing shared assets');
  for(const route of ['research.html','career.html'])assert.ok(html.includes(route),page+' missing navigation');
  assert.equal(html.split('<h1 ').length-1,1,page+' needs one heading');
