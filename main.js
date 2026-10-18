@@ -601,3 +601,29 @@ void main() {
  }
  if(document.createElement('canvas').getContext('webgl2'))document.querySelectorAll('[data-field]').forEach(init);
 })();
+
+/* V2.1 botanical progressive growth. The SVG image remains a no-JS fallback. */
+(function(){
+ const figure=document.querySelector('.botanical-specimen');
+ if(!figure)return;
+ const image=figure.querySelector('img');
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ fetch('assets/botanical-tree.svg').then(r=>{if(!r.ok)throw Error('SVG unavailable');return r.text()}).then(source=>{
+   const xml=new DOMParser().parseFromString(source,'image/svg+xml');
+   if(xml.querySelector('parsererror'))return;
+   const svg=xml.querySelector('svg');
+   if(!svg)return;
+   svg.setAttribute('class','tree-svg');
+   svg.setAttribute('aria-hidden','true');
+   svg.removeAttribute('role');
+   image.replaceWith(document.importNode(svg,true));
+   if(reduced){figure.classList.add('tree-grown');return}
+   const grow=()=>figure.classList.add('tree-growing');
+   if('IntersectionObserver' in window){
+     const ob=new IntersectionObserver(entries=>{
+       if(entries.some(e=>e.isIntersecting)){ob.disconnect();grow()}
+     },{threshold:.16});
+     ob.observe(figure);
+   }else{grow()}
+ }).catch(()=>{ /* Static image remains if SVG loading fails */});
+})();
