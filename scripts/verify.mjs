@@ -7,7 +7,7 @@ for(const page of pages){
   const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
   assert.ok(embedded,page+' missing inline style fallback');
   assert.equal(embedded[1].trim(),css.trim(),page+' styles differ from style.css');
-  assert.ok(html.includes('style.css?v=20261018-career-v2'),page+' CSS version mismatch');
+  assert.ok(html.includes('style.css?v=20261018-temporal-tree-v1'),page+' CSS version mismatch');
   assert.ok(html.includes('main.js?v=20261018-session-v1'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
@@ -20,8 +20,23 @@ assert.ok(home.includes('assets/profile.jpeg')&&home.includes('id="contact"'));
 assert.equal((research.match(/class="publication-row"/g)||[]).length,5);
 assert.ok(research.includes('Modeling the Object Representations Underlying Human Physical Reasoning'));
 assert.ok(career.includes('assets/branch-reference.jpg'));
-assert.equal((career.match(/class="timeline-branch academic"/g)||[]).length,4);
-assert.equal((career.match(/class="timeline-branch enterprise"/g)||[]).length,4);
+assert.equal((career.match(/class="career-entry career-entry--/g)||[]).length,6,'Expect exactly six career entries');
+assert.ok(!career.includes('class="timeline-row"'),'Old connector timeline should not be present');
+assert.ok(career.includes('class="career-tree-plot"')&&career.includes('viewBox="0 0 240 960"'),'Missing duration tree geometry');
+const branches=[
+ ['mit','2026','present'],['harvard','2025','present'],
+ ['marche','2024','2025'],['bocconi','2023','2026'],
+ ['bainsa','2023','present'],['eurotech','2025','present']
+];
+for(const [slug,start,end] of branches){
+ const entry=career.match(new RegExp('<article class="career-entry career-entry--'+slug+'[^>]*>'));
+ assert.ok(entry,'Missing experience '+slug);
+ assert.ok(entry[0].includes('data-start="'+start+'"')&&entry[0].includes('data-end="'+end+'"'),'Wrong duration for '+slug);
+ assert.ok(career.includes('data-track="'+slug+'"'),'Missing duration line for '+slug);
+}
+assert.ok(css.includes('grid-template-columns:minmax(0,1fr) clamp(195px,19vw,240px) minmax(0,1fr)'),'Desktop diagram must have its own protected column');
+assert.ok(css.includes('@media(max-width:1040px)')&&css.includes('.career-tree-plot{display:none}'),'Mobile must use distinct legible layout');
+
 const content=career.split('</head>')[1];
 const expected=[
   'MIT','PhD student, advised by Prof. Dimitris Bertsimas','Continual learning in autonomous research systems',
