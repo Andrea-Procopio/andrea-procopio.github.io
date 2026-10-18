@@ -77,3 +77,18 @@ body{overflow-x:hidden}
 html,body{max-width:100%;overflow-x:clip}
 .contact-environment,.research-environment{overflow:clip}
 @media(max-width:600px){.botanical-specimen .tree-svg{max-width:100%}}
+
+/* Editorial refinements — clean index, quieter texture, clearer hierarchy. */
+.research-field{opacity:.20;left:-17%;top:210px;width:min(34vw,500px);height:560px}
+.research-section .section-intro::after{background:linear-gradient(90deg,var(--paper) 5%,rgba(247,246,242,.92) 55%,transparent)}
+.section-intro h2{max-width:11ch;text-wrap:balance}
+.section-label{letter-spacing:.14em}
+.paper .entry-main h3 a{text-decoration:none;transition:text-decoration-color .2s ease}
+.paper .entry-main h3 a:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.paper .entry-venue{letter-spacing:.025em}
+.career-entry{border-top-color:rgba(48,48,44,.18)}
+.botanical-specimen .tree-svg{opacity:.76}
+.contact-section{overflow:visible}
+.contact-links a{transition:padding-left .25s ease}
+.contact-links a:hover{padding-left:6px}
+@media(max-width:600px){.research-field{opacity:.11}.section-intro h2{max-width:none}.contact-links a:hover{padding-left:0}}
