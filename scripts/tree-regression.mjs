@@ -14,10 +14,10 @@ try{
   // External font servers are irrelevant to this image regression.
   await page.route('https://fonts.googleapis.com/**',r=>r.abort());
   async function inspect(label){
-   await page.locator('.tree-still').waitFor({timeout:12000});
+   await page.locator('#career-painting').evaluate(img=>img.decode());
    await page.waitForTimeout(400);
-   assert.equal(await page.locator('#branch-shader canvas').count(),0,'settled tree releases GPU canvas');
-   const png=await page.locator('.branch-photo').screenshot({path:`v3-tree-${engine.name()}-${width}-${label}.png`});
+   assert.equal(await page.locator('canvas').count(),0,'Career painting requires no GPU canvas');
+   const png=await page.locator('.artwork').screenshot({path:`v3-tree-${engine.name()}-${width}-${label}.png`});
    const dark=await page.evaluate(async base64=>{
     const image=new Image();image.src='data:image/png;base64,'+base64;await image.decode();
     const canvas=document.createElement('canvas');canvas.width=128;canvas.height=128;
@@ -45,25 +45,13 @@ try{
  // Reduced motion also takes the non-animated, repeat-visit path.
  const reduced=await browser.newPage({reducedMotion:'reduce'});
  await reduced.goto('http://127.0.0.1:4173/career.html',{waitUntil:'domcontentloaded'});
- await reduced.locator('.tree-still').waitFor();
+ await reduced.locator('#career-painting').evaluate(img=>img.decode());
  await reduced.close();
- // Lose the GPU before the static snapshot; the original picture must return.
- const loss=await browser.newPage();
- await loss.addInitScript(()=>{
-  const getContext=HTMLCanvasElement.prototype.getContext;
-  HTMLCanvasElement.prototype.getContext=function(type,...args){
-   const gl=getContext.call(this,type,...args);
-   if(type==='webgl2'&&gl&&this.parentElement?.id==='branch-shader'){
-    this.addEventListener('webglcontextlost',()=>{window.treeContextLost=true},{once:true});
-    setTimeout(()=>gl.getExtension('WEBGL_lose_context').loseContext(),0);
-   }
-   return gl;
-  };
- });
- await loss.goto('http://127.0.0.1:4173/career.html',{waitUntil:'domcontentloaded'});
- await loss.waitForFunction(()=>window.treeContextLost&&getComputedStyle(document.getElementById('branch-image')).opacity==='1');
- assert.equal(await loss.locator('#branch-shader.ready').count(),0);
- await loss.close();
+ // The painting remains usable without JavaScript or WebGL.
+ const plain=await browser.newPage({javaScriptEnabled:false});
+ await plain.goto('http://127.0.0.1:4173/career.html',{waitUntil:'load'});
+ assert.ok(await plain.locator('#career-painting').isVisible());
+ await plain.close();
  // Portrait context loss must reveal the source on both layouts.
  for(const width of [390,1440]){
  const portraitLoss=await browser.newPage({viewport:{width,height:900}});
@@ -89,5 +77,5 @@ try{
  }
  await browser.close();browser=null;
  }
- console.log('Tree navigation, reduced-motion, and context-loss regressions passed in Chromium and WebKit');
+ console.log('Career painting navigation and portrait context-loss regressions passed in Chromium and WebKit');
 }finally{if(browser)await browser.close();server.kill('SIGTERM')}

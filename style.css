@@ -11,15 +11,9 @@
 .page-research .footnote{margin-top:20px}
 .page-career .career-top{display:grid;grid-template-columns:34% minmax(0,66%);min-height:430px;align-items:center;gap:0;border-bottom:1px solid var(--line);overflow:hidden}
 .page-career .career-title{position:relative;z-index:2;align-self:center}
-.page-career .branch-photo{margin:0;position:relative;min-height:420px;overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent,black 24%,black 96%);mask-image:linear-gradient(to right,transparent,black 24%,black 96%)}
-.page-career .branch-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 30%;transition:opacity .3s}
-.page-career .branch-photo .shader-surface{position:absolute;inset:0;opacity:0}
-.page-career .branch-photo .shader-surface.ready{opacity:1}
-.page-career .branch-photo:has(.shader-surface.ready) #branch-image{opacity:0}
 @media(max-width:980px){
 .page-research .research-content{padding-top:55px}
 .page-career .career-top{grid-template-columns:35% 65%;min-height:360px}
-.page-career .branch-photo{min-height:340px}
 }
 @media(max-width:640px){
 .page-research .research-content{padding:38px 0 68px}
@@ -29,7 +23,6 @@
 .page-career .career-top{display:block;min-height:auto}
 .page-career .career-title{padding:40px 0 10px}
 .page-career .career-title h1{font-size:72px}
-.page-career .branch-photo{height:240px;min-height:240px}
 }
 .page-career .career-chronology{max-width:1160px;padding:48px 0 105px}
 .page-career .career-tree-grid{
@@ -278,23 +271,27 @@
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 @media print{
  .shader-surface{display:none!important}
- .page-home .portrait-graphic.shader-ready .portrait-fallback,.page-career .branch-photo:has(.shader-surface.ready) #branch-image{opacity:1!important}
+ .page-home .portrait-graphic.shader-ready .portrait-fallback{opacity:1!important}
  [data-reveal]{opacity:1!important;transform:none!important}
  .publication-row,.career-entry{break-inside:avoid}
 }
 
 .footer-links{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
 
-/* Preserve the shader’s warm paper palette after it becomes a still image. */
-.page-career #branch-image{filter:grayscale(1);mix-blend-mode:multiply}
-.page-career .branch-photo{background:var(--paper)}
 
-/* Research: original-color landscape paired with the quiet halftone pages. */
+/* Original-color paintings share their image and caption treatment. */
 .research-hero{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);align-items:center;gap:40px;margin-bottom:44px}
 .page-research .research-hero h1{font-size:clamp(56px,7.2vw,106px);margin:0;line-height:1.05;letter-spacing:-.055em}
-.research-landscape{margin:0;min-width:0}
-.research-landscape img{display:block;width:100%;height:auto}
-.research-landscape figcaption{margin-top:12px;color:var(--muted);font:11px/1.6 var(--mono)}
-.research-landscape cite{font-style:normal}
-.research-landscape figcaption a{display:inline-block;margin-left:10px;text-decoration:underline;text-underline-offset:3px}
-@media(max-width:760px){.research-hero{grid-template-columns:1fr;gap:26px;margin-bottom:32px}.page-research .research-hero h1{font-size:clamp(52px,14vw,72px)}.research-landscape figcaption{font-size:10px}}
+.artwork{margin:0;min-width:0}
+.artwork img{display:block;width:100%;height:auto}
+.artwork figcaption{margin-top:12px;color:var(--muted);font:11px/1.6 var(--mono)}
+.artwork cite{font-style:normal}
+.artwork figcaption a{display:inline-block;margin-left:10px;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:760px){.research-hero{grid-template-columns:1fr;gap:26px;margin-bottom:32px}.page-research .research-hero h1{font-size:clamp(52px,14vw,72px)}.artwork figcaption{font-size:10px}}
+
+/* Career painting shares Research's composition and caption treatment. */
+.page-career .career-top{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:40px;min-height:0;padding:74px 0 44px;overflow:visible}
+.page-career .career-title{padding:0}
+.page-career .career-title h1{font-size:clamp(56px,7.2vw,106px);margin:0;line-height:1.05;letter-spacing:-.055em}
+@media(max-width:980px){.page-career .career-top{padding-top:55px}}
+@media(max-width:760px){.page-career .career-top{display:grid;grid-template-columns:1fr;gap:26px;padding-top:38px;padding-bottom:32px}.page-career .career-title h1{font-size:clamp(52px,14vw,72px)}}

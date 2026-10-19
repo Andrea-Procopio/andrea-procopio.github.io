@@ -492,7 +492,7 @@ void main() {
 'use strict';
 const P=typeof PaperShaders==='undefined'?null:PaperShaders;
 function supportsWebGL(){try{return !!document.createElement('canvas').getContext('webgl2')}catch{return false}}
-const capable=!!P&&!!document.querySelector('#portrait-shader, #branch-shader')&&supportsWebGL();
+const capable=!!P&&!!document.querySelector('#portrait-shader')&&supportsWebGL();
 function uniforms(img,opts={}){
 return {u_image:img,u_colorFront:P.getShaderColorFromString('#282824'),u_colorBack:P.getShaderColorFromString('#f7f6f2'),u_size:opts.size??.55,u_radius:opts.radius??1.3,u_contrast:opts.contrast??.42,u_originalColors:false,u_inverted:false,u_grainMixer:.08,u_grainOverlay:.025,u_grainSize:.4,u_grid:P.HalftoneDotsGrids.hex,u_type:P.HalftoneDotsTypes.gooey,u_fit:P.ShaderFitOptions.cover,u_scale:opts.scale??1,u_rotation:0,u_offsetX:0,u_offsetY:opts.offsetY??0,u_originX:.5,u_originY:.5,u_worldWidth:0,u_worldHeight:0};
 }
@@ -529,41 +529,6 @@ if(portrait&&surface){
     }
     mount.canvasElement.addEventListener('webglcontextlost',fallback,{once:true});
 
-  });
-}
-const branchImage=document.getElementById('branch-image');
-if(branchImage){
-  const layer=document.getElementById('branch-shader');
-  const finalSize=0.2;
-  render(layer,branchImage,{size:finalSize,radius:1.05,contrast:0.5}).then(mount=>{
-    if(!mount)return;
-    let finished=false;
-    function fallback(){
-      if(finished)return;
-      finished=true;
-      layer.classList.remove('ready');
-      mount.dispose();
-    }
-    // A restored page must not depend on a retained GPU drawing buffer.
-    // Capture the final shader frame synchronously, then display a normal image.
-    async function freezeTree(){
-      if(finished)return;
-      try{
-        if(mount.gl.isContextLost()){fallback();return}
-        mount.setUniforms({u_size:finalSize});
-        const still=new Image();
-        still.className='tree-still';still.alt='';
-        still.src=mount.canvasElement.toDataURL('image/png');
-        await still.decode();
-        if(finished)return;
-        finished=true;
-        mount.dispose();
-        layer.replaceChildren(still);
-      }catch{fallback()}
-    }
-    mount.canvasElement.addEventListener('webglcontextlost',fallback,{once:true});
-    // Let the initial ResizeObserver set the canvas resolution before capture.
-    requestAnimationFrame(()=>requestAnimationFrame(freezeTree));
   });
 }
 })();

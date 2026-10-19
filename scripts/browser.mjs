@@ -33,7 +33,7 @@ try{
    }
  }
  if(route==='research.html'){
-   const painting=page.locator('.research-landscape img');
+   const painting=page.locator('.artwork img');
    await painting.evaluate(img=>img.decode());
    assert.ok(await painting.evaluate(img=>img.complete&&img.naturalWidth>0&&/watzmann-(800|1600|2400)\.webp/.test(img.currentSrc)),'responsive painting must load');
    const art=await painting.boundingBox();
@@ -45,8 +45,13 @@ try{
  assert.ok(await page.locator('[data-reveal]').evaluateAll(items=>items.every(el=>getComputedStyle(el).opacity==='1')),'content readable without scrolling');
  if(route==='career.html'){
    assert.equal(await page.locator('.career-entry h2').count(),6);
-   assert.equal(await page.locator('#branch-image').count(),1);
-   assert.ok(await page.locator('#branch-image').evaluate(x=>x.complete&&x.naturalWidth>0),'career image must load');
+   assert.equal(await page.locator('#career-painting').count(),1);
+   await page.locator('#career-painting').evaluate(img=>img.decode());
+   const art=await page.locator('#career-painting').boundingBox();
+   const title=await page.locator('h1').boundingBox();
+   assert.ok(art.x>=title.x+title.width-1||art.y>=title.y+title.height-1,'Career heading and painting must not overlap');
+   assert.equal(await page.locator('#career-painting').evaluate(img=>getComputedStyle(img).filter),'none','Preserve painting colors');
+   assert.ok(await page.locator('#career-painting').evaluate(x=>x.complete&&x.naturalWidth>0),'career image must load');
  }
  await page.screenshot({path:'v3-'+(route||'home').replace('.html','')+'-'+viewport.width+'.png',fullPage:true,animations:'disabled',timeout:25000});
  await page.close();
