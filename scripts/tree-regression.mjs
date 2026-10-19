@@ -47,7 +47,7 @@ try{
  await reduced.goto('http://127.0.0.1:4173/career.html',{waitUntil:'domcontentloaded'});
  await reduced.locator('.tree-still').waitFor();
  await reduced.close();
- // If the GPU is lost during the intro, the original picture must return.
+ // Lose the GPU before the static snapshot; the original picture must return.
  const loss=await browser.newPage();
  await loss.addInitScript(()=>{
   const getContext=HTMLCanvasElement.prototype.getContext;
@@ -55,7 +55,7 @@ try{
    const gl=getContext.call(this,type,...args);
    if(type==='webgl2'&&gl&&this.parentElement?.id==='branch-shader'){
     this.addEventListener('webglcontextlost',()=>{window.treeContextLost=true},{once:true});
-    setTimeout(()=>gl.getExtension('WEBGL_lose_context').loseContext(),100);
+    setTimeout(()=>gl.getExtension('WEBGL_lose_context').loseContext(),0);
    }
    return gl;
   };
