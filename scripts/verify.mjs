@@ -5,8 +5,8 @@ const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
-  assert.ok(html.includes('style.css?v=20261019-watzmann-v1'),page+' CSS version mismatch');
-  assert.ok(html.includes('main.js?v=20261019-watzmann-v1'),page+' script version mismatch');
+  assert.ok(html.includes('style.css?v=20261019-crows-v1'),page+' CSS version mismatch');
+  assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
   assert.ok(!html.includes('class="wordmark"'),page+' should not include top Andrea Procopio link');
@@ -60,7 +60,7 @@ assert.ok(!biography.includes('I work on AI systems that do research:'),
  'Old biography text should be removed');
 assert.equal((research.match(/class="publication-row"/g)||[]).length,5);
 assert.ok(research.includes('Modeling the Object Representations Underlying Human Physical Reasoning'));
-assert.ok(career.includes('assets/branch-reference.jpg'));
+assert.ok(career.includes('assets/tree-of-crows-1600.webp')&&!career.includes('branch-shader'),'Career must render the original-color painting without a shader');
 assert.equal((career.match(/class="career-entry career-entry--/g)||[]).length,6,'Expect exactly six career entries');
 assert.ok(!career.includes('class="timeline-row"'),'Old connector timeline should not be present');
 assert.ok(career.includes('class="career-tree-plot"')&&career.includes('viewBox="0 0 180 920"'),'Missing duration tree geometry');
@@ -127,9 +127,8 @@ assert.ok(js.includes('const finalSize=0.45'),'Portrait must finish at size 0.45
 assert.ok(js.includes('scale:.84'),'Smaller portrait shader scale must match photo fallback');
 assert.ok(css.includes('transform:scale(.84)'),'Portrait fallback should use the same smaller scale');
 assert.ok(css.includes('.site-header{justify-content:flex-end}'),'Header must right-align navigation without wordmark');
-assert.ok(js.includes('const finalSize=0.2'),'Tree must finish at size 0.2');
-for(const asset of ['assets/profile.jpeg','assets/icon1.jpg','assets/branch-reference.jpg','style.css','main.js'])
+for(const asset of ['assets/profile.jpeg','assets/icon1.jpg','style.css','main.js'])
   assert.ok(existsSync(asset),asset+' missing');
 assert.ok(!js.includes('transitionCoarseness')&&!js.includes('playOnceInSession'),'Halftones must not animate granularity');
-for(const w of [800,1600,2400])assert.ok(existsSync(`assets/watzmann-${w}.webp`),'Missing responsive painting');
+for(const w of [800,1600,2400])for(const name of ['watzmann','tree-of-crows'])assert.ok(existsSync(`assets/${name}-${w}.webp`),'Missing responsive painting');
 console.log('All fast page, asset, and static halftone checks passed');
