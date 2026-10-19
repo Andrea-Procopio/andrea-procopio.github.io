@@ -64,6 +64,29 @@ try{
  await loss.waitForFunction(()=>window.treeContextLost&&getComputedStyle(document.getElementById('branch-image')).opacity==='1');
  assert.equal(await loss.locator('#branch-shader.ready').count(),0);
  await loss.close();
+ // Portrait context loss must reveal the source on both layouts.
+ for(const width of [390,1440]){
+ const portraitLoss=await browser.newPage({viewport:{width,height:900}});
+ await portraitLoss.route('https://fonts.googleapis.com/**',r=>r.abort());
+ await portraitLoss.addInitScript(()=>{
+  const getContext=HTMLCanvasElement.prototype.getContext;
+  HTMLCanvasElement.prototype.getContext=function(type,...args){
+   const gl=getContext.call(this,type,...args);
+   if(type==='webgl2'&&gl&&this.parentElement?.id==='portrait-shader'){
+    this.addEventListener('webglcontextlost',()=>{window.portraitContextLost=true},{once:true});
+    setTimeout(()=>gl.getExtension('WEBGL_lose_context').loseContext(),100);
+   }
+   return gl;
+  };
+ });
+ await portraitLoss.goto('http://127.0.0.1:4173/',{waitUntil:'domcontentloaded'});
+ await portraitLoss.waitForFunction(()=>window.portraitContextLost&&getComputedStyle(document.querySelector('.portrait-fallback')).opacity==='1');
+ assert.equal(await portraitLoss.locator('#portrait.shader-ready').count(),0);
+ assert.equal(await portraitLoss.locator('#portrait-shader canvas').count(),0);
+ await portraitLoss.setViewportSize({width:width===390?1440:390,height:900});
+ assert.equal(await portraitLoss.locator('.portrait-fallback').evaluate(el=>getComputedStyle(el).opacity),'1');
+ await portraitLoss.close();
+ }
  await browser.close();browser=null;
  }
  console.log('Tree navigation, reduced-motion, and context-loss regressions passed in Chromium and WebKit');

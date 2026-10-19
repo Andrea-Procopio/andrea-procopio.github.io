@@ -493,7 +493,7 @@ void main() {
 const P=typeof PaperShaders==='undefined'?null:PaperShaders;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function supportsWebGL(){try{return !!document.createElement('canvas').getContext('webgl2')}catch{return false}}
-const capable=!!P&&supportsWebGL();
+const capable=!!P&&!!document.querySelector('#portrait-shader, #branch-shader')&&supportsWebGL();
 function uniforms(img,opts={}){
 return {u_image:img,u_colorFront:P.getShaderColorFromString('#282824'),u_colorBack:P.getShaderColorFromString('#f7f6f2'),u_size:opts.size??.55,u_radius:opts.radius??1.3,u_contrast:opts.contrast??.42,u_originalColors:false,u_inverted:false,u_grainMixer:.08,u_grainOverlay:.025,u_grainSize:.4,u_grid:P.HalftoneDotsGrids.hex,u_type:P.HalftoneDotsTypes.gooey,u_fit:P.ShaderFitOptions.cover,u_scale:opts.scale??1,u_rotation:0,u_offsetX:0,u_offsetY:opts.offsetY??0,u_originX:.5,u_originY:.5,u_worldWidth:0,u_worldHeight:0};
 }
@@ -545,28 +545,22 @@ if(portrait&&surface){
   render(surface,image,{size:animate?1:finalSize,contrast:.48,offsetY:.035,scale:.84}).then(mount=>{
     if(!mount)return;
     mount.setUniforms(framing());
-    mobilePortrait.addEventListener('change',()=>mount.setUniforms(framing()));
+    function updateFraming(){if(!mount.hasBeenDisposed)mount.setUniforms(framing())}
+    mobilePortrait.addEventListener('change',updateFraming);
     portrait.classList.add('shader-ready');
-    function enableHover(){
-      if(reduced||!window.matchMedia('(hover:hover) and (pointer:fine)').matches)return;
-      let pending=false,mouseX=null;
-      portrait.addEventListener('pointermove',event=>{
-        mouseX=event.clientX;
-        if(pending)return;
-        pending=true;
-        requestAnimationFrame(()=>{
-          pending=false;
-          const bounds=portrait.getBoundingClientRect();
-          const x=Math.max(0,Math.min(1,(mouseX-bounds.left)/Math.max(bounds.width,1)));
-          mount.setUniforms({u_size:.43+.04*x});
-        });
-      },{passive:true});
-      portrait.addEventListener('pointerleave',()=>mount.setUniforms({u_size:finalSize}));
+    // Always reveal the source when a retained portrait context is lost.
+    function fallback(){
+      portrait.classList.remove('shader-ready');
+      surface.classList.remove('ready');
+      mobilePortrait.removeEventListener('change',updateFraming);
+      mount.dispose();
     }
+    mount.canvasElement.addEventListener('webglcontextlost',fallback,{once:true});
     if(animate){
       rememberPlayed(key);
-      transitionCoarseness(mount,1,finalSize,enableHover);
-    }else enableHover();
+      transitionCoarseness(mount,1,finalSize);
+    }
+
   });
 }
 const branchImage=document.getElementById('branch-image');
@@ -610,9 +604,5 @@ if(branchImage){
       requestAnimationFrame(()=>requestAnimationFrame(freezeTree));
     }
   });
-}
-if('IntersectionObserver'in window&&!reduced){
- const ob=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){e.target.classList.add('revealed');ob.unobserve(e.target)}},{threshold:.04});
- document.querySelectorAll('[data-reveal]').forEach(x=>ob.observe(x));document.documentElement.classList.add('js-motion');
 }
 })();
