@@ -288,3 +288,13 @@
 /* Preserve the shader’s warm paper palette after it becomes a still image. */
 .page-career #branch-image{filter:grayscale(1);mix-blend-mode:multiply}
 .page-career .branch-photo{background:var(--paper)}
+
+/* Research: original-color landscape paired with the quiet halftone pages. */
+.research-hero{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);align-items:center;gap:40px;margin-bottom:44px}
+.page-research .research-hero h1{font-size:clamp(56px,7.2vw,106px);margin:0;line-height:1.05;letter-spacing:-.055em}
+.research-landscape{margin:0;min-width:0}
+.research-landscape img{display:block;width:100%;height:auto}
+.research-landscape figcaption{margin-top:12px;color:var(--muted);font:11px/1.6 var(--mono)}
+.research-landscape cite{font-style:normal}
+.research-landscape figcaption a{display:inline-block;margin-left:10px;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:760px){.research-hero{grid-template-columns:1fr;gap:26px;margin-bottom:32px}.page-research .research-hero h1{font-size:clamp(52px,14vw,72px)}.research-landscape figcaption{font-size:10px}}

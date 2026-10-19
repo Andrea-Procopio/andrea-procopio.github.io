@@ -33,6 +33,12 @@ try{
    }
  }
  if(route==='research.html'){
+   const painting=page.locator('.research-landscape img');
+   await painting.evaluate(img=>img.decode());
+   assert.ok(await painting.evaluate(img=>img.complete&&img.naturalWidth>0&&/watzmann-(800|1600|2400)\.webp/.test(img.currentSrc)),'responsive painting must load');
+   const art=await painting.boundingBox();
+   const title=await page.locator('h1').boundingBox();
+   assert.ok(art.x>=title.x+title.width-1||art.y>=title.y+title.height-1,'painting and heading must not overlap');
    assert.equal(await page.locator('.publication-row').count(),5);
    assert.equal(await page.locator('.publication-row a').count(),3,'one focus target per available paper');
  }
