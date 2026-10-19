@@ -109,7 +109,7 @@ const expected=[
   'MIT','PhD student, advised by Prof. Dimitris Bertsimas','Continual learning in autonomous research systems',
   'Harvard University','Research Fellow, advised by Prof. Tomer Ullman',
   "Work at the intersection of computer vision and human cognition that led to my bachelor's thesis",
-  'Marche Polytechnic University','Researcher, advised by Prof. Paola Pierleoni',
+  'Marche Polytechnic','Researcher, advised by Prof. Paola Pierleoni',
   'Designed and trained light ML models for movement detection on wearables',
   'BAINSA','2023–present','Co-Founder, Chairman',
   "Italy's first student-led research labs on AI, Neuroscience, and Robotics. Active in Bocconi, Polimi, Sapienza, and more soon.",
