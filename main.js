@@ -491,7 +491,6 @@ void main() {
 (function(){
 'use strict';
 const P=typeof PaperShaders==='undefined'?null:PaperShaders;
-const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function supportsWebGL(){try{return !!document.createElement('canvas').getContext('webgl2')}catch{return false}}
 const capable=!!P&&!!document.querySelector('#portrait-shader, #branch-shader')&&supportsWebGL();
 function uniforms(img,opts={}){
@@ -507,42 +506,15 @@ async function render(host,img,opts={}){
  host.classList.add('ready');return mount;
  }catch(err){console.warn('Halftone fallback active',err);return null}
 }
-// Halftone introductions: once per page, per tab session.
-// sessionStorage survives normal navigation but clears when the browsing session ends.
-const TRANSITION_MS=2000;
-function playOnceInSession(key){
-  if(reduced)return false;
-  try{return sessionStorage.getItem(key)!=='played'}catch{return true}
-}
-function rememberPlayed(key){
-  try{sessionStorage.setItem(key,'played')}catch{}
-}
-function transitionCoarseness(mount,from,to,onComplete){
-  if(reduced){mount.setUniforms({u_size:to});onComplete?.();return}
-  let startedAt=null;
-  function frame(now){
-    if(mount.hasBeenDisposed)return;
-    if(startedAt===null)startedAt=now;
-    const progress=Math.min(1,(now-startedAt)/TRANSITION_MS);
-    const eased=progress*progress*(3-2*progress);
-    mount.setUniforms({u_size:from+(to-from)*eased});
-    if(progress<1){requestAnimationFrame(frame);return}
-    mount.setUniforms({u_size:to});
-    onComplete?.();
-  }
-  requestAnimationFrame(frame);
-}
+// Static halftones: render directly at the final dot size.
 const portrait=document.getElementById('portrait');
 const surface=document.getElementById('portrait-shader');
 if(portrait&&surface){
   const image=portrait.querySelector('img');
-  const key='andrea-halftone-portrait-session-v1';
   const finalSize=0.45;
   const mobilePortrait=matchMedia('(max-width:640px)');
-  // Keep the mobile portrait crisp and still; retain the desktop introduction.
-  const animate=!mobilePortrait.matches&&playOnceInSession(key);
   const framing=()=>mobilePortrait.matches?{u_scale:1,u_offsetY:0}:{u_scale:.84,u_offsetY:.035};
-  render(surface,image,{size:animate?1:finalSize,contrast:.48,offsetY:.035,scale:.84}).then(mount=>{
+  render(surface,image,{size:finalSize,contrast:.48,offsetY:.035,scale:.84}).then(mount=>{
     if(!mount)return;
     mount.setUniforms(framing());
     function updateFraming(){if(!mount.hasBeenDisposed)mount.setUniforms(framing())}
@@ -556,20 +528,14 @@ if(portrait&&surface){
       mount.dispose();
     }
     mount.canvasElement.addEventListener('webglcontextlost',fallback,{once:true});
-    if(animate){
-      rememberPlayed(key);
-      transitionCoarseness(mount,1,finalSize);
-    }
 
   });
 }
 const branchImage=document.getElementById('branch-image');
 if(branchImage){
   const layer=document.getElementById('branch-shader');
-  const key='andrea-halftone-tree-session-v1';
   const finalSize=0.2;
-  const animate=playOnceInSession(key);
-  render(layer,branchImage,{size:animate?1:finalSize,radius:1.05,contrast:0.5}).then(mount=>{
+  render(layer,branchImage,{size:finalSize,radius:1.05,contrast:0.5}).then(mount=>{
     if(!mount)return;
     let finished=false;
     function fallback(){
@@ -596,13 +562,8 @@ if(branchImage){
       }catch{fallback()}
     }
     mount.canvasElement.addEventListener('webglcontextlost',fallback,{once:true});
-    if(animate){
-      rememberPlayed(key);
-      transitionCoarseness(mount,1,finalSize,freezeTree);
-    }else{
-      // Let the initial ResizeObserver set the canvas resolution before capture.
-      requestAnimationFrame(()=>requestAnimationFrame(freezeTree));
-    }
+    // Let the initial ResizeObserver set the canvas resolution before capture.
+    requestAnimationFrame(()=>requestAnimationFrame(freezeTree));
   });
 }
 })();
