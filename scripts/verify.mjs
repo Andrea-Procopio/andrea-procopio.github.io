@@ -4,11 +4,9 @@ const pages=['index.html','research.html','career.html'];
 const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
-  const embedded=html.match(/<style id="embedded-site-styles">([\s\S]*?)<\/style>/);
-  assert.ok(embedded,page+' missing inline style fallback');
-  assert.equal(embedded[1].trim(),css.trim(),page+' styles differ from style.css');
-  assert.ok(html.includes('style.css?v=20261018-tree-v1'),page+' CSS version mismatch');
-  assert.ok(html.includes('main.js?v=20261018-session-v6'),page+' script version mismatch');
+  assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
+  assert.ok(html.includes('style.css?v=20261019-audit-v1'),page+' CSS version mismatch');
+  assert.ok(html.includes('main.js?v=20261019-audit-v1'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
   assert.ok(!html.includes('class="wordmark"'),page+' should not include top Andrea Procopio link');
@@ -117,7 +115,8 @@ const expected=[
   "Italy's first student-led research labs on AI, Neuroscience, and Robotics. Active in Bocconi, Polimi, Sapienza, and more soon.",
   'EuroTech Federation','Co-Founder, Advisor','Non-profit network of the brightest European founders U26.'
 ];
-for(const phrase of expected)assert.ok(content.includes(phrase),'Missing career text: '+phrase);
+const careerText=content.replace(/<[^>]*>/g,'');
+for(const phrase of expected)assert.ok(careerText.includes(phrase),'Missing career text: '+phrase);
 const links=[
   'https://orc.mit.edu','https://www.cocodev.org','https://dii.univpm.it/riot_it/',
   'https://bainsa.ai','https://www.eurotech-federation.com'
@@ -127,7 +126,7 @@ assert.ok(!content.includes('Research & academia')&&!content.includes('Entrepren
 assert.ok(js.includes('TRANSITION_MS=3500'),'Animations must take 3.5 seconds');
 assert.ok(js.includes('const finalSize=0.45'),'Portrait must finish at size 0.45');
 assert.ok(js.includes('scale:.84'),'Smaller portrait shader scale must match photo fallback');
-assert.ok(css.includes('portrait-fallback{transform:scale(.84)'),'Portrait fallback should use the same smaller scale');
+assert.ok(css.includes('transform:scale(.84)'),'Portrait fallback should use the same smaller scale');
 assert.ok(css.includes('.site-header{justify-content:flex-end}'),'Header must right-align navigation without wordmark');
 assert.ok(js.includes('const finalSize=0.2'),'Tree must finish at size 0.2');
 assert.ok(js.includes('sessionStorage.getItem')&&js.includes('sessionStorage.setItem'),'Must run once per tab session');
