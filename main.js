@@ -509,7 +509,7 @@ async function render(host,img,opts={}){
 }
 // Halftone introductions: once per page, per tab session.
 // sessionStorage survives normal navigation but clears when the browsing session ends.
-const TRANSITION_MS=3500;
+const TRANSITION_MS=2000;
 function playOnceInSession(key){
   if(reduced)return false;
   try{return sessionStorage.getItem(key)!=='played'}catch{return true}

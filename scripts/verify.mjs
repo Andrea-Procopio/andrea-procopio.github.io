@@ -5,8 +5,8 @@ const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
-  assert.ok(html.includes('style.css?v=20261019-audit-v1'),page+' CSS version mismatch');
-  assert.ok(html.includes('main.js?v=20261019-audit-v1'),page+' script version mismatch');
+  assert.ok(html.includes('style.css?v=20261019-photos-v2'),page+' CSS version mismatch');
+  assert.ok(html.includes('main.js?v=20261019-photos-v2'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
   assert.ok(!html.includes('class="wordmark"'),page+' should not include top Andrea Procopio link');
@@ -109,7 +109,7 @@ const expected=[
   'MIT','PhD student, advised by Prof. Dimitris Bertsimas','Continual learning in autonomous research systems',
   'Harvard University','Research Fellow, advised by Prof. Tomer Ullman',
   "Work at the intersection of computer vision and human cognition that led to my bachelor's thesis",
-  'Marche Polytechnic University','Researcher, advised by Prof. Paola Pierleoni',
+  'Marche Polytechnic','Researcher, advised by Prof. Paola Pierleoni',
   'Designed and trained light ML models for movement detection on wearables',
   'BAINSA','2023–present','Co-Founder, Chairman',
   "Italy's first student-led research labs on AI, Neuroscience, and Robotics. Active in Bocconi, Polimi, Sapienza, and more soon.",
@@ -123,7 +123,7 @@ const links=[
 ];
 for(const link of links)assert.ok(content.includes('href="'+link+'"'),'Missing clickable career link: '+link);
 assert.ok(!content.includes('Research & academia')&&!content.includes('Entrepreneurship & other'));
-assert.ok(js.includes('TRANSITION_MS=3500'),'Animations must take 3.5 seconds');
+assert.ok(js.includes('TRANSITION_MS=2000'),'Animations must take 2 seconds');
 assert.ok(js.includes('const finalSize=0.45'),'Portrait must finish at size 0.45');
 assert.ok(js.includes('scale:.84'),'Smaller portrait shader scale must match photo fallback');
 assert.ok(css.includes('transform:scale(.84)'),'Portrait fallback should use the same smaller scale');
