@@ -295,3 +295,37 @@
 .page-career .career-title h1{font-size:clamp(56px,7.2vw,106px);margin:0;line-height:1.05;letter-spacing:-.055em}
 @media(max-width:980px){.page-career .career-top{padding-top:55px}}
 @media(max-width:760px){.page-career .career-top{display:grid;grid-template-columns:1fr;gap:26px;padding-top:38px;padding-bottom:32px}.page-career .career-title h1{font-size:clamp(52px,14vw,72px)}}
+
+/* Refined Geist: display spacing and readable supporting text. */
+.page-home .cover-copy h1,
+.page-research .research-hero h1,
+.page-career .career-title h1,
+.page-home .contact-home h2 { letter-spacing: -.035em; }
+.page-career .career-entry h2,
+.page-home .contact-method-heading { letter-spacing: -.025em; }
+.page-research .publication-description h2 { letter-spacing: -.015em; }
+.artwork figcaption { font: 13px/1.55 var(--sans); }
+.artwork cite { font-style: italic; }
+.footer { font: 12px/1.6 var(--sans); }
+.page-home .contact-method-detail { font: 13px/1.6 var(--sans); }
+.footnote { font: 12px/1.6 var(--sans); }
+@media (max-width: 760px) {
+  .artwork figcaption { font-size: 12px; }
+}
+
+/* Compact desktop artwork keeps page content within the opening view. */
+@media (min-width: 981px) {
+  .page-research .research-content { padding-top: 32px; }
+  .page-research .research-hero { margin-bottom: 28px; }
+  .page-career .career-top { padding-top: 32px; padding-bottom: 28px; }
+  .page-research .research-hero .artwork,
+  .page-career .career-top .artwork {
+    width: min(100%, 560px, 65vh);
+    justify-self: end;
+  }
+  .page-research .research-hero h1,
+  .page-career .career-title h1 {
+    font-size: clamp(56px, 6.1vw, 90px);
+  }
+  .page-career .career-chronology { padding-top: 28px; }
+}
