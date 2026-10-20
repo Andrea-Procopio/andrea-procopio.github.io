@@ -5,7 +5,7 @@ const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
-  assert.ok(html.includes('style.css?v=20261019-crows-v1'),page+' CSS version mismatch');
+  assert.ok(html.includes('style.css?v=20261020-refined-v1'),page+' CSS version mismatch');
   assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
   assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');

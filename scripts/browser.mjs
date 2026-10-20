@@ -6,7 +6,7 @@ try{
  let ready=false;for(let i=0;i<50;i++){try{const r=await fetch('http://127.0.0.1:4173/');if(r.ok){ready=true;break}}catch{}await wait(250)}
  assert.ok(ready,'Vite did not start');
  browser=await chromium.launch({headless:true,args:['--disable-dev-shm-usage']});
- for(const viewport of [{width:1440,height:900},{width:768,height:1024},{width:980,height:900},{width:1040,height:900},{width:1041,height:900},{width:320,height:740},{width:390,height:844},{width:430,height:932},{width:640,height:900}]){
+ for(const viewport of [{width:1440,height:900},{width:1440,height:720},{width:768,height:1024},{width:980,height:900},{width:1040,height:900},{width:1041,height:900},{width:320,height:740},{width:390,height:844},{width:430,height:932},{width:640,height:900}]){
  for(const route of ['','research.html','career.html']){
  const page=await browser.newPage({viewport});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -41,6 +41,10 @@ try{
    assert.ok(art.x>=title.x+title.width-1||art.y>=title.y+title.height-1,'painting and heading must not overlap');
    assert.equal(await page.locator('.publication-row').count(),5);
    assert.equal(await page.locator('.publication-row a').count(),3,'one focus target per available paper');
+   if(viewport.width>=981){
+     const first=await page.locator('.publication-description h2').first().boundingBox();
+     assert.ok(first.y+first.height<=viewport.height,'First paper title must be visible below the artwork without scrolling');
+   }
  }
  assert.ok(await page.locator('[data-reveal]').evaluateAll(items=>items.every(el=>getComputedStyle(el).opacity==='1')),'content readable without scrolling');
  if(route==='career.html'){
@@ -52,9 +56,13 @@ try{
    assert.ok(art.x>=title.x+title.width-1||art.y>=title.y+title.height-1,'Career heading and painting must not overlap');
    assert.equal(await page.locator('#career-painting').evaluate(img=>getComputedStyle(img).filter),'none','Preserve painting colors');
    assert.ok(await page.locator('#career-painting').evaluate(x=>x.complete&&x.naturalWidth>0),'career image must load');
+   if(viewport.width>=981){
+     const first=await page.locator('.career-entry--mit h2').boundingBox();
+     assert.ok(first.y+first.height<=viewport.height,'First career heading must be visible below the artwork without scrolling');
+   }
  }
- await page.screenshot({path:'v3-'+(route||'home').replace('.html','')+'-'+viewport.width+'.png',fullPage:true,animations:'disabled',timeout:25000});
+ await page.screenshot({path:'v3-'+(route||'home').replace('.html','')+'-'+viewport.width+'x'+viewport.height+'.png',fullPage:true,animations:'disabled',timeout:25000});
  await page.close();
  }}
- console.log('All 27 responsive browser routes passed');
+ console.log('All 30 responsive browser routes passed');
 }finally{if(browser)await browser.close();server.kill('SIGTERM')}
