@@ -313,15 +313,20 @@
   .artwork figcaption { font-size: 12px; }
 }
 
-/* Compact desktop artwork keeps page content within the opening view. */
+/* Keep desktop titles and paintings together without hiding the content below. */
 @media (min-width: 981px) {
   .page-research .research-content { padding-top: 32px; }
   .page-research .research-hero { margin-bottom: 28px; }
   .page-career .career-top { padding-top: 32px; padding-bottom: 28px; }
+  .page-research .research-hero,
+  .page-career .career-top {
+    grid-template-columns: minmax(0, 400px) minmax(0, min(640px, 70vh));
+    justify-content: center;
+    gap: 48px;
+  }
   .page-research .research-hero .artwork,
   .page-career .career-top .artwork {
-    width: min(100%, 560px, 65vh);
-    justify-self: end;
+    width: 100%;
   }
   .page-research .research-hero h1,
   .page-career .career-title h1 {
