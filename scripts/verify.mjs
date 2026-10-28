@@ -1,15 +1,26 @@
 import {readFileSync,existsSync} from 'node:fs';
 import assert from 'node:assert/strict';
-const pages=['index.html','research.html','career.html'];
+import {dirname,resolve,join} from 'node:path';
+const originalPages=['index.html','research.html','career.html'];
+const pages=[...originalPages,'press.html','press/bainsa-forbes.html','press/corriere-adriatico.html'];
 const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
   assert.ok(html.includes('style.css?v=20261021-spacing-v1'),page+' CSS version mismatch');
-  assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
-  assert.ok(html.includes('research.html')&&html.includes('career.html'),page+' missing navigation');
+  if(originalPages.includes(page)) assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
+  const nav=html.match(/<nav aria-label="Main navigation">([\s\S]*?)<\/nav>/)?.[1]||'';
+  assert.ok(['Home','Research','Career','Press'].every(label=>nav.includes('>'+label+'</a>')),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
   assert.ok(!html.includes('class="wordmark"'),page+' should not include top Andrea Procopio link');
+  // Resolve relative paths from each page, including nested English articles.
+  for(const match of html.matchAll(/(?:href|src)="([^"?#]+)(?:[?#][^"]*)?"/g)){
+    const url=match[1];
+    if(/^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(url))continue;
+    let target=resolve(dirname(page),url);
+    if(url.endsWith('/'))target=join(target,'index.html');
+    assert.ok(existsSync(target),page+' broken local link or asset: '+url);
+  }
 }
 // All shared pages must use the actual favicon asset as their OG/WhatsApp preview.
 for(const page of pages){

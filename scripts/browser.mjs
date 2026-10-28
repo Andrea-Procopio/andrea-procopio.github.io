@@ -7,7 +7,9 @@ try{
  assert.ok(ready,'Vite did not start');
  browser=await chromium.launch({headless:true,args:['--disable-dev-shm-usage']});
  for(const viewport of [{width:1920,height:1080},{width:1440,height:900},{width:1440,height:720},{width:768,height:1024},{width:980,height:900},{width:1040,height:900},{width:1041,height:900},{width:320,height:740},{width:390,height:844},{width:430,height:932},{width:640,height:900}]){
- for(const route of ['','research.html','career.html']){
+ const routes=['','research.html','career.html'];
+ if([320,390,1440].includes(viewport.width))routes.push('press.html','press/bainsa-forbes.html','press/corriere-adriatico.html');
+ for(const route of routes){
  const page=await browser.newPage({viewport});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('http://127.0.0.1:4173/'+route,{waitUntil:'domcontentloaded',timeout:20000});
@@ -61,7 +63,7 @@ try{
      assert.ok(first.y+first.height<=viewport.height,'First career heading must be visible below the artwork without scrolling');
    }
  }
- if(route!==''&&viewport.width>=981){
+ if(['research.html','career.html'].includes(route)&&viewport.width>=981){
    const spacing=await page.evaluate(()=>{
      const title=document.querySelector('h1');
      const range=document.createRange();range.selectNodeContents(title);
@@ -73,8 +75,8 @@ try{
    assert.ok(spacing.gap>=0&&spacing.gap<=spacing.width*.3,'Title and painting must form a connected composition: '+JSON.stringify(spacing));
    console.log(route,viewport.width+'x'+viewport.height,JSON.stringify(spacing));
  }
- await page.screenshot({path:'v3-'+(route||'home').replace('.html','')+'-'+viewport.width+'x'+viewport.height+'.png',fullPage:true,animations:'disabled',timeout:25000});
+ await page.screenshot({path:'v3-'+(route||'home').replace('.html','').replaceAll('/','-')+'-'+viewport.width+'x'+viewport.height+'.png',fullPage:true,animations:'disabled',timeout:25000});
  await page.close();
  }}
- console.log('All 33 responsive browser routes passed');
+ console.log('All responsive browser routes passed');
 }finally{if(browser)await browser.close();server.kill('SIGTERM')}
