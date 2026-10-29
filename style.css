@@ -321,13 +321,15 @@
   .page-research .research-hero,
   .page-career .career-top,
   .page-press .press-hero {
-    --hero-art-width: min(640px, 68vh, calc(60vw - 91.2px));
-    --hero-title-width: min(400px, calc(40vw - 60.8px));
+    --hero-gap: clamp(64px, 8vw, 128px);
+    --hero-room: calc(100vw - 104px - var(--hero-gap));
+    --hero-art-width: min(640px, 68vh, calc(var(--hero-room) * .6));
+    --hero-title-width: min(400px, calc(var(--hero-room) * .4));
     grid-template-columns: var(--hero-title-width) var(--hero-art-width);
     /* Allow for the tallest painting and a single-line caption. */
     grid-template-rows: calc(var(--hero-art-width) * .835 + 32.15px);
     justify-content: center;
-    gap: 48px;
+    gap: var(--hero-gap);
   }
   .page-research .research-hero .artwork,
   .page-career .career-top .artwork,
