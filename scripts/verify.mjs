@@ -10,7 +10,7 @@ for(const page of pages){
   assert.ok(html.includes('style.css?v=20261029-spacing-v3'),page+' CSS version mismatch');
   if(originalPages.includes(page)) assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
   const nav=html.match(/<nav aria-label="Main navigation">([\s\S]*?)<\/nav>/)?.[1]||'';
-  assert.ok(['Home','Research','Career','Press'].every(label=>nav.includes('>'+label+'</a>')),page+' missing navigation');
+  assert.ok(['Home','Research','Career','Updates'].every(label=>nav.includes('>'+label+'</a>')),page+' missing navigation');
   assert.equal(html.split('<h1 ').length-1,1,page+' needs exactly one h1');
   assert.ok(!html.includes('class="wordmark"'),page+' should not include top Andrea Procopio link');
   // Resolve relative paths from each page, including nested English articles.
