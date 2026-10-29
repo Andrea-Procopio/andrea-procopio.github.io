@@ -7,7 +7,7 @@ const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
-  assert.ok(html.includes('style.css?v=20261021-spacing-v1'),page+' CSS version mismatch');
+  assert.ok(html.includes('style.css?v=20261029-hero-v1'),page+' CSS version mismatch');
   if(originalPages.includes(page)) assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
   const nav=html.match(/<nav aria-label="Main navigation">([\s\S]*?)<\/nav>/)?.[1]||'';
   assert.ok(['Home','Research','Career','Press'].every(label=>nav.includes('>'+label+'</a>')),page+' missing navigation');

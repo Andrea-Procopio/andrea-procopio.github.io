@@ -7,8 +7,9 @@ try{
  assert.ok(ready,'Vite did not start');
  browser=await chromium.launch({headless:true,args:['--disable-dev-shm-usage']});
  for(const viewport of [{width:1920,height:1080},{width:1440,height:900},{width:1440,height:720},{width:768,height:1024},{width:980,height:900},{width:1040,height:900},{width:1041,height:900},{width:320,height:740},{width:390,height:844},{width:430,height:932},{width:640,height:900}]){
- const routes=['','research.html','career.html'];
- if([320,390,1440].includes(viewport.width))routes.push('press.html','press/bainsa-forbes.html','press/corriere-adriatico.html');
+ const routes=['','research.html','career.html','press.html'];
+ if([320,390,1440].includes(viewport.width))routes.push('press/bainsa-forbes.html','press/corriere-adriatico.html');
+ let referenceHeading;
  for(const route of routes){
  const page=await browser.newPage({viewport});
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -18,6 +19,13 @@ try{
  assert.deepEqual(errors,[],'page runtime errors');
  const w=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,view:innerWidth}));
  assert.ok(w.scroll<=w.view+2,'horizontal overflow '+route+' '+viewport.width+': '+JSON.stringify(w));
+ if(['research.html','career.html','press.html'].includes(route)&&viewport.width>=981){
+   const heading=await page.locator('h1').boundingBox();
+   if(referenceHeading){
+     assert.ok(Math.abs(heading.x-referenceHeading.x)<=1&&Math.abs(heading.y-referenceHeading.y)<=1,
+       'Page titles must share their desktop position: '+route+' '+JSON.stringify({heading,referenceHeading}));
+   }else referenceHeading=heading;
+ }
  if(route===''&&viewport.width<=640){
    const portrait=await page.locator('#portrait').boundingBox();
    const heading=await page.locator('h1').boundingBox();
@@ -63,13 +71,26 @@ try{
      assert.ok(first.y+first.height<=viewport.height,'First career heading must be visible below the artwork without scrolling');
    }
  }
- if(['research.html','career.html'].includes(route)&&viewport.width>=981){
+ if(route==='press.html'){
+   const painting=page.locator('#press-painting');
+   await painting.evaluate(img=>img.decode());
+   assert.ok(await painting.evaluate(img=>img.complete&&img.naturalWidth>0&&/bean-eater-(800|1600)\.webp/.test(img.currentSrc)),'Press painting must load');
+   const art=await painting.boundingBox();
+   const title=await page.locator('h1').boundingBox();
+   assert.ok(art.x>=title.x+title.width-1||art.y>=title.y+title.height-1,'Press painting and title must not overlap');
+   assert.ok(Math.abs(art.width/art.height-3294/2748)<.002,'Preserve the full Press painting aspect ratio');
+   if(viewport.width>=981){
+     const first=await page.locator('.press-entry h2').first().boundingBox();
+     assert.ok(first.y+first.height<=viewport.height,'First press article title must be visible without scrolling');
+   }
+ }
+ if(['research.html','career.html','press.html'].includes(route)&&viewport.width>=981){
    const spacing=await page.evaluate(()=>{
      const title=document.querySelector('h1');
      const range=document.createRange();range.selectNodeContents(title);
      const text=range.getBoundingClientRect();
      const artwork=document.querySelector('.artwork').getBoundingClientRect();
-     const hero=document.querySelector('.research-hero,.career-top').getBoundingClientRect();
+     const hero=document.querySelector('.research-hero,.career-top,.press-hero').getBoundingClientRect();
      return {gap:artwork.left-text.right,width:hero.width,painting:artwork.width};
    });
    assert.ok(spacing.gap>=0&&spacing.gap<=spacing.width*.3,'Title and painting must form a connected composition: '+JSON.stringify(spacing));
