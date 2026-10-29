@@ -9,6 +9,7 @@
 .press-description{max-width:820px}
 .press-description h2{font-size:clamp(24px,2.6vw,36px);line-height:1.18;letter-spacing:-.025em;font-weight:400}
 .press-description>p{font-size:16px;line-height:1.65;color:var(--muted);max-width:66ch;margin-top:16px}
+.press-description>p a{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
 .press-links{display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:22px;font-size:14px}
 .press-links a,.press-article-meta a{display:inline-flex;align-items:center;gap:8px;min-height:44px}
 .press-links a:first-child{font-weight:500}
