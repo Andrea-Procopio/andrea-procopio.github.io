@@ -7,8 +7,8 @@ try{
  assert.ok(ready,'Vite did not start');
  browser=await chromium.launch({headless:true,args:['--disable-dev-shm-usage']});
  for(const viewport of [{width:1920,height:1080},{width:1440,height:900},{width:1440,height:720},{width:768,height:1024},{width:980,height:900},{width:1040,height:900},{width:1041,height:900},{width:320,height:740},{width:390,height:844},{width:430,height:932},{width:640,height:900}]){
- const routes=['','research.html','career.html','press.html'];
- if([320,390,1440].includes(viewport.width))routes.push('press/bainsa-forbes.html','press/corriere-adriatico.html');
+ const routes=['','research.html','career.html','updates.html'];
+ if([320,390,980,1040,1041,1440,1920].includes(viewport.width))routes.push('updates/bainsa-forbes.html');
  let referenceHeading;
  for(const route of routes){
  const page=await browser.newPage({viewport});
@@ -19,7 +19,7 @@ try{
  assert.deepEqual(errors,[],'page runtime errors');
  const w=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,view:innerWidth}));
  assert.ok(w.scroll<=w.view+2,'horizontal overflow '+route+' '+viewport.width+': '+JSON.stringify(w));
- if(['research.html','career.html','press.html'].includes(route)&&viewport.width>=981){
+ if(['research.html','career.html','updates.html'].includes(route)&&viewport.width>=981){
    const heading=await page.locator('h1').boundingBox();
    if(referenceHeading){
      assert.ok(Math.abs(heading.x-referenceHeading.x)<=1&&Math.abs(heading.y-referenceHeading.y)<=1,
@@ -71,26 +71,35 @@ try{
      assert.ok(first.y+first.height<=viewport.height,'First career heading must be visible below the artwork without scrolling');
    }
  }
- if(route==='press.html'){
-   const painting=page.locator('#press-painting');
-   await painting.evaluate(img=>img.decode());
-   assert.ok(await painting.evaluate(img=>img.complete&&img.naturalWidth>0&&/bean-eater-(800|1600)\.webp/.test(img.currentSrc)),'Press painting must load');
-   const art=await painting.boundingBox();
-   const title=await page.locator('h1').boundingBox();
-   assert.ok(art.x>=title.x+title.width-1||art.y>=title.y+title.height-1,'Press painting and title must not overlap');
-   assert.ok(Math.abs(art.width/art.height-3294/2748)<.002,'Preserve the full Press painting aspect ratio');
+ if(route==='updates/bainsa-forbes.html'){
+   const photo=page.locator('.updates-article-figure img');
+   await photo.evaluate(img=>img.decode());
+   assert.equal(await photo.evaluate(img=>img.naturalWidth),1600,'Team photo must load');
    if(viewport.width>=981){
-     const first=await page.locator('.press-entry h2').first().boundingBox();
-     assert.ok(first.y+first.height<=viewport.height,'First press article title must be visible without scrolling');
+     const lines=await page.locator('h1').evaluate(el=>{const r=document.createRange();r.selectNodeContents(el);return r.getClientRects().length});
+     assert.equal(lines,1,'Article headline must stay on one desktop line');
    }
  }
- if(['research.html','career.html','press.html'].includes(route)&&viewport.width>=981){
+ if(route==='updates.html'){
+   const painting=page.locator('#updates-painting');
+   await painting.evaluate(img=>img.decode());
+   assert.ok(await painting.evaluate(img=>img.complete&&img.naturalWidth>0&&/bean-eater-(800|1600)\.webp/.test(img.currentSrc)),'Updates painting must load');
+   const art=await painting.boundingBox();
+   const title=await page.locator('h1').boundingBox();
+   assert.ok(art.x>=title.x+title.width-1||art.y>=title.y+title.height-1,'Updates painting and title must not overlap');
+   assert.ok(Math.abs(art.width/art.height-3294/2748)<.002,'Preserve the full Updates painting aspect ratio');
+   if(viewport.width>=981){
+     const first=await page.locator('.updates-entry h2').first().boundingBox();
+     assert.ok(first.y+first.height<=viewport.height,'First updates article title must be visible without scrolling');
+   }
+ }
+ if(['research.html','career.html','updates.html'].includes(route)&&viewport.width>=981){
    const spacing=await page.evaluate(()=>{
      const title=document.querySelector('h1');
      const range=document.createRange();range.selectNodeContents(title);
      const text=range.getBoundingClientRect();
      const artwork=document.querySelector('.artwork').getBoundingClientRect();
-     const hero=document.querySelector('.research-hero,.career-top,.press-hero').getBoundingClientRect();
+     const hero=document.querySelector('.research-hero,.career-top,.updates-hero').getBoundingClientRect();
      return {gap:artwork.left-text.right,width:hero.width,painting:artwork.width};
    });
    assert.ok(spacing.gap>=0&&spacing.gap<=spacing.width*.3,'Title and painting must form a connected composition: '+JSON.stringify(spacing));

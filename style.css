@@ -320,7 +320,7 @@
   .page-career .career-top { padding-top: 32px; padding-bottom: 28px; }
   .page-research .research-hero,
   .page-career .career-top,
-  .page-press .press-hero {
+  .page-updates .updates-hero {
     --hero-gap: clamp(64px, 8vw, 128px);
     --hero-room: calc(100vw - 104px - var(--hero-gap));
     --hero-art-width: min(640px, 68vh, calc(var(--hero-room) * .6));
@@ -333,7 +333,7 @@
   }
   .page-research .research-hero .artwork,
   .page-career .career-top .artwork,
-  .page-press .press-hero .artwork {
+  .page-updates .updates-hero .artwork {
     width: 100%;
   }
   .page-research .research-hero h1,

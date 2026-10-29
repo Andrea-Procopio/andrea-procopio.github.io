@@ -2,12 +2,12 @@ import {readFileSync,existsSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import {dirname,resolve,join} from 'node:path';
 const originalPages=['index.html','research.html','career.html'];
-const pages=[...originalPages,'press.html','press/bainsa-forbes.html','press/corriere-adriatico.html'];
+const pages=[...originalPages,'updates.html','updates/bainsa-forbes.html'];
 const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
-  assert.ok(html.includes('style.css?v=20261029-spacing-v3'),page+' CSS version mismatch');
+  assert.ok(html.includes('style.css?v=20261029-updates-v4'),page+' CSS version mismatch');
   if(originalPages.includes(page)) assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
   const nav=html.match(/<nav aria-label="Main navigation">([\s\S]*?)<\/nav>/)?.[1]||'';
   assert.ok(['Home','Research','Career','Updates'].every(label=>nav.includes('>'+label+'</a>')),page+' missing navigation');
@@ -22,10 +22,10 @@ for(const page of pages){
     assert.ok(existsSync(target),page+' broken local link or asset: '+url);
   }
 }
-// All shared pages must use the actual favicon asset as their OG/WhatsApp preview.
+// Shared previews use the same portrait as the home page.
 for(const page of pages){
   const head=readFileSync(page,'utf8').split('</head>')[0];
-  assert.ok(head.includes('<meta property="og:image" content="https://andrea-procopio.github.io/assets/icon1.jpg">'),page+' incorrect social preview image');
+  assert.ok(head.includes('<meta property="og:image" content="https://andreaprocopio.com/assets/profile.jpeg?v=20261029">'),page+' incorrect social preview image');
   assert.ok(head.includes('<meta property="og:image:type" content="image/jpeg">'),page+' missing OG image type');
   assert.ok(!head.includes('property="og:image" content="https://andrea-procopio.github.io/assets/profile.jpeg"'),page+' outdated preview');
 }
@@ -143,3 +143,16 @@ for(const asset of ['assets/profile.jpeg','assets/icon1.jpg','style.css','main.j
 assert.ok(!js.includes('transitionCoarseness')&&!js.includes('playOnceInSession'),'Halftones must not animate granularity');
 for(const w of [800,1600,2400])for(const name of ['watzmann','tree-of-crows'])assert.ok(existsSync(`assets/${name}-${w}.webp`),'Missing responsive painting');
 console.log('All fast page, asset, and static halftone checks passed');
+
+// The renamed section has a real Updates URL; old shared links remain useful.
+for(const page of pages){
+ const html=readFileSync(page,'utf8');
+ assert.ok(/href="(?:\.\.\/)?updates.html"/.test(html),page+' must link to Updates');
+}
+const updates=readFileSync('updates.html','utf8');
+assert.equal((updates.match(/<article /g)||[]).length,1,'Only the Forbes article remains');
+assert.ok(!/Corriere|English summary|Original \(Italian\)/.test(updates),'Listing must omit removed article and language links');
+for(const old of ['press.html','press/bainsa-forbes.html','press/corriere-adriatico.html']){
+ const html=readFileSync(old,'utf8');
+ assert.ok(html.includes('http-equiv="refresh"')&&html.includes('https://andreaprocopio.com/updates'),'Old URLs must redirect to Updates');
+}
