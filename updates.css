@@ -1,0 +1,59 @@
+/* Updates shares the existing site's paper palette and Geist typography. */
+.updates-index{padding:32px 0 110px}
+.updates-hero{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);align-items:center;justify-content:center;gap:40px;margin-bottom:28px}
+.updates-index h1{font-size:clamp(56px,6.1vw,90px);line-height:1.05;letter-spacing:-.035em;margin:0}
+.updates-list{border-top:1px solid var(--line)}
+.updates-entry{padding:28px 0;border-bottom:1px solid var(--line);scroll-margin-top:32px}
+.updates-publication{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 18px;font:12px/1.6 var(--mono);color:var(--muted)}
+.updates-publication p{color:var(--ink);font-weight:500}
+.updates-description{max-width:900px;margin-top:10px}
+.updates-description h2{font-size:clamp(24px,2.25vw,30px);line-height:1.25;letter-spacing:-.025em;font-weight:400}
+.updates-description>p{font-size:16px;line-height:1.65;color:var(--muted);max-width:66ch;margin-top:12px}
+.updates-description>p a{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.updates-reading{width:min(100%,1000px);margin-inline:auto;padding:24px 0 80px}
+.updates-back{display:inline-flex;align-items:center;gap:8px;min-height:44px;font:13px/1.6 var(--mono);color:var(--muted)}
+.updates-article-header{display:flex;flex-direction:column;align-items:flex-start;gap:16px;margin-top:22px}
+.updates-source{font:12px/1.65 var(--mono);color:var(--muted)}
+.updates-article-header h1{font-size:clamp(30px,3vw,40px);line-height:1.18;letter-spacing:-.03em;font-weight:450}
+.updates-deck{font-size:19px;line-height:1.6;color:var(--muted);text-wrap:pretty}
+.updates-article-figure{margin-top:28px}
+.updates-article-figure>img{display:block;width:100%;height:auto}
+.updates-article-figure figcaption{font:12px/1.6 var(--mono);color:var(--muted);margin-top:10px}
+.updates-source-note{font-size:14px;line-height:1.7;color:var(--muted);margin-top:28px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.updates-source-note a{color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.updates-prose{padding-top:30px;font-size:18px;line-height:1.75;overflow-wrap:break-word}
+.updates-prose p+p{margin-top:16px}
+.updates-prose h2{font-size:22px;line-height:1.35;letter-spacing:-.02em;font-weight:500;margin:36px 0 12px}
+.updates-prose>h2:first-child{margin-top:0}
+.updates-prose .updates-byline{font-size:13px;line-height:1.6;color:var(--muted);margin-top:24px}
+.updates-back-bottom{margin-top:36px}
+.page-updates-article .site-header nav a[aria-current=true]{text-decoration:underline;text-underline-offset:6px}
+@media(min-width:981px){
+  .updates-article-header h1{font-size:clamp(32px,3vw,40px);white-space:nowrap}
+  .updates-prose p{text-align:justify;hyphens:auto}
+}
+@media(max-width:760px){
+  .updates-index{padding:32px 0 70px}
+  .updates-hero{grid-template-columns:minmax(0,1fr);gap:26px;margin-bottom:32px}
+  .updates-hero .artwork{width:min(100%,300px);justify-self:center}
+  .updates-index h1{font-size:clamp(52px,14vw,72px)}
+  .updates-entry{padding:24px 0}
+  .updates-publication{font-size:11px;gap:4px 14px}
+  .updates-description h2{font-size:26px}
+  .updates-description>p{font-size:15px}
+  .updates-reading{padding:16px 0 64px}
+  .updates-article-header{margin-top:18px;gap:14px}
+  .updates-article-header h1{font-size:clamp(30px,6vw,36px)}
+  .updates-source{font-size:11px}
+  .updates-deck{font-size:18px}
+  .updates-article-figure,.updates-source-note{margin-top:24px}
+  .updates-prose{font-size:16px;padding-top:24px}
+  .updates-prose h2{font-size:21px;margin-top:30px}
+}
+@media print{
+  .site-header,.skip,.updates-back,.footer{display:none}
+  .updates-reading{width:100%;padding:0}
+  .updates-article-header{margin-top:0}
+  .updates-prose h2{break-after:avoid}
+  .updates-prose p{orphans:3;widows:3}
+}

@@ -8,4 +8,4 @@ The Updates page uses *The Bean Eater* (c. 1584–85) by Annibale Carracci. [Sou
 
 ## Forbes article photograph
 
-The BAINSA team photograph follows the [reference article supplied for the redesign](https://lorenzocaputi.com/news/bainsa-forbes.html). The [source JPEG](https://lorenzocaputi.com/news/bainsa-team.jpg) is preserved as `assets/forbes-bainsa-team.jpg`. The article links to the original Italian publication.
+The BAINSA team photograph follows the [reference article supplied for the redesign](https://lorenzocaputi.com/news/bainsa-forbes.html). The [source JPEG](https://svxepporewpqnxnndlce.supabase.co/storage/v1/object/public/article-images/1792148519681-315yrzgorqm.jpg) is preserved as `assets/forbes-bainsa-team.jpg`. The article links to the original Italian publication.
