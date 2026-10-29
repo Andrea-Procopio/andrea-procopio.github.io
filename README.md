@@ -4,4 +4,4 @@ Personal website, work in progress
 
 ## Press artwork
 
-The Press page uses *Caspar David Friedrich in his Studio* (c. 1812) by Georg Friedrich Kersting. [Source on Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Georg_Friedrich_Kersting_-_Caspar_David_Friedrich_in_seinem_Atelier_(um_1812).jpg), credited there to Staatliche Museen zu Berlin, Nationalgalerie / Jörg P. Anders and marked public domain. The responsive WebP assets preserve the full composition and original colors.
+The Press page uses *The Bean Eater* (c. 1584–85) by Annibale Carracci. [Source on Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Carracci_-_Der_Bohnenesser.jpeg), marked public domain. The responsive WebP assets are derived from the [original image selected for the site](https://upload.wikimedia.org/wikipedia/commons/a/ae/Carracci_-_Der_Bohnenesser.jpeg) and preserve its full composition and colors.

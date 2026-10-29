@@ -313,19 +313,25 @@
   .artwork figcaption { font-size: 12px; }
 }
 
-/* Keep desktop titles and paintings together without hiding the content below. */
+/* Shared desktop columns and row height keep page titles aligned across paintings. */
 @media (min-width: 981px) {
   .page-research .research-content { padding-top: 32px; }
   .page-research .research-hero { margin-bottom: 28px; }
   .page-career .career-top { padding-top: 32px; padding-bottom: 28px; }
   .page-research .research-hero,
-  .page-career .career-top {
-    grid-template-columns: minmax(0, 400px) minmax(0, min(640px, 70vh));
+  .page-career .career-top,
+  .page-press .press-hero {
+    --hero-art-width: min(640px, 68vh, calc(60vw - 91.2px));
+    --hero-title-width: min(400px, calc(40vw - 60.8px));
+    grid-template-columns: var(--hero-title-width) var(--hero-art-width);
+    /* Allow for the tallest painting and a single-line caption. */
+    grid-template-rows: calc(var(--hero-art-width) * .835 + 32.15px);
     justify-content: center;
     gap: 48px;
   }
   .page-research .research-hero .artwork,
-  .page-career .career-top .artwork {
+  .page-career .career-top .artwork,
+  .page-press .press-hero .artwork {
     width: 100%;
   }
   .page-research .research-hero h1,
