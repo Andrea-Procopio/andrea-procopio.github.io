@@ -52,20 +52,17 @@ assert.ok(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'Desktop
 assert.ok(css.includes('.page-home .contact-list{grid-template-columns:minmax(0,1fr);gap:0}'),'Mobile contact links must stack');
 
 const biography=home.split('<div class="introduction">')[1]?.split('</div>')[0]||'';
-assert.equal((biography.match(/<p>/g)||[]).length,4,'Landing biography must have exactly four paragraphs');
+assert.equal((biography.match(/<p>/g)||[]).length,3,'Landing biography must have exactly three paragraphs');
 for(const phrase of [
-  "I'm a PhD student at MIT working with Prof. Dimitris Bertsimas, and a Research Fellow at Harvard.",
-  'reliably and meaningfully automate scientific discovery',
-  'continual learning and recursive self improvement',
-  'raise the median quality of life.',
-  'I studied Computer Science and Economics at Bocconi. My thesis grew out of research with Prof. Tomer Ullman',
-  'Harvard’s Computation, Cognition, and Development Lab, where I continue to collaborate.',
-  'Italy’s largest student-run AI research lab',
-  'a community for European founders under 26.'
+  "I'm 21, and I'm a first year PhD student at MIT with Prof. Dimitris Bertsimas, and a Research Fellow at Harvard with Prof. Tomer Ullman.",
+  "I'm interested in AI systems that perform automated scientific discovery by learning and adapting continually from their experience, just like humans do.",
+  "I believe that making open-ended discovery cheap, fast, and domain-agnostic is the most effective way to expand human capabilities and knowledge and raise the median quality of life. I also think it's just very cool.",
+  'Previously, I studied CS and Economics at Bocconi University and spent my final year doing research at Harvard on computer vision and cognitive science.',
+  'Italy’s largest undergraduate-run AI research lab',
+  'a community of young founders in Europe.'
 ]) assert.ok(biography.includes(phrase),'Missing biography copy: '+phrase);
 assert.ok(biography.includes('href="https://bainsa.ai/"'),'BAINSA link missing from biography');
-assert.ok(biography.includes('href="https://www.eurotech-federation.com"'),'EuroTech link missing from biography');
-assert.ok(!biography.includes('recursive self-improvement'),'The phrase must not contain a hyphen');
+assert.ok(biography.includes('href="https://www.eurotech-federation.com/"'),'EuroTech link missing from biography');
 assert.ok(css.includes('.page-home .introduction p{text-align:justify;text-justify:inter-word;hyphens:none}'),'Homepage biography must be justified');
 assert.ok(!biography.includes('I work on AI systems that do research:'),
  'Old biography text should be removed');
