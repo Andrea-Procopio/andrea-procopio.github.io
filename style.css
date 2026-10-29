@@ -321,7 +321,7 @@
   .page-research .research-hero,
   .page-career .career-top,
   .page-press .press-hero {
-    --hero-art-width: min(640px, 70vh, calc(60vw - 91.2px));
+    --hero-art-width: min(640px, 68vh, calc(60vw - 91.2px));
     --hero-title-width: min(400px, calc(40vw - 60.8px));
     grid-template-columns: var(--hero-title-width) var(--hero-art-width);
     /* Allow for the tallest painting and a single-line caption. */
