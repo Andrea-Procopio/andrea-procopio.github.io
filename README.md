@@ -1,6 +1,10 @@
 # andrea-procopio.github.io
 
-Personal website, work in progress
+Source for [andreaprocopio.com](https://andreaprocopio.com), a static website hosted on GitHub Pages.
+
+The Research page lists the five verified publications and selected collaborative projects. Publication titles, author lists, and statuses are maintained directly in `research.html`. Do not infer acceptance from a preprint or an under-review manuscript.
+
+Checks: `npm ci`, `npm run check`, and `npm test` (the browser test requires Playwright browser installation).
 
 ## Updates artwork
 
