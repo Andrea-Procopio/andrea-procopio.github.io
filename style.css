@@ -342,3 +342,12 @@
   }
   .page-career .career-chronology { padding-top: 28px; }
 }
+
+/* Selected collaborative projects, visually consistent with research rows. */
+.page-research .selected-projects{margin-top:84px}
+.page-research .selected-projects>h2{font-size:clamp(28px,3vw,39px);font-weight:400;letter-spacing:-.035em;margin-bottom:22px}
+.page-research .project-list{border-top:1px solid var(--line)}
+.page-research .project-row{display:grid;grid-template-columns:48px minmax(0,1fr);gap:24px;border-bottom:1px solid var(--line);padding:25px 0;align-items:start}
+.page-research .project-row h3{font-size:clamp(18px,2vw,24px);font-weight:450;line-height:1.4;letter-spacing:-.015em}
+.page-research .project-row p{font-size:14px;line-height:1.65;color:var(--muted);margin-top:8px;max-width:800px}
+@media(max-width:640px){.page-research .selected-projects{margin-top:55px}.page-research .project-row{grid-template-columns:minmax(0,1fr);gap:7px;padding:23px 0}.page-research .project-row h3{font-size:18px}}

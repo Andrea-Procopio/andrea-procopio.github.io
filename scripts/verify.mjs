@@ -7,7 +7,7 @@ const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
-  assert.ok(html.includes('style.css?v=20261029-updates-v4'),page+' CSS version mismatch');
+  assert.ok(html.includes('style.css?v=20261103-projects-v1'),page+' CSS version mismatch');
   if(originalPages.includes(page)) assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
   const nav=html.match(/<nav aria-label="Main navigation">([\s\S]*?)<\/nav>/)?.[1]||'';
   assert.ok(['Home','Research','Career','Updates'].every(label=>nav.includes('>'+label+'</a>')),page+' missing navigation');
@@ -68,6 +68,8 @@ assert.ok(!biography.includes('I work on AI systems that do research:'),
  'Old biography text should be removed');
 assert.equal((research.match(/class="publication-row"/g)||[]).length,5);
 assert.ok(research.includes('Modeling the Object Representations Underlying Human Physical Reasoning'));
+assert.equal((research.match(/class="project-row"/g)||[]).length,3,'Expect exactly three selected collaborative projects');
+for (const repo of ['simulated-annealing-3sat','football-player-value','telomere-longevity']) assert.ok(research.includes('https://github.com/lorenzocaputi/'+repo),'Missing selected project: '+repo);
 assert.ok(career.includes('assets/tree-of-crows-1600.webp')&&!career.includes('branch-shader'),'Career must render the original-color painting without a shader');
 assert.equal((career.match(/class="career-entry career-entry--/g)||[]).length,6,'Expect exactly six career entries');
 assert.ok(!career.includes('class="timeline-row"'),'Old connector timeline should not be present');
