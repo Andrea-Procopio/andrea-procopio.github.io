@@ -7,7 +7,8 @@ const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
-  assert.ok(html.includes('style.css?v=20261029-updates-v4'),page+' CSS version mismatch');
+  const expectedStylesheet = page==='index.html' ? 'style.css?v=20261108-research-layout-v1' : 'style.css?v=20261029-updates-v4';
+  assert.ok(html.includes(expectedStylesheet),page+' CSS version mismatch');
   if(originalPages.includes(page)) assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
   const nav=html.match(/<nav aria-label="Main navigation">([\s\S]*?)<\/nav>/)?.[1]||'';
   assert.ok(['Home','Research','Career','Updates'].every(label=>nav.includes('>'+label+'</a>')),page+' missing navigation');
@@ -55,8 +56,7 @@ const biography=home.split('<div class="introduction">')[1]?.split('</div>')[0]|
 assert.equal((biography.match(/<p>/g)||[]).length,3,'Landing biography must have exactly three paragraphs');
 for(const phrase of [
   "I'm 21, and I'm a first year PhD student at MIT with Prof. Dimitris Bertsimas, and a Research Fellow at Harvard with Prof. Tomer Ullman.",
-  "I'm interested in AI systems that perform automated scientific discovery by learning and adapting continually from their experience, just like humans do.",
-  "I believe that making open-ended discovery cheap, fast, and domain-agnostic is the most effective way to expand human capabilities and knowledge and raise the median quality of life. I also think it's just very cool.",
+  "My research focuses on AI systems for open ended scientific discovery that can continually learn and improve from experience, using new knowledge, and becoming themselves better at performing the process of discovery. Similar to what humans do, and possibly in a more holistic way.",
   'Previously, I studied CS and Economics at Bocconi University and spent my final year doing research at Harvard on computer vision and cognitive science.',
   'Italy’s largest undergraduate-run AI research lab',
   'a community of young founders in Europe.'
@@ -64,6 +64,9 @@ for(const phrase of [
 assert.ok(biography.includes('href="https://bainsa.ai/"'),'BAINSA link missing from biography');
 assert.ok(biography.includes('href="https://www.eurotech-federation.com/"'),'EuroTech link missing from biography');
 assert.ok(css.includes('.page-home .introduction p{text-align:justify;text-justify:inter-word;hyphens:none}'),'Homepage biography must be justified');
+assert.ok(home.includes('class="home-research-lead"') && home.includes('id="home-motivation-title"'),'Homepage must include thesis and motivation');
+assert.equal((home.match(/class="home-question"/g)||[]).length,4,'Homepage must display four research questions');
+assert.ok(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'Research questions must have a two-column desktop grid');
 assert.ok(!biography.includes('I work on AI systems that do research:'),
  'Old biography text should be removed');
 assert.equal((research.match(/class="publication-row"/g)||[]).length,5);
