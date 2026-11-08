@@ -342,3 +342,31 @@
   }
   .page-career .career-chronology { padding-top: 28px; }
 }
+
+/* Home editorial statements: research rationale and motivation. */
+.page-home .home-thoughts{padding-bottom:48px}
+.page-home .home-thought-row{
+  display:grid;grid-template-columns:minmax(240px,.8fr) minmax(0,1.2fr);
+  gap:clamp(30px,7vw,110px);padding:70px 0;
+  border-top:1px solid var(--line)
+}
+.page-home .home-thought-index{
+  display:block;margin-bottom:20px;color:var(--muted);
+  font:12px/1.5 var(--mono);letter-spacing:.065em
+}
+.page-home .home-thought-heading h2{
+  max-width:11ch;font-size:clamp(36px,4.4vw,62px);
+  font-weight:300;letter-spacing:-.035em;line-height:1.07
+}
+.page-home .home-thought-copy{
+  max-width:64ch;color:#42423e;font-size:17px;line-height:1.78
+}
+.page-home .home-thought-copy p+p{margin-top:24px}
+@media(max-width:760px){
+  .page-home .home-thoughts{padding-bottom:10px}
+  .page-home .home-thought-row{grid-template-columns:1fr;gap:24px;padding:44px 0}
+  .page-home .home-thought-index{margin-bottom:13px}
+  .page-home .home-thought-heading h2{max-width:none;font-size:clamp(36px,8vw,54px)}
+  .page-home .home-thought-copy{font-size:16px;line-height:1.75}
+  .page-home .home-thought-copy p+p{margin-top:20px}
+}
