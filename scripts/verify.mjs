@@ -7,7 +7,7 @@ const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
-  const expectedStylesheet = 'style.css?v=20261109-gutter-200-v10';
+  const expectedStylesheet = 'style.css?v=20261109-unified-frame-v11';
   assert.ok(html.includes(expectedStylesheet),page+' CSS version mismatch');
   if(originalPages.includes(page)) assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
   const nav=html.match(/<nav aria-label="Main navigation">([\s\S]*?)<\/nav>/)?.[1]||'';
@@ -69,6 +69,8 @@ assert.ok(css.includes('.page-home .introduction p{text-align:justify;text-justi
 assert.ok(home.includes('class="home-research-column"') && home.includes('id="home-motivation-title"'),'Homepage must include thesis and motivation');
 assert.equal((home.match(/class="home-research-column"/g)||[]).length,2,'Research thesis should have two normal text columns');
 assert.ok(css.includes('--site-gutter:clamp(24px,calc(22vw - 116.8px),200px)'),'Desktop page gutters should be wider');
+assert.ok(css.includes('.page-career .career-chronology{max-width:none}'),'Career timeline must use shared page frame');
+assert.ok(css.includes('grid-template-columns:minmax(0,1fr) var(--hero-art-width)'),'Hero grid must use unified frame');
 assert.equal((home.match(/class="home-question"/g)||[]).length,4,'Homepage must display four research questions');
 assert.ok(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'Research questions must have a two-column desktop grid');
 assert.ok(!biography.includes('I work on AI systems that do research:'),

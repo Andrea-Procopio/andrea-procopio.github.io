@@ -24,7 +24,7 @@
 .page-career .career-title{padding:40px 0 10px}
 .page-career .career-title h1{font-size:72px}
 }
-.page-career .career-chronology{max-width:1160px;padding:48px 0 105px}
+.page-career .career-chronology{max-width:none;padding:48px 0 105px}
 .page-career .career-tree-grid{
   --tree-gutter:clamp(32px,3.2vw,44px);
   display:grid;
@@ -415,32 +415,34 @@
   .page-home .contact-method-detail{margin-top:12px}
 }
 
-/* Uniform responsive gutters for navigation, content and hero across every page. */
+/* Shared frame: content and navigation use the same responsive edges across every page. */
 :root{--site-gutter:clamp(24px,calc(22vw - 116.8px),200px)}
 .page-width,
 .page-home .home-cover{
- width:min(calc(100% - var(--site-gutter) - var(--site-gutter)),1200px);
- margin-inline:auto;
+  width:calc(100% - var(--site-gutter) - var(--site-gutter));
+  max-width:none;
+  margin-inline:auto;
 }
-@media (min-width:981px){
- .page-research .research-hero,
- .page-career .career-top,
- .page-updates .updates-hero{
-  --hero-gap:clamp(40px,5vw,72px);
-  --hero-content-width:min(calc(100vw - var(--site-gutter) - var(--site-gutter)),1200px);
-  --hero-room:calc(var(--hero-content-width) - var(--hero-gap));
-  --hero-art-width:min(640px,68vh,calc(var(--hero-room) * .56));
-  --hero-title-width:min(400px,calc(var(--hero-room) * .42));
-  grid-template-columns:var(--hero-title-width) var(--hero-art-width);
-  grid-template-rows:calc(var(--hero-art-width) * .835 + 32.15px);
-  justify-content:space-between;
-  gap:var(--hero-gap);
- }
-}
-
-/* Short desktop windows need a closer title/image composition. */
-@media (min-width:981px) and (max-height:780px){
- .page-research .research-hero,
- .page-career .career-top,
- .page-updates .updates-hero{justify-content:center}
+.page-career .career-chronology{max-width:none}
+@media(min-width:761px){
+  .page-home .portrait-graphic{max-width:640px;justify-self:end}
+  .page-research .research-hero,
+  .page-career .career-top,
+  .page-updates .updates-hero{
+    --hero-gap:clamp(28px,5vw,72px);
+    --hero-content-width:calc(100vw - var(--site-gutter) - var(--site-gutter));
+    --hero-room:calc(var(--hero-content-width) - var(--hero-gap));
+    --hero-art-width:min(640px,68vh,calc(var(--hero-room) * .6));
+    grid-template-columns:minmax(0,1fr) var(--hero-art-width);
+    grid-template-rows:calc(var(--hero-art-width) * .835 + 32.15px);
+    justify-content:stretch;
+    align-items:center;
+    gap:var(--hero-gap);
+  }
+  .page-research .research-hero .artwork,
+  .page-career .career-top .artwork,
+  .page-updates .updates-hero .artwork{
+    width:var(--hero-art-width);
+    justify-self:end;
+  }
 }

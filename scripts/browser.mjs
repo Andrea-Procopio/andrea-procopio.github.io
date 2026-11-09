@@ -19,9 +19,9 @@ try{
  assert.deepEqual(errors,[],'page runtime errors');
  const w=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,view:innerWidth}));
  assert.ok(w.scroll<=w.view+2,'horizontal overflow '+route+' '+viewport.width+': '+JSON.stringify(w));
- if(['','research.html','career.html','updates.html'].includes(route)){
+ if(['','research.html','career.html','updates.html','updates/bainsa-forbes.html'].includes(route)){
   const ref=await page.evaluate(()=>{
-   const mainSelector=location.pathname.endsWith('research.html')?'.research-content':location.pathname.endsWith('career.html')?'.career-top':location.pathname.endsWith('updates.html')?'.page-updates #main':'.home-cover';
+   const mainSelector=location.pathname.endsWith('research.html')?'.research-content':location.pathname.endsWith('career.html')?'.career-top':location.pathname.endsWith('updates.html')?'.page-updates #main':location.pathname.includes('/updates/')?'#main':'.home-cover';
    const header=document.querySelector('.site-header').getBoundingClientRect();
    const main=document.querySelector(mainSelector).getBoundingClientRect();
    const nav=document.querySelector('.site-header nav').getBoundingClientRect();
@@ -29,7 +29,24 @@ try{
   });
   assert.ok(Math.abs(ref.headerLeft-ref.mainLeft)<=1&&Math.abs(ref.headerRight-ref.mainRight)<=1,'Shared gutters disagree '+route+' '+viewport.width+': '+JSON.stringify(ref));
   assert.ok(ref.navRight<=ref.headerRight+1&&ref.navRight>=ref.headerRight-1,'Navigation must follow content edge '+route+' '+viewport.width+': '+JSON.stringify(ref));
-  if(viewport.width===1440)assert.ok(Math.abs(ref.headerLeft-200)<=1&&Math.abs(ref.headerRight-1240)<=1,'Expected 200px side gutters at 1440px '+route+': '+JSON.stringify(ref));
+  if(viewport.width===1440||viewport.width===1920){
+    const right=viewport.width-200;
+    assert.ok(Math.abs(ref.headerLeft-200)<=1&&Math.abs(ref.headerRight-right)<=1,'Expected exactly 200px side gutters '+route+' '+viewport.width+': '+JSON.stringify(ref));
+  }
+  if(route==='career.html'){
+    const timeline=await page.locator('.career-chronology').boundingBox();
+    assert.ok(Math.abs(timeline.x-ref.headerLeft)<=1&&Math.abs(timeline.x+timeline.width-ref.headerRight)<=1,'Career timeline gutter mismatch '+viewport.width);
+  }
+  if(route==='updates/bainsa-forbes.html'){
+    const reading=await page.locator('.updates-reading').boundingBox();
+    assert.ok(Math.abs(reading.x-ref.headerLeft)<=1&&Math.abs(reading.x+reading.width-ref.headerRight)<=1,'Updates article gutter mismatch '+viewport.width);
+  }
+  if(['research.html','career.html','updates.html'].includes(route)&&viewport.width>=761){
+    const art=await page.locator('.artwork').first().boundingBox();
+    const heading=await page.locator('h1').first().boundingBox();
+    assert.ok(Math.abs(heading.x-ref.headerLeft)<=1,'Hero heading gutter mismatch '+route+' '+viewport.width);
+    assert.ok(Math.abs(art.x+art.width-ref.headerRight)<=1,'Hero artwork gutter mismatch '+route+' '+viewport.width);
+  }
  }
  if(route==='')assert.equal(await page.locator('.cover-actions').count(),0,'No duplicate home quick links');
  if(['research.html','career.html','updates.html'].includes(route)&&viewport.width>=981){

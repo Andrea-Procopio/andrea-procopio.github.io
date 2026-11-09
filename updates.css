@@ -10,7 +10,7 @@
 .updates-description h2{font-size:clamp(24px,2.25vw,30px);line-height:1.25;letter-spacing:-.025em;font-weight:400}
 .updates-description>p{font-size:16px;line-height:1.65;color:var(--muted);max-width:66ch;margin-top:12px}
 .updates-description>p a{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
-.updates-reading{width:min(100%,1000px);margin-inline:auto;padding:24px 0 80px}
+.updates-reading{width:100%;margin-inline:0;padding:24px 0 80px}
 .updates-back{display:inline-flex;align-items:center;gap:8px;min-height:44px;font:13px/1.6 var(--mono);color:var(--muted)}
 .updates-article-header{display:flex;flex-direction:column;align-items:flex-start;gap:16px;margin-top:22px}
 .updates-source{font:12px/1.65 var(--mono);color:var(--muted)}
@@ -21,7 +21,7 @@
 .updates-article-figure figcaption{font:12px/1.6 var(--mono);color:var(--muted);margin-top:10px}
 .updates-source-note{font-size:14px;line-height:1.7;color:var(--muted);margin-top:28px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .updates-source-note a{color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
-.updates-prose{padding-top:30px;font-size:18px;line-height:1.75;overflow-wrap:break-word}
+.updates-prose{max-width:1000px;padding-top:30px;font-size:18px;line-height:1.75;overflow-wrap:break-word}
 .updates-prose p+p{margin-top:16px}
 .updates-prose h2{font-size:22px;line-height:1.35;letter-spacing:-.02em;font-weight:500;margin:36px 0 12px}
 .updates-prose>h2:first-child{margin-top:0}
