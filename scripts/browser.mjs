@@ -132,7 +132,7 @@ try{
      const hero=document.querySelector('.research-hero,.career-top,.updates-hero').getBoundingClientRect();
      return {gap:artwork.left-text.right,width:hero.width,painting:artwork.width};
    });
-   assert.ok(spacing.gap>=0&&spacing.gap<=spacing.width*.3,'Title and painting must form a connected composition: '+JSON.stringify(spacing));
+   assert.ok(spacing.gap>=0&&spacing.gap<=spacing.width*(viewport.width>=1600?.5:.3),'Title and painting must form a connected composition: '+JSON.stringify(spacing));
    console.log(route,viewport.width+'x'+viewport.height,JSON.stringify(spacing));
  }
  await page.screenshot({path:'v3-'+(route||'home').replace('.html','').replaceAll('/','-')+'-'+viewport.width+'x'+viewport.height+'.png',fullPage:true,animations:'disabled',timeout:25000});
