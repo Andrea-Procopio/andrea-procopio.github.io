@@ -7,7 +7,7 @@ const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
-  const expectedStylesheet = page==='index.html' ? 'style.css?v=20261108-compact-research-v2' : 'style.css?v=20261029-updates-v4';
+  const expectedStylesheet = 'style.css?v=20261108-thesis-columns-gutters-v4';
   assert.ok(html.includes(expectedStylesheet),page+' CSS version mismatch');
   if(originalPages.includes(page)) assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
   const nav=html.match(/<nav aria-label="Main navigation">([\s\S]*?)<\/nav>/)?.[1]||'';
@@ -65,6 +65,8 @@ assert.ok(biography.includes('href="https://bainsa.ai/"'),'BAINSA link missing f
 assert.ok(biography.includes('href="https://www.eurotech-federation.com/"'),'EuroTech link missing from biography');
 assert.ok(css.includes('.page-home .introduction p{text-align:justify;text-justify:inter-word;hyphens:none}'),'Homepage biography must be justified');
 assert.ok(home.includes('class="home-research-lead"') && home.includes('id="home-motivation-title"'),'Homepage must include thesis and motivation');
+assert.equal((home.match(/class="home-research-column"/g)||[]).length,2,'Research thesis should have two normal text columns');
+assert.ok(css.includes('.page-width{width:min(100% - 160px,1320px)}'),'Desktop page gutters should be wider');
 assert.equal((home.match(/class="home-question"/g)||[]).length,4,'Homepage must display four research questions');
 assert.ok(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'Research questions must have a two-column desktop grid');
 assert.ok(!biography.includes('I work on AI systems that do research:'),
