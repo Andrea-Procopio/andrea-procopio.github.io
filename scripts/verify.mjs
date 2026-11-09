@@ -64,7 +64,7 @@ for(const phrase of [
 assert.ok(biography.includes('href="https://bainsa.ai/"'),'BAINSA link missing from biography');
 assert.ok(biography.includes('href="https://www.eurotech-federation.com/"'),'EuroTech link missing from biography');
 assert.ok(css.includes('.page-home .introduction p{text-align:justify;text-justify:inter-word;hyphens:none}'),'Homepage biography must be justified');
-assert.ok(home.includes('class="home-research-lead"') && home.includes('id="home-motivation-title"'),'Homepage must include thesis and motivation');
+assert.ok(home.includes('class="home-research-column"') && home.includes('id="home-motivation-title"'),'Homepage must include thesis and motivation');
 assert.equal((home.match(/class="home-research-column"/g)||[]).length,2,'Research thesis should have two normal text columns');
 assert.ok(css.includes('.page-width{width:min(100% - 160px,1320px)}'),'Desktop page gutters should be wider');
 assert.equal((home.match(/class="home-question"/g)||[]).length,4,'Homepage must display four research questions');
