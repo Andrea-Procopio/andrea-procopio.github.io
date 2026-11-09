@@ -416,7 +416,7 @@
 }
 
 /* Uniform responsive gutters for navigation, content and hero across every page. */
-:root{--site-gutter:clamp(24px,calc(14.5vw - 68.8px),140px)}
+:root{--site-gutter:clamp(24px,calc(22vw - 116.8px),200px)}
 .page-width,
 .page-home .home-cover{
  width:min(calc(100% - var(--site-gutter) - var(--site-gutter)),1200px);

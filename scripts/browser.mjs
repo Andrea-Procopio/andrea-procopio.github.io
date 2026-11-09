@@ -29,6 +29,7 @@ try{
   });
   assert.ok(Math.abs(ref.headerLeft-ref.mainLeft)<=1&&Math.abs(ref.headerRight-ref.mainRight)<=1,'Shared gutters disagree '+route+' '+viewport.width+': '+JSON.stringify(ref));
   assert.ok(ref.navRight<=ref.headerRight+1&&ref.navRight>=ref.headerRight-1,'Navigation must follow content edge '+route+' '+viewport.width+': '+JSON.stringify(ref));
+  if(viewport.width===1440)assert.ok(Math.abs(ref.headerLeft-200)<=1&&Math.abs(ref.headerRight-1240)<=1,'Expected 200px side gutters at 1440px '+route+': '+JSON.stringify(ref));
  }
  if(route==='')assert.equal(await page.locator('.cover-actions').count(),0,'No duplicate home quick links');
  if(['research.html','career.html','updates.html'].includes(route)&&viewport.width>=981){
