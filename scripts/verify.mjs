@@ -7,7 +7,7 @@ const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
-  const expectedStylesheet = page==='index.html' ? 'style.css?v=20261108-research-layout-v1' : 'style.css?v=20261029-updates-v4';
+  const expectedStylesheet = page==='index.html' ? 'style.css?v=20261108-compact-research-v2' : 'style.css?v=20261029-updates-v4';
   assert.ok(html.includes(expectedStylesheet),page+' CSS version mismatch');
   if(originalPages.includes(page)) assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
   const nav=html.match(/<nav aria-label="Main navigation">([\s\S]*?)<\/nav>/)?.[1]||'';
