@@ -61,7 +61,7 @@ for(const phrase of [
   "My research focuses on AI systems for open ended scientific discovery that can continually learn and improve from experience, using new knowledge, and becoming themselves better at performing the process of discovery. Similar to what humans do, and possibly in a more holistic way.",
   'Previously, I studied CS and Economics at Bocconi University and spent my final year doing research at Harvard on computer vision and cognitive science.',
   'a non-profit research lab run by undergrads',
-  'a community for young founders in Europe.'
+  'a community of young founders in Europe.'
 ]) assert.ok(biography.includes(phrase),'Missing biography copy: '+phrase);
 assert.ok(biography.includes('href="https://bainsa.ai/"'),'BAINSA link missing from biography');
 assert.ok(biography.includes('href="https://www.eurotech-federation.com/"'),'EuroTech link missing from biography');
@@ -130,7 +130,7 @@ const expected=[
   'Designed and trained light ML models for movement detection on wearables',
   'BAINSA','2023–present','Co-Founder, Chairman',
   "Research lab on AI, Robotic, and Neuroscience, run by students. Active in Bocconi, Polimi, Sapienza, and more soon.",
-  'EuroTech Federation','Co-Founder, Advisor','a community for young founders in Europe'
+  'EuroTech Federation','Co-Founder, Advisor','a community of young founders in Europe'
 ];
 const careerText=content.replace(/<[^>]*>/g,'');
 for(const phrase of expected)assert.ok(careerText.includes(phrase),'Missing career text: '+phrase);
