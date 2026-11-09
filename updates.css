@@ -20,7 +20,9 @@
 .updates-article-figure>img{display:block;width:100%;height:auto}
 .updates-article-figure figcaption{font:12px/1.6 var(--mono);color:var(--muted);margin-top:10px}
 .updates-source-note{font-size:14px;line-height:1.7;color:var(--muted);margin-top:28px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.updates-source-note a{color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.updates-source-link{display:inline-flex;align-items:center;gap:12px;min-height:44px;margin-top:8px;font-size:17px;font-weight:500;line-height:1.5;color:var(--ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.updates-source-link .link-arrow-icon{flex-shrink:0;width:18px;height:18px}
+.updates-source-link:hover{text-decoration-thickness:2px}
 .updates-prose{max-width:1000px;padding-top:30px;font-size:18px;line-height:1.75;overflow-wrap:break-word}
 .updates-prose p+p{margin-top:16px}
 .updates-prose h2{font-size:22px;line-height:1.35;letter-spacing:-.02em;font-weight:500;margin:36px 0 12px}
