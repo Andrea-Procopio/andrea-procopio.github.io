@@ -437,3 +437,10 @@
   gap:var(--hero-gap);
  }
 }
+
+/* Short desktop windows need a closer title/image composition. */
+@media (min-width:981px) and (max-height:780px){
+ .page-research .research-hero,
+ .page-career .career-top,
+ .page-updates .updates-hero{justify-content:center}
+}
