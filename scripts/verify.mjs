@@ -7,7 +7,7 @@ const css=readFileSync('style.css','utf8');
 for(const page of pages){
   const html=readFileSync(page,'utf8');
   assert.ok(!html.includes('embedded-site-styles'),page+' must use the shared stylesheet only');
-  const expectedStylesheet = 'style.css?v=20261108-site-gutters-v7';
+  const expectedStylesheet = 'style.css?v=20261109-layout-alignment-v8';
   assert.ok(html.includes(expectedStylesheet),page+' CSS version mismatch');
   if(originalPages.includes(page)) assert.ok(html.includes('main.js?v=20261019-crows-v1'),page+' script version mismatch');
   const nav=html.match(/<nav aria-label="Main navigation">([\s\S]*?)<\/nav>/)?.[1]||'';
@@ -43,6 +43,8 @@ const research=readFileSync('research.html','utf8');
 const career=readFileSync('career.html','utf8');
 const js=readFileSync('main.js','utf8');
 assert.ok(home.includes('assets/profile.jpeg')&&home.includes('id="contact"'));
+assert.ok(!home.includes('class="cover-actions"'),'No duplicate research/career quick links below the name');
+assert.ok(css.includes('justify-content:space-between'),'Desktop artwork should align with the page container');
 const contact=home.split('<section class="contact-home page-width"')[1]?.split('</section>')[0]||'';
 assert.equal((contact.match(/class="contact-method"/g)||[]).length,2,'Contact must have exactly two editorial links');
 assert.ok(contact.includes('href="mailto:procopio@mit.edu"'),'Missing email destination');
@@ -66,7 +68,7 @@ assert.ok(biography.includes('href="https://www.eurotech-federation.com/"'),'Eur
 assert.ok(css.includes('.page-home .introduction p{text-align:justify;text-justify:inter-word;hyphens:none}'),'Homepage biography must be justified');
 assert.ok(home.includes('class="home-research-column"') && home.includes('id="home-motivation-title"'),'Homepage must include thesis and motivation');
 assert.equal((home.match(/class="home-research-column"/g)||[]).length,2,'Research thesis should have two normal text columns');
-assert.ok(css.includes('.page-width{width:min(100% - 280px,1200px);'),'Desktop page gutters should be wider');
+assert.ok(css.includes('--site-gutter:clamp(24px,calc(14.5vw - 68.8px),140px)'),'Desktop page gutters should be wider');
 assert.equal((home.match(/class="home-question"/g)||[]).length,4,'Homepage must display four research questions');
 assert.ok(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'Research questions must have a two-column desktop grid');
 assert.ok(!biography.includes('I work on AI systems that do research:'),
