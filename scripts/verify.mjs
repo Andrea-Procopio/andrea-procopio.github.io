@@ -57,11 +57,11 @@ assert.ok(css.includes('.page-home .contact-list{grid-template-columns:minmax(0,
 const biography=home.split('<div class="introduction">')[1]?.split('</div>')[0]||'';
 assert.equal((biography.match(/<p>/g)||[]).length,3,'Landing biography must have exactly three paragraphs');
 for(const phrase of [
-  "I'm 21, and I'm a first year PhD student at MIT with Prof. Dimitris Bertsimas, and a Research Fellow at Harvard with Prof. Tomer Ullman.",
+  "I'm a first year PhD student at MIT with Prof. Dimitris Bertsimas, and a Research Fellow at Harvard with Prof. Tomer Ullman.",
   "My research focuses on AI systems for open ended scientific discovery that can continually learn and improve from experience, using new knowledge, and becoming themselves better at performing the process of discovery. Similar to what humans do, and possibly in a more holistic way.",
   'Previously, I studied CS and Economics at Bocconi University and spent my final year doing research at Harvard on computer vision and cognitive science.',
-  'Italy’s largest undergraduate-run AI research lab',
-  'a community of young founders in Europe.'
+  'a non-profit research lab run by undergrads',
+  'a community for young founders in Europe.'
 ]) assert.ok(biography.includes(phrase),'Missing biography copy: '+phrase);
 assert.ok(biography.includes('href="https://bainsa.ai/"'),'BAINSA link missing from biography');
 assert.ok(biography.includes('href="https://www.eurotech-federation.com/"'),'EuroTech link missing from biography');
@@ -129,8 +129,8 @@ const expected=[
   'Marche Polytechnic','Researcher, advised by Prof. Paola Pierleoni',
   'Designed and trained light ML models for movement detection on wearables',
   'BAINSA','2023–present','Co-Founder, Chairman',
-  "Italy's first student-led research labs on AI, Neuroscience, and Robotics. Active in Bocconi, Polimi, Sapienza, and more soon.",
-  'EuroTech Federation','Co-Founder, Advisor','Non-profit network of European founders under 26.'
+  "Research lab on AI, Robotic, and Neuroscience, run by students. Active in Bocconi, Polimi, Sapienza, and more soon.",
+  'EuroTech Federation','Co-Founder, Advisor','a community for young founders in Europe'
 ];
 const careerText=content.replace(/<[^>]*>/g,'');
 for(const phrase of expected)assert.ok(careerText.includes(phrase),'Missing career text: '+phrase);
