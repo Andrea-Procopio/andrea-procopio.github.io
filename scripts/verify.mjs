@@ -66,7 +66,7 @@ assert.ok(biography.includes('href="https://www.eurotech-federation.com/"'),'Eur
 assert.ok(css.includes('.page-home .introduction p{text-align:justify;text-justify:inter-word;hyphens:none}'),'Homepage biography must be justified');
 assert.ok(home.includes('class="home-research-column"') && home.includes('id="home-motivation-title"'),'Homepage must include thesis and motivation');
 assert.equal((home.match(/class="home-research-column"/g)||[]).length,2,'Research thesis should have two normal text columns');
-assert.ok(css.includes('.page-width{width:min(100% - 160px,1320px)}'),'Desktop page gutters should be wider');
+assert.ok(css.includes('.page-width{width:min(100% - 160px,1320px);'),'Desktop page gutters should be wider');
 assert.equal((home.match(/class="home-question"/g)||[]).length,4,'Homepage must display four research questions');
 assert.ok(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'),'Research questions must have a two-column desktop grid');
 assert.ok(!biography.includes('I work on AI systems that do research:'),
